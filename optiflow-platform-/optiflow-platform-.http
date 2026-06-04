@@ -1,6 +1,0 @@
-@optiflow_platform__HostAddress = http://localhost:5238
-
-GET {{optiflow_platform__HostAddress}}/weatherforecast/
-Accept: application/json
-
-###
