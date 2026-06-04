@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "optiflow-platform-", "optiflow-platform-\optiflow-platform-.csproj", "{27D13FCC-9C42-422C-AC11-C0F76651B84B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "optiflow-platform", "optiflow-platform\optiflow-platform.csproj", "{27D13FCC-9C42-422C-AC11-C0F76651B84B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
