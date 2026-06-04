@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="CMakeProjectFlavorService">
+    <option name="flavorId" value="CMakePlainProjectFlavor" />
+  </component>
+  <component name="CMakeSettings">
+    <configurations />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="5cf7af24-1ced-4c32-82e2-6503b5395ad2" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/optiflow-platform/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/optiflow-platform/Program.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/optiflow-platform/Shared/Infrastructure/Persistence/EFC/Configuration/AppDbContext.cs" beforeDir="false" afterPath="$PROJECT_DIR$/optiflow-platform/Shared/Infrastructure/Persistence/EFC/Configuration/AppDbContext.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/optiflow-platform/Shared/Infrastructure/Persistence/EFC/Migrations/AppDbContextModelSnapshot.cs" beforeDir="false" afterPath="$PROJECT_DIR$/optiflow-platform/Shared/Infrastructure/Persistence/EFC/Migrations/AppDbContextModelSnapshot.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/optiflow-platform/appsettings.Development.json" beforeDir="false" afterPath="$PROJECT_DIR$/optiflow-platform/appsettings.Development.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/optiflow-platform/appsettings.json" beforeDir="false" afterPath="$PROJECT_DIR$/optiflow-platform/appsettings.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/optiflow-platform/obj/Debug/net10.0/optiflow-platform.AssemblyInfo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/optiflow-platform/obj/Debug/net10.0/optiflow-platform.AssemblyInfo.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/optiflow-platform/obj/Debug/net10.0/optiflow-platform.AssemblyInfoInputs.cache" beforeDir="false" afterPath="$PROJECT_DIR$/optiflow-platform/obj/Debug/net10.0/optiflow-platform.AssemblyInfoInputs.cache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/optiflow-platform/obj/Debug/net10.0/optiflow-platform.GeneratedMSBuildEditorConfig.editorconfig" beforeDir="false" afterPath="$PROJECT_DIR$/optiflow-platform/obj/Debug/net10.0/optiflow-platform.GeneratedMSBuildEditorConfig.editorconfig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/optiflow-platform/obj/Debug/net10.0/optiflow-platform.assets.cache" beforeDir="false" afterPath="$PROJECT_DIR$/optiflow-platform/obj/Debug/net10.0/optiflow-platform.assets.cache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/optiflow-platform/obj/Debug/net10.0/optiflow-platform.csproj.AssemblyReference.cache" beforeDir="false" afterPath="$PROJECT_DIR$/optiflow-platform/obj/Debug/net10.0/optiflow-platform.csproj.AssemblyReference.cache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/optiflow-platform/obj/optiflow-platform.csproj.nuget.dgspec.json" beforeDir="false" afterPath="$PROJECT_DIR$/optiflow-platform/obj/optiflow-platform.csproj.nuget.dgspec.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/optiflow-platform/obj/optiflow-platform.csproj.nuget.g.props" beforeDir="false" afterPath="$PROJECT_DIR$/optiflow-platform/obj/optiflow-platform.csproj.nuget.g.props" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/optiflow-platform/obj/optiflow-platform.csproj.nuget.g.targets" beforeDir="false" afterPath="$PROJECT_DIR$/optiflow-platform/obj/optiflow-platform.csproj.nuget.g.targets" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/optiflow-platform/obj/project.assets.json" beforeDir="false" afterPath="$PROJECT_DIR$/optiflow-platform/obj/project.assets.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/optiflow-platform/obj/project.nuget.cache" beforeDir="false" afterPath="$PROJECT_DIR$/optiflow-platform/obj/project.nuget.cache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/optiflow-platform/optiflow-platform.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/optiflow-platform/optiflow-platform.csproj" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/optiflow-platform/LabAndOrders/Application/Errors/CreateWorkOrderError.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/optiflow-platform/LabAndOrders/Application/Errors/UpdateOrderStatusError.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/optiflow-platform/LabAndOrders/Application/Internal/CommandServices/WorkOrderCommandService.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/optiflow-platform/LabAndOrders/Application/Internal/QueryServices/LaboratoryQueryService.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/optiflow-platform/LabAndOrders/Domain/Model/Aggregates/WorkOrder.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/optiflow-platform/LabAndOrders/Domain/Model/Commands/CreateWorkOrderCommand.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/optiflow-platform/LabAndOrders/Domain/Model/Commands/UpdateOrderStatusCommand.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/optiflow-platform/LabAndOrders/Domain/Model/Entities/Laboratory.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/optiflow-platform/LabAndOrders/Domain/Model/Queries/GetAllLaboratoriesQuery.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/optiflow-platform/LabAndOrders/Domain/Model/Queries/GetAllWorkOrdersQuery.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/optiflow-platform/LabAndOrders/Domain/Model/Queries/GetLaboratoryByIdQuery.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/optiflow-platform/LabAndOrders/Domain/Model/Queries/GetWorkOrderByIdQuery.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/optiflow-platform/LabAndOrders/Domain/Model/ValueObjects/OrderPriority.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/optiflow-platform/LabAndOrders/Domain/Model/ValueObjects/OrderStatus.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/optiflow-platform/LabAndOrders/Domain/Repositories/ILaboratoryRepository.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/optiflow-platform/LabAndOrders/Domain/Repositories/IWorkOrderRepository.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/optiflow-platform/LabAndOrders/Interfaces/REST/LaboratoriesController.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/optiflow-platform/LabAndOrders/Interfaces/REST/Resources/CreateWorkOrderResource.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/optiflow-platform/LabAndOrders/Interfaces/REST/Resources/LaboratoryResource.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/optiflow-platform/LabAndOrders/Interfaces/REST/Resources/UpdateWorkOrderStatusResource.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/optiflow-platform/LabAndOrders/Interfaces/REST/Resources/WorkOrderResource.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/optiflow-platform/LabAndOrders/Interfaces/REST/WorkOrdersController.cs" root0="SKIP_HIGHLIGHTING" />
+  </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": 3,
+  "fromUser": false
+}]]></component>
+  <component name="ProjectId" id="3EgadwHQlz9IWtBPYXzpFS2NO8U" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.cidr.known.project.marker": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.readMode.enableVisualFormatting": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "cidr.known.project.marker": "true",
+    "codeWithMe.voiceChat.enabledByDefault": "false",
+    "git-widget-placeholder": "feature/lab-and-orders",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="5cf7af24-1ced-4c32-82e2-6503b5395ad2" name="Changes" comment="" />
+      <created>1780602761051</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1780602761051</updated>
+      <workItem from="1780602761053" duration="5502000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="UnityProjectConfiguration" hasMinimizedUI="false" />
+  <component name="VcsManagerConfiguration">
+    <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <breakpoint enabled="true" type="DotNet_Exception_Breakpoints">
+          <properties exception="System.OperationCanceledException" breakIfHandledByOtherCode="false" displayValue="System.OperationCanceledException" />
+          <option name="timeStamp" value="1" />
+        </breakpoint>
+        <breakpoint enabled="true" type="DotNet_Exception_Breakpoints">
+          <properties exception="System.Threading.Tasks.TaskCanceledException" breakIfHandledByOtherCode="false" displayValue="System.Threading.Tasks.TaskCanceledException" />
+          <option name="timeStamp" value="2" />
+        </breakpoint>
+        <breakpoint enabled="true" type="DotNet_Exception_Breakpoints">
+          <properties exception="System.Threading.ThreadAbortException" breakIfHandledByOtherCode="false" displayValue="System.Threading.ThreadAbortException" />
+          <option name="timeStamp" value="3" />
+        </breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+</project>
