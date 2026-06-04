@@ -1,36 +1,29 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\DELL\\Desktop\\Mierda2\\Estudio\\UPC\\CICLO 2026 - 1\\WEB APPLICATIONS\\optiflow-platform\\optiflow-platform\\optiflow-platform.csproj": {}
+    "C:\\Users\\lucia\\RiderProjects\\optiflow-platform\\optiflow-platform\\optiflow-platform.csproj": {}
   },
   "projects": {
-    "C:\\Users\\DELL\\Desktop\\Mierda2\\Estudio\\UPC\\CICLO 2026 - 1\\WEB APPLICATIONS\\optiflow-platform\\optiflow-platform\\optiflow-platform.csproj": {
+    "C:\\Users\\lucia\\RiderProjects\\optiflow-platform\\optiflow-platform\\optiflow-platform.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\DELL\\Desktop\\Mierda2\\Estudio\\UPC\\CICLO 2026 - 1\\WEB APPLICATIONS\\optiflow-platform\\optiflow-platform\\optiflow-platform.csproj",
+        "projectUniqueName": "C:\\Users\\lucia\\RiderProjects\\optiflow-platform\\optiflow-platform\\optiflow-platform.csproj",
         "projectName": "optiflow-platform",
-        "projectPath": "C:\\Users\\DELL\\Desktop\\Mierda2\\Estudio\\UPC\\CICLO 2026 - 1\\WEB APPLICATIONS\\optiflow-platform\\optiflow-platform\\optiflow-platform.csproj",
-        "packagesPath": "C:\\Users\\DELL\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\DELL\\Desktop\\Mierda2\\Estudio\\UPC\\CICLO 2026 - 1\\WEB APPLICATIONS\\optiflow-platform\\optiflow-platform\\obj\\",
+        "projectPath": "C:\\Users\\lucia\\RiderProjects\\optiflow-platform\\optiflow-platform\\optiflow-platform.csproj",
+        "packagesPath": "C:\\Users\\lucia\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\lucia\\RiderProjects\\optiflow-platform\\optiflow-platform\\obj\\",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-        ],
         "configFilePaths": [
-          "C:\\Users\\DELL\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "C:\\Users\\lucia\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net10.0"
         ],
         "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
           "net10.0": {
-            "framework": "net10.0",
             "targetAlias": "net10.0",
             "projectReferences": {}
           }
@@ -49,7 +42,6 @@
       },
       "frameworks": {
         "net10.0": {
-          "framework": "net10.0",
           "targetAlias": "net10.0",
           "dependencies": {
             "Humanizer": {
@@ -64,15 +56,21 @@
               "target": "Package",
               "version": "[10.0.8, )"
             },
-            "MySql.Data.EntityFrameworkCore": {
+            "Microsoft.EntityFrameworkCore.Design": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers",
+              "suppressParent": "All",
               "target": "Package",
-              "version": "[8.0.22, )"
+              "version": "[10.0.8, )"
             },
             "MySql.EntityFrameworkCore": {
               "target": "Package",
               "version": "[10.0.7, )"
             },
             "Swashbuckle.AspNetCore": {
+              "target": "Package",
+              "version": "[10.2.1, )"
+            },
+            "Swashbuckle.AspNetCore.Annotations": {
               "target": "Package",
               "version": "[10.2.1, )"
             }

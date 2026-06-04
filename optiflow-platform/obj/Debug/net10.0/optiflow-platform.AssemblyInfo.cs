@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("optiflow-platform")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e7b0dfe371e8db512a31eef4fe30e70bde93763b")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+2387b14afb5fd1de3e0e6ce8054a480ce6c59d7f")]
 [assembly: System.Reflection.AssemblyProductAttribute("optiflow-platform")]
 [assembly: System.Reflection.AssemblyTitleAttribute("optiflow-platform")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
