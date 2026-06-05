@@ -7,6 +7,11 @@ using optiflow_platform.Shared.Domain.Repositories;
 using optiflow_platform.Shared.Infrastructure.Interfaces.ASP.Configuration;
 using optiflow_platform.Shared.Infrastructure.Persistence.EFC.Configuration;
 using optiflow_platform.Shared.Infrastructure.Persistence.EFC.Repositories;
+using optiflow_platform.Analytics.Application.Internal.QueryServices;
+using optiflow_platform.Analytics.Application.Services;
+using optiflow_platform.Analytics.Domain.Repositories;
+using optiflow_platform.Analytics.Infrastructure.Persistence.EFC.Repositories;
+
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -56,6 +61,13 @@ builder.Services.AddScoped<ILaboratoryRepository, LaboratoryRepository>();
 builder.Services.AddScoped<IWorkOrderCommandService, WorkOrderCommandService>();
 builder.Services.AddScoped<IWorkOrderQueryService, WorkOrderQueryService>();
 builder.Services.AddScoped<ILaboratoryQueryService, LaboratoryQueryService>();
+
+// Analytics Bounded Context Injection
+builder.Services.AddScoped<IAnalyticsReportRepository, AnalyticsReportRepository>();
+builder.Services.AddScoped<IStaffMetricRepository, StaffMetricRepository>();
+builder.Services.AddScoped<IAnalyticsReportQueryService, AnalyticsReportQueryService>();
+builder.Services.AddScoped<IStaffMetricQueryService, StaffMetricQueryService>();
+*/
 
 var app = builder.Build();
 
