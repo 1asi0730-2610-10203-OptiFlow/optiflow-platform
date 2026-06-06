@@ -10,11 +10,7 @@
     <configurations />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d296ff64-6e73-4031-9c6d-4a2eebb0c6c2" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/optiflow-platform/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/optiflow-platform/Program.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/optiflow-platform/Shared/Infrastructure/Persistence/EFC/Configuration/AppDbContext.cs" beforeDir="false" afterPath="$PROJECT_DIR$/optiflow-platform/Shared/Infrastructure/Persistence/EFC/Configuration/AppDbContext.cs" afterDir="false" />
-    </list>
+    <list default="true" id="d296ff64-6e73-4031-9c6d-4a2eebb0c6c2" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -52,7 +48,7 @@
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "cidr.known.project.marker": "true",
     "codeWithMe.voiceChat.enabledByDefault": "false",
-    "git-widget-placeholder": "develop",
+    "git-widget-placeholder": "feature/add-analytics",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -69,7 +65,7 @@
       <option name="presentableId" value="Default" />
       <updated>1780647974325</updated>
       <workItem from="1780647978479" duration="457000" />
-      <workItem from="1780649217670" duration="305000" />
+      <workItem from="1780649217670" duration="462000" />
     </task>
     <servers />
   </component>

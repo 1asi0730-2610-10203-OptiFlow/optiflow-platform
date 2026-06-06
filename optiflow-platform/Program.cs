@@ -11,6 +11,11 @@ using optiflow_platform.Analytics.Application.Internal.QueryServices;
 using optiflow_platform.Analytics.Application.Services;
 using optiflow_platform.Analytics.Domain.Repositories;
 using optiflow_platform.Analytics.Infrastructure.Persistence.EFC.Repositories;
+using optiflow_platform.Clinical.Application.Internal.CommandServices;
+using optiflow_platform.Clinical.Application.Internal.QueryServices;
+using optiflow_platform.Clinical.Application.Services;
+using optiflow_platform.Clinical.Domain.Repositories;
+using optiflow_platform.Clinical.Infrastructure.Persistence.EFC.Repositories;
 
 using Microsoft.EntityFrameworkCore;
 
@@ -67,7 +72,16 @@ builder.Services.AddScoped<IAnalyticsReportRepository, AnalyticsReportRepository
 builder.Services.AddScoped<IStaffMetricRepository, StaffMetricRepository>();
 builder.Services.AddScoped<IAnalyticsReportQueryService, AnalyticsReportQueryService>();
 builder.Services.AddScoped<IStaffMetricQueryService, StaffMetricQueryService>();
-*/
+
+// Clinical Bounded Context Injection
+builder.Services.AddScoped<IPatientRepository, PatientRepository>();
+builder.Services.AddScoped<IClinicalRecordRepository, ClinicalRecordRepository>();
+builder.Services.AddScoped<IPrescriptionRepository, PrescriptionRepository>();
+builder.Services.AddScoped<IPatientCommandService, PatientCommandService>();
+builder.Services.AddScoped<IPatientQueryService, PatientQueryService>();
+builder.Services.AddScoped<IClinicalRecordQueryService, ClinicalRecordQueryService>();
+builder.Services.AddScoped<IPrescriptionCommandService, PrescriptionCommandService>();
+builder.Services.AddScoped<IPrescriptionQueryService, PrescriptionQueryService>();
 
 var app = builder.Build();
 
