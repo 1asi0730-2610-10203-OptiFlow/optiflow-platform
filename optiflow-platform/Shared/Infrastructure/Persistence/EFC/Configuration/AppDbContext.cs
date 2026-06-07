@@ -1,5 +1,6 @@
 using optiflow_platform.LabAndOrders.Domain.Model.Aggregates;
 using optiflow_platform.LabAndOrders.Domain.Model.Entities;
+using optiflow_platform.Sales.Domain.Model.Aggregates;
 using optiflow_platform.Shared.Infrastructure.Persistence.EFC.Configuration.Extensions;
 using optiflow_platform.Shared.Infrastructure.Persistence.EFC.Interceptors;
 using Microsoft.EntityFrameworkCore;
@@ -45,6 +46,24 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
         builder.Entity<WorkOrder>().Property(w => w.Deposit).HasColumnType("decimal(10,2)");
         builder.Entity<WorkOrder>().Property(w => w.Total).HasColumnType("decimal(10,2)");
         builder.Entity<WorkOrder>().Property(w => w.IsRework).IsRequired();
+
+        // Sales Bounded Context
+        builder.Entity<Sale>().HasKey(s => s.Id);
+        builder.Entity<Sale>().Property(s => s.Id).IsRequired().ValueGeneratedOnAdd();
+        builder.Entity<Sale>().Property(s => s.ClientName).IsRequired().HasMaxLength(255);
+        builder.Entity<Sale>().Property(s => s.TotalAmount).IsRequired().HasColumnType("decimal(10,2)");
+        builder.Entity<Sale>().Property(s => s.QuotaAmount).HasColumnType("decimal(10,2)");
+        builder.Entity<Sale>().Property(s => s.DiscountPercentage).HasColumnType("decimal(5,2)");
+        builder.Entity<Sale>().Property(s => s.Status).IsRequired().HasMaxLength(50);
+        builder.Entity<Sale>().Property(s => s.SaleDate).IsRequired().HasMaxLength(50);
+
+        builder.Entity<Payment>().HasKey(p => p.Id);
+        builder.Entity<Payment>().Property(p => p.Id).IsRequired().ValueGeneratedOnAdd();
+        builder.Entity<Payment>().Property(p => p.SaleId).IsRequired();
+        builder.Entity<Payment>().Property(p => p.TotalAmount).IsRequired().HasColumnType("decimal(10,2)");
+        builder.Entity<Payment>().Property(p => p.PaidAmount).HasColumnType("decimal(10,2)");
+        builder.Entity<Payment>().Property(p => p.OutstandingBalance).HasColumnType("decimal(10,2)");
+        builder.Entity<Payment>().Property(p => p.Status).IsRequired().HasMaxLength(20);
 
         builder.UseSnakeCaseNamingConvention();
     }
