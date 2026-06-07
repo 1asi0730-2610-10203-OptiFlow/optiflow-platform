@@ -3,6 +3,11 @@ using optiflow_platform.LabAndOrders.Application.Internal.QueryServices;
 using optiflow_platform.LabAndOrders.Application.Services;
 using optiflow_platform.LabAndOrders.Domain.Repositories;
 using optiflow_platform.LabAndOrders.Infrastructure.Persistence.EFC.Repositories;
+using optiflow_platform.Sales.Application.Internal.CommandServices;
+using optiflow_platform.Sales.Application.Internal.QueryServices;
+using optiflow_platform.Sales.Application.Services;
+using optiflow_platform.Sales.Domain.Repositories;
+using optiflow_platform.Sales.Infrastructure.Persistence.EFC.Repositories;
 using optiflow_platform.Shared.Domain.Repositories;
 using optiflow_platform.Shared.Infrastructure.Interfaces.ASP.Configuration;
 using optiflow_platform.Shared.Infrastructure.Persistence.EFC.Configuration;
@@ -56,6 +61,14 @@ builder.Services.AddScoped<ILaboratoryRepository, LaboratoryRepository>();
 builder.Services.AddScoped<IWorkOrderCommandService, WorkOrderCommandService>();
 builder.Services.AddScoped<IWorkOrderQueryService, WorkOrderQueryService>();
 builder.Services.AddScoped<ILaboratoryQueryService, LaboratoryQueryService>();
+
+// Sales Bounded Context Injection
+builder.Services.AddScoped<ISaleRepository, SaleRepository>();
+builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
+builder.Services.AddScoped<ISaleCommandService, SaleCommandService>();
+builder.Services.AddScoped<ISaleQueryService, SaleQueryService>();
+builder.Services.AddScoped<IPaymentCommandService, PaymentCommandService>();
+builder.Services.AddScoped<IPaymentQueryService, PaymentQueryService>();
 
 var app = builder.Build();
 
