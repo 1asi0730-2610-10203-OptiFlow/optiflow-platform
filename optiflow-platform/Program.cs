@@ -1,3 +1,8 @@
+using optiflow_platform.Inventory.Application.Internal.CommandServices;
+using optiflow_platform.Inventory.Application.Internal.QueryServices;
+using optiflow_platform.Inventory.Application.Services;
+using optiflow_platform.Inventory.Domain.Repositories;
+using optiflow_platform.Inventory.Infrastructure.Persistence.EFC.Repositories;
 using optiflow_platform.LabAndOrders.Application.Internal.CommandServices;
 using optiflow_platform.LabAndOrders.Application.Internal.QueryServices;
 using optiflow_platform.LabAndOrders.Application.Services;
@@ -5,6 +10,7 @@ using optiflow_platform.LabAndOrders.Domain.Repositories;
 using optiflow_platform.LabAndOrders.Infrastructure.Persistence.EFC.Repositories;
 using optiflow_platform.Sales.Application.Internal.CommandServices;
 using optiflow_platform.Sales.Application.Internal.QueryServices;
+using optiflow_platform.Resources;
 using optiflow_platform.Sales.Application.Services;
 using optiflow_platform.Sales.Domain.Repositories;
 using optiflow_platform.Sales.Infrastructure.Persistence.EFC.Repositories;
@@ -13,14 +19,33 @@ using optiflow_platform.Shared.Infrastructure.Interfaces.ASP.Configuration;
 using optiflow_platform.Shared.Infrastructure.Persistence.EFC.Configuration;
 using optiflow_platform.Shared.Infrastructure.Persistence.EFC.Repositories;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Localization;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Configure lowercase URLs
 builder.Services.AddRouting(options => options.LowercaseUrls = true);
 
+// Localization Configuration
+builder.Services.AddLocalization();
+
 // Configure Kebab Case Route Naming Convention
-builder.Services.AddControllers(options => options.Conventions.Add(new KebabCaseRouteNamingConvention()));
+builder.Services.AddControllers(options => options.Conventions.Add(new KebabCaseRouteNamingConvention()))
+    .AddDataAnnotationsLocalization();
+
+// Register RFC 7807 ProblemDetails payloads for centralized exception handling.
+builder.Services.AddProblemDetails(options =>
+{
+    options.CustomizeProblemDetails = context =>
+    {
+        if (context.ProblemDetails.Status is null or >= 500)
+        {
+            var localizer = context.HttpContext.RequestServices.GetRequiredService<IStringLocalizer<SharedResource>>();
+            context.ProblemDetails.Title ??= localizer["UnexpectedServerError"].Value;
+            context.ProblemDetails.Detail ??= localizer["UnexpectedErrorProcessingRequest"].Value;
+        }
+    };
+});
 
 // Configure Swagger/OpenAPI
 builder.Services.AddEndpointsApiExplorer();
@@ -70,6 +95,17 @@ builder.Services.AddScoped<ISaleQueryService, SaleQueryService>();
 builder.Services.AddScoped<IPaymentCommandService, PaymentCommandService>();
 builder.Services.AddScoped<IPaymentQueryService, PaymentQueryService>();
 
+// Inventory Bounded Context Injection
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<IStockAuditLogRepository, StockAuditLogRepository>();
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+builder.Services.AddScoped<ISupplierRepository, SupplierRepository>();
+builder.Services.AddScoped<IProductCommandService, ProductCommandService>();
+builder.Services.AddScoped<IProductQueryService, ProductQueryService>();
+builder.Services.AddScoped<ICategoryQueryService, CategoryQueryService>();
+builder.Services.AddScoped<ISupplierQueryService, SupplierQueryService>();
+builder.Services.AddScoped<IStockAuditLogQueryService, StockAuditLogQueryService>();
+
 var app = builder.Build();
 
 // Apply pending EF Core migrations on startup
@@ -79,8 +115,20 @@ using (var scope = app.Services.CreateScope())
     context.Database.Migrate();
 }
 
+// Configure the HTTP request pipeline.
+app.UseExceptionHandler();
+
 app.UseSwagger();
 app.UseSwaggerUI();
+
+// Localization Configuration
+string[] supportedCultures = ["en", "en-US", "es", "es-PE"];
+var localizationOptions = new RequestLocalizationOptions()
+    .SetDefaultCulture(supportedCultures[0])
+    .AddSupportedCultures(supportedCultures)
+    .AddSupportedUICultures(supportedCultures);
+localizationOptions.ApplyCurrentCultureToResponseHeaders = true;
+app.UseRequestLocalization(localizationOptions);
 
 app.UseCors();
 
