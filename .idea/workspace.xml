@@ -12,6 +12,13 @@
   <component name="ChangeListManager">
     <list default="true" id="d296ff64-6e73-4031-9c6d-4a2eebb0c6c2" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    <list default="true" id="bd4e3d4d-a283-4b5c-a4b3-802b279d7eff" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/optiflow-platform/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/optiflow-platform/Program.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/optiflow-platform/Shared/Infrastructure/Persistence/EFC/Configuration/AppDbContext.cs" beforeDir="false" afterPath="$PROJECT_DIR$/optiflow-platform/Shared/Infrastructure/Persistence/EFC/Configuration/AppDbContext.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/optiflow-platform/Shared/Infrastructure/Persistence/EFC/Migrations/AppDbContextModelSnapshot.cs" beforeDir="false" afterPath="$PROJECT_DIR$/optiflow-platform/Shared/Infrastructure/Persistence/EFC/Migrations/AppDbContextModelSnapshot.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/optiflow-platform/optiflow-platform.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/optiflow-platform/optiflow-platform.csproj" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -34,6 +41,70 @@
   &quot;fromUser&quot;: false
 }</component>
   <component name="ProjectId" id="3Ei4HvZxmS83ryVc56hUWxQV7k0" />
+    <setting file="file://$PROJECT_DIR$/optiflow-platform/Inventory/Application/Errors/LogManualAdjustmentError.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/optiflow-platform/Inventory/Application/Errors/RegisterProductError.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/optiflow-platform/Inventory/Application/Errors/RestockProductError.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/optiflow-platform/Inventory/Application/Errors/UpdateProductError.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/optiflow-platform/Inventory/Application/Errors/UpdateStockLevelError.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/optiflow-platform/Inventory/Application/Errors/VerifySupplyStockError.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/optiflow-platform/Inventory/Application/Internal/CommandServices/ProductCommandService.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/optiflow-platform/Inventory/Application/Internal/QueryServices/CategoryQueryService.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/optiflow-platform/Inventory/Application/Internal/QueryServices/ProductQueryService.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/optiflow-platform/Inventory/Application/Internal/QueryServices/StockAuditLogQueryService.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/optiflow-platform/Inventory/Application/Internal/QueryServices/SupplierQueryService.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/optiflow-platform/Inventory/Domain/Model/Aggregates/Product.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/optiflow-platform/Inventory/Domain/Model/Aggregates/StockAuditLog.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/optiflow-platform/Inventory/Domain/Model/Commands/LogManualAdjustmentCommand.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/optiflow-platform/Inventory/Domain/Model/Commands/RegisterProductCommand.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/optiflow-platform/Inventory/Domain/Model/Commands/RestockProductCommand.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/optiflow-platform/Inventory/Domain/Model/Commands/UpdateProductCommand.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/optiflow-platform/Inventory/Domain/Model/Commands/UpdateStockLevelCommand.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/optiflow-platform/Inventory/Domain/Model/Commands/VerifySupplyStockCommand.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/optiflow-platform/Inventory/Domain/Model/Entities/Category.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/optiflow-platform/Inventory/Domain/Model/Entities/Supplier.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/optiflow-platform/Inventory/Domain/Model/Queries/GetAllCategoriesQuery.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/optiflow-platform/Inventory/Domain/Model/Queries/GetAllProductsQuery.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/optiflow-platform/Inventory/Domain/Model/Queries/GetAuditLogsQuery.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/optiflow-platform/Inventory/Domain/Model/Queries/GetLowStockProductsQuery.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/optiflow-platform/Inventory/Domain/Model/ValueObjects/StockOperation.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/optiflow-platform/Inventory/Infrastructure/Persistence/EFC/Repositories/CategoryRepository.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/optiflow-platform/Inventory/Infrastructure/Persistence/EFC/Repositories/ProductRepository.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/optiflow-platform/Inventory/Infrastructure/Persistence/EFC/Repositories/StockAuditLogRepository.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/optiflow-platform/Inventory/Infrastructure/Persistence/EFC/Repositories/SupplierRepository.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/optiflow-platform/Inventory/Interfaces/REST/CategoriesController.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/optiflow-platform/Inventory/Interfaces/REST/ProductsController.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/optiflow-platform/Inventory/Interfaces/REST/StockAuditLogsController.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/optiflow-platform/Inventory/Interfaces/REST/SuppliersController.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/optiflow-platform/LabAndOrders/Application/Errors/CreateWorkOrderError.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/optiflow-platform/LabAndOrders/Application/Errors/UpdateOrderStatusError.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/optiflow-platform/LabAndOrders/Domain/Model/Aggregates/WorkOrder.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/optiflow-platform/LabAndOrders/Domain/Model/Commands/CreateWorkOrderCommand.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/optiflow-platform/LabAndOrders/Domain/Model/Commands/UpdateOrderStatusCommand.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/optiflow-platform/LabAndOrders/Domain/Model/Entities/Laboratory.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/optiflow-platform/LabAndOrders/Domain/Model/Queries/GetAllLaboratoriesQuery.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/optiflow-platform/LabAndOrders/Domain/Model/Queries/GetAllWorkOrdersQuery.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/optiflow-platform/LabAndOrders/Domain/Model/Queries/GetLaboratoryByIdQuery.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/optiflow-platform/LabAndOrders/Domain/Model/Queries/GetWorkOrderByIdQuery.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/optiflow-platform/LabAndOrders/Domain/Repositories/ILaboratoryRepository.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/optiflow-platform/LabAndOrders/Domain/Repositories/IWorkOrderRepository.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/optiflow-platform/LabAndOrders/Infrastructure/Persistence/EFC/Repositories/WorkOrderRepository.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/optiflow-platform/LabAndOrders/Interfaces/REST/LaboratoriesController.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/optiflow-platform/LabAndOrders/Interfaces/REST/Resources/CreateWorkOrderResource.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/optiflow-platform/LabAndOrders/Interfaces/REST/Resources/UpdateWorkOrderStatusResource.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/optiflow-platform/LabAndOrders/Interfaces/REST/Resources/WorkOrderResource.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/optiflow-platform/LabAndOrders/Interfaces/REST/Transform/CreateWorkOrderCommandFromResourceAssembler.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/optiflow-platform/LabAndOrders/Interfaces/REST/Transform/LaboratoryResourceFromEntityAssembler.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/optiflow-platform/LabAndOrders/Interfaces/REST/Transform/UpdateOrderStatusCommandFromResourceAssembler.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/optiflow-platform/LabAndOrders/Interfaces/REST/Transform/WorkOrderResourceFromEntityAssembler.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/optiflow-platform/LabAndOrders/Interfaces/REST/WorkOrdersController.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/optiflow-platform/Program.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/optiflow-platform/Sales/Interfaces/REST/PaymentsController.cs" root0="SKIP_HIGHLIGHTING" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 5,
+  &quot;fromUser&quot;: false
+}</component>
+  <component name="ProjectId" id="3EoogQGOqMORFk3IrVo0tj7ILpZ" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -41,6 +112,7 @@
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
     &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
@@ -51,11 +123,15 @@
     &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
     &quot;codeWithMe.voiceChat.enabledByDefault&quot;: &quot;false&quot;,
     &quot;git-widget-placeholder&quot;: &quot;feature/add-analytics&quot;,
+    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;codeWithMe.voiceChat.enabledByDefault&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;feature/inventory&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
@@ -70,6 +146,13 @@
       <workItem from="1780649217670" duration="462000" />
       <workItem from="1780716356372" duration="808000" />
       <workItem from="1780849096365" duration="282000" />
+      <changelist id="bd4e3d4d-a283-4b5c-a4b3-802b279d7eff" name="Changes" comment="" />
+      <created>1780854394173</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1780854394173</updated>
+      <workItem from="1780854396709" duration="6624000" />
+      <workItem from="1780861157877" duration="828000" />
     </task>
     <servers />
   </component>

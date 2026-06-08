@@ -18,6 +18,206 @@ namespace optiflow_platform.Shared.Infrastructure.Persistence.EFC.Migrations
                 .HasAnnotation("ProductVersion", "10.0.8")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
+            modelBuilder.Entity("optiflow_platform.Inventory.Domain.Model.Aggregates.Product", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("id");
+
+                    b.Property<string>("Brand")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)")
+                        .HasColumnName("brand");
+
+                    b.Property<string>("Category")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)")
+                        .HasColumnName("category");
+
+                    b.Property<int>("CategoryId")
+                        .HasColumnType("int")
+                        .HasColumnName("category_id");
+
+                    b.Property<string>("LastRestockDate")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)")
+                        .HasColumnName("last_restock_date");
+
+                    b.Property<int>("MinimumStockThreshold")
+                        .HasColumnType("int")
+                        .HasColumnName("minimum_stock_threshold");
+
+                    b.Property<string>("Model")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)")
+                        .HasColumnName("model");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)")
+                        .HasColumnName("name");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(10,2)")
+                        .HasColumnName("price");
+
+                    b.Property<string>("Sku")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)")
+                        .HasColumnName("sku");
+
+                    b.Property<int>("Stock")
+                        .HasColumnType("int")
+                        .HasColumnName("stock");
+
+                    b.Property<int>("SupplierId")
+                        .HasColumnType("int")
+                        .HasColumnName("supplier_id");
+
+                    b.Property<string>("SupplierName")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)")
+                        .HasColumnName("supplier_name");
+
+                    b.HasKey("Id")
+                        .HasName("p_k_products");
+
+                    b.HasIndex("Sku")
+                        .IsUnique()
+                        .HasDatabaseName("i_x_products_sku");
+
+                    b.ToTable("products");
+                });
+
+            modelBuilder.Entity("optiflow_platform.Inventory.Domain.Model.Aggregates.StockAuditLog", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("id");
+
+                    b.Property<string>("Author")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)")
+                        .HasColumnName("author");
+
+                    b.Property<string>("Date")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("varchar(20)")
+                        .HasColumnName("date");
+
+                    b.Property<int>("NewStock")
+                        .HasColumnType("int")
+                        .HasColumnName("new_stock");
+
+                    b.Property<string>("Operation")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)")
+                        .HasColumnName("operation");
+
+                    b.Property<int>("PreviousStock")
+                        .HasColumnType("int")
+                        .HasColumnName("previous_stock");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int")
+                        .HasColumnName("product_id");
+
+                    b.Property<string>("ProductName")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)")
+                        .HasColumnName("product_name");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int")
+                        .HasColumnName("quantity");
+
+                    b.Property<string>("Sku")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)")
+                        .HasColumnName("sku");
+
+                    b.Property<string>("Time")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("varchar(20)")
+                        .HasColumnName("time");
+
+                    b.HasKey("Id")
+                        .HasName("p_k_stock_audit_logs");
+
+                    b.ToTable("stock_audit_logs");
+                });
+
+            modelBuilder.Entity("optiflow_platform.Inventory.Domain.Model.Entities.Category", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("id");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)")
+                        .HasColumnName("name");
+
+                    b.HasKey("Id")
+                        .HasName("p_k_categories");
+
+                    b.ToTable("categories");
+                });
+
+            modelBuilder.Entity("optiflow_platform.Inventory.Domain.Model.Entities.Supplier", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("id");
+
+                    b.Property<string>("ContactPerson")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)")
+                        .HasColumnName("contact_person");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)")
+                        .HasColumnName("email");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)")
+                        .HasColumnName("name");
+
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)")
+                        .HasColumnName("phone");
+
+                    b.HasKey("Id")
+                        .HasName("p_k_suppliers");
+
+                    b.ToTable("suppliers");
+                });
+
             modelBuilder.Entity("optiflow_platform.LabAndOrders.Domain.Model.Aggregates.WorkOrder", b =>
                 {
                     b.Property<int>("Id")
@@ -126,6 +326,84 @@ namespace optiflow_platform.Shared.Infrastructure.Persistence.EFC.Migrations
                         .HasName("p_k_laboratories");
 
                     b.ToTable("laboratories");
+                });
+
+            modelBuilder.Entity("optiflow_platform.Sales.Domain.Model.Aggregates.Payment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("id");
+
+                    b.Property<decimal>("OutstandingBalance")
+                        .HasColumnType("decimal(10,2)")
+                        .HasColumnName("outstanding_balance");
+
+                    b.Property<decimal>("PaidAmount")
+                        .HasColumnType("decimal(10,2)")
+                        .HasColumnName("paid_amount");
+
+                    b.Property<int>("SaleId")
+                        .HasColumnType("int")
+                        .HasColumnName("sale_id");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("varchar(20)")
+                        .HasColumnName("status");
+
+                    b.Property<decimal>("TotalAmount")
+                        .HasColumnType("decimal(10,2)")
+                        .HasColumnName("total_amount");
+
+                    b.HasKey("Id")
+                        .HasName("p_k_payments");
+
+                    b.ToTable("payments");
+                });
+
+            modelBuilder.Entity("optiflow_platform.Sales.Domain.Model.Aggregates.Sale", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("id");
+
+                    b.Property<string>("ClientName")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)")
+                        .HasColumnName("client_name");
+
+                    b.Property<decimal>("DiscountPercentage")
+                        .HasColumnType("decimal(5,2)")
+                        .HasColumnName("discount_percentage");
+
+                    b.Property<decimal>("QuotaAmount")
+                        .HasColumnType("decimal(10,2)")
+                        .HasColumnName("quota_amount");
+
+                    b.Property<string>("SaleDate")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)")
+                        .HasColumnName("sale_date");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)")
+                        .HasColumnName("status");
+
+                    b.Property<decimal>("TotalAmount")
+                        .HasColumnType("decimal(10,2)")
+                        .HasColumnName("total_amount");
+
+                    b.HasKey("Id")
+                        .HasName("p_k_sales");
+
+                    b.ToTable("sales");
                 });
 #pragma warning restore 612, 618
         }
