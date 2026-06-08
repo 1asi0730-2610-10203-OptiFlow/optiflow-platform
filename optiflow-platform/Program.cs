@@ -18,6 +18,16 @@ using optiflow_platform.Shared.Domain.Repositories;
 using optiflow_platform.Shared.Infrastructure.Interfaces.ASP.Configuration;
 using optiflow_platform.Shared.Infrastructure.Persistence.EFC.Configuration;
 using optiflow_platform.Shared.Infrastructure.Persistence.EFC.Repositories;
+using optiflow_platform.Analytics.Application.Internal.QueryServices;
+using optiflow_platform.Analytics.Application.Services;
+using optiflow_platform.Analytics.Domain.Repositories;
+using optiflow_platform.Analytics.Infrastructure.Persistence.EFC.Repositories;
+using optiflow_platform.Clinical.Application.Internal.CommandServices;
+using optiflow_platform.Clinical.Application.Internal.QueryServices;
+using optiflow_platform.Clinical.Application.Services;
+using optiflow_platform.Clinical.Domain.Repositories;
+using optiflow_platform.Clinical.Infrastructure.Persistence.EFC.Repositories;
+
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
 
@@ -87,6 +97,21 @@ builder.Services.AddScoped<IWorkOrderCommandService, WorkOrderCommandService>();
 builder.Services.AddScoped<IWorkOrderQueryService, WorkOrderQueryService>();
 builder.Services.AddScoped<ILaboratoryQueryService, LaboratoryQueryService>();
 
+// Analytics Bounded Context Injection
+builder.Services.AddScoped<IAnalyticsReportRepository, AnalyticsReportRepository>();
+builder.Services.AddScoped<IStaffMetricRepository, StaffMetricRepository>();
+builder.Services.AddScoped<IAnalyticsReportQueryService, AnalyticsReportQueryService>();
+builder.Services.AddScoped<IStaffMetricQueryService, StaffMetricQueryService>();
+
+// Clinical Bounded Context Injection
+builder.Services.AddScoped<IPatientRepository, PatientRepository>();
+builder.Services.AddScoped<IClinicalRecordRepository, ClinicalRecordRepository>();
+builder.Services.AddScoped<IPrescriptionRepository, PrescriptionRepository>();
+builder.Services.AddScoped<IPatientCommandService, PatientCommandService>();
+builder.Services.AddScoped<IPatientQueryService, PatientQueryService>();
+builder.Services.AddScoped<IClinicalRecordQueryService, ClinicalRecordQueryService>();
+builder.Services.AddScoped<IPrescriptionCommandService, PrescriptionCommandService>();
+builder.Services.AddScoped<IPrescriptionQueryService, PrescriptionQueryService>();
 // Sales Bounded Context Injection
 builder.Services.AddScoped<ISaleRepository, SaleRepository>();
 builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
