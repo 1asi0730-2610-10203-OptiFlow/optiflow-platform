@@ -23,6 +23,11 @@
 
     <ItemGroup>
       <Folder Include="Sales\" />
+      <Folder Include="Subscription\Application\" />
+      <Folder Include="Subscription\Domain\Model\Queries\" />
+      <Folder Include="Subscription\Domain\Repositories\" />
+      <Folder Include="Subscription\Infrastructure\" />
+      <Folder Include="Subscription\Interfaces\" />
     </ItemGroup>
 
 </Project>
