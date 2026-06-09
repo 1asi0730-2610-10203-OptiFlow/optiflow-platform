@@ -1,7 +1,7 @@
 using optiflow_platform.Subscription.Application.Services;
-using optiflow_platform.Subscription.Domain.Model.Aggregates;
 using optiflow_platform.Subscription.Domain.Model.Queries;
 using optiflow_platform.Subscription.Domain.Repositories;
+using SubscriptionAggregate = optiflow_platform.Subscription.Domain.Model.Aggregates.Subscription;
 
 namespace optiflow_platform.Subscription.Application.Internal.QueryServices;
 
@@ -10,17 +10,17 @@ public class SubscriptionQueryService(ISubscriptionRepository subscriptionReposi
     : ISubscriptionQueryService
 {
     /// <inheritdoc />
-    public async Task<Subscription?> Handle(GetSubscriptionByIdQuery query,
+    public async Task<SubscriptionAggregate?> Handle(GetSubscriptionByIdQuery query,
         CancellationToken cancellationToken = default) =>
         await subscriptionRepository.FindByIdAsync(query.Id.Value, cancellationToken);
 
     /// <inheritdoc />
-    public async Task<IEnumerable<Subscription>> Handle(GetAllSubscriptionsQuery query,
+    public async Task<IEnumerable<SubscriptionAggregate>> Handle(GetAllSubscriptionsQuery query,
         CancellationToken cancellationToken = default) =>
         await subscriptionRepository.ListAsync(cancellationToken);
 
     /// <inheritdoc />
-    public async Task<IEnumerable<Subscription>> Handle(GetSubscriptionsByAdminIdQuery query,
+    public async Task<IEnumerable<SubscriptionAggregate>> Handle(GetSubscriptionsByAdminIdQuery query,
         CancellationToken cancellationToken = default) =>
         await subscriptionRepository.FindByAdminIdAsync(query.AdminId, cancellationToken);
 }

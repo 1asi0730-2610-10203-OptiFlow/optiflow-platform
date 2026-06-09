@@ -1,7 +1,6 @@
+namespace optiflow_platform.Subscription.Domain.Repositories;
 using optiflow_platform.Shared.Domain.Repositories;
 using optiflow_platform.Subscription.Domain.Model.Aggregates;
-
-namespace optiflow_platform.Subscription.Domain.Repositories;
 
 /// <summary>
 ///     Repository contract for subscription persistence.

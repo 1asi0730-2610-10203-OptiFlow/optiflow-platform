@@ -1,5 +1,5 @@
-using optiflow_platform.Subscription.Domain.Model.Aggregates;
 using optiflow_platform.Subscription.Domain.Model.Queries;
+using SubscriptionAggregate = optiflow_platform.Subscription.Domain.Model.Aggregates.Subscription;
 
 namespace optiflow_platform.Subscription.Application.Services;
 
@@ -7,14 +7,14 @@ namespace optiflow_platform.Subscription.Application.Services;
 public interface ISubscriptionQueryService
 {
     /// <summary>Handles retrieving a subscription by its identifier.</summary>
-    Task<Subscription?> Handle(GetSubscriptionByIdQuery query,
+    Task<SubscriptionAggregate?> Handle(GetSubscriptionByIdQuery query,
         CancellationToken cancellationToken = default);
 
     /// <summary>Handles retrieving all subscriptions.</summary>
-    Task<IEnumerable<Subscription>> Handle(GetAllSubscriptionsQuery query,
+    Task<IEnumerable<SubscriptionAggregate>> Handle(GetAllSubscriptionsQuery query,
         CancellationToken cancellationToken = default);
 
     /// <summary>Handles retrieving all subscriptions belonging to a given admin.</summary>
-    Task<IEnumerable<Subscription>> Handle(GetSubscriptionsByAdminIdQuery query,
+    Task<IEnumerable<SubscriptionAggregate>> Handle(GetSubscriptionsByAdminIdQuery query,
         CancellationToken cancellationToken = default);
 }

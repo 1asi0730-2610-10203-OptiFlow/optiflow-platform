@@ -3,9 +3,9 @@ using optiflow_platform.Shared.Application.Patterns;
 using optiflow_platform.Shared.Domain.Repositories;
 using optiflow_platform.Subscription.Application.Errors;
 using optiflow_platform.Subscription.Application.Services;
-using optiflow_platform.Subscription.Domain.Model.Aggregates;
 using optiflow_platform.Subscription.Domain.Model.Commands;
 using optiflow_platform.Subscription.Domain.Repositories;
+using SubscriptionAggregate = optiflow_platform.Subscription.Domain.Model.Aggregates.Subscription;
 
 namespace optiflow_platform.Subscription.Application.Internal.CommandServices;
 
@@ -17,37 +17,37 @@ public class SubscriptionCommandService(
     : ISubscriptionCommandService
 {
     /// <inheritdoc />
-    public async Task<Result<Subscription, SelectSubscriptionPlanError>> Handle(
+    public async Task<Result<SubscriptionAggregate, SelectSubscriptionPlanError>> Handle(
         SelectSubscriptionPlanCommand command, CancellationToken cancellationToken = default)
     {
         try
         {
-            var subscription = new Subscription(command);
+            var subscription = new SubscriptionAggregate(command);
             await subscriptionRepository.AddAsync(subscription, cancellationToken);
             await unitOfWork.CompleteAsync(cancellationToken);
-            return new Result<Subscription, SelectSubscriptionPlanError>.Success(subscription);
+            return new Result<SubscriptionAggregate, SelectSubscriptionPlanError>.Success(subscription);
         }
         catch (DbUpdateException ex)
         {
             logger.LogError(ex, "Database error creating subscription for admin {AdminId}", command.AdminId);
-            return new Result<Subscription, SelectSubscriptionPlanError>.Failure(SelectSubscriptionPlanError.UnexpectedError);
+            return new Result<SubscriptionAggregate, SelectSubscriptionPlanError>.Failure(SelectSubscriptionPlanError.UnexpectedError);
         }
         catch (Exception ex)
         {
             logger.LogError(ex, "Unexpected error creating subscription for admin {AdminId}", command.AdminId);
-            return new Result<Subscription, SelectSubscriptionPlanError>.Failure(SelectSubscriptionPlanError.UnexpectedError);
+            return new Result<SubscriptionAggregate, SelectSubscriptionPlanError>.Failure(SelectSubscriptionPlanError.UnexpectedError);
         }
     }
 
     /// <inheritdoc />
-    public async Task<Result<Subscription, ActivateSubscriptionError>> Handle(
+    public async Task<Result<SubscriptionAggregate, ActivateSubscriptionError>> Handle(
         ActivateSubscriptionCommand command, CancellationToken cancellationToken = default)
     {
         var subscription = await subscriptionRepository.FindByIdAsync(command.SubscriptionId.Value, cancellationToken);
         if (subscription is null)
         {
             logger.LogWarning("Subscription {Id} not found for activation", command.SubscriptionId.Value);
-            return new Result<Subscription, ActivateSubscriptionError>.Failure(ActivateSubscriptionError.SubscriptionNotFound);
+            return new Result<SubscriptionAggregate, ActivateSubscriptionError>.Failure(ActivateSubscriptionError.SubscriptionNotFound);
         }
 
         try
@@ -55,24 +55,24 @@ public class SubscriptionCommandService(
             subscription.Activate(command);
             subscriptionRepository.Update(subscription);
             await unitOfWork.CompleteAsync(cancellationToken);
-            return new Result<Subscription, ActivateSubscriptionError>.Success(subscription);
+            return new Result<SubscriptionAggregate, ActivateSubscriptionError>.Success(subscription);
         }
         catch (Exception ex)
         {
             logger.LogError(ex, "Unexpected error activating subscription {Id}", command.SubscriptionId.Value);
-            return new Result<Subscription, ActivateSubscriptionError>.Failure(ActivateSubscriptionError.UnexpectedError);
+            return new Result<SubscriptionAggregate, ActivateSubscriptionError>.Failure(ActivateSubscriptionError.UnexpectedError);
         }
     }
 
     /// <inheritdoc />
-    public async Task<Result<Subscription, CancelSubscriptionError>> Handle(
+    public async Task<Result<SubscriptionAggregate, CancelSubscriptionError>> Handle(
         CancelSubscriptionCommand command, CancellationToken cancellationToken = default)
     {
         var subscription = await subscriptionRepository.FindByIdAsync(command.SubscriptionId.Value, cancellationToken);
         if (subscription is null)
         {
             logger.LogWarning("Subscription {Id} not found for cancellation", command.SubscriptionId.Value);
-            return new Result<Subscription, CancelSubscriptionError>.Failure(CancelSubscriptionError.SubscriptionNotFound);
+            return new Result<SubscriptionAggregate, CancelSubscriptionError>.Failure(CancelSubscriptionError.SubscriptionNotFound);
         }
 
         try
@@ -80,24 +80,24 @@ public class SubscriptionCommandService(
             subscription.Cancel(command);
             subscriptionRepository.Update(subscription);
             await unitOfWork.CompleteAsync(cancellationToken);
-            return new Result<Subscription, CancelSubscriptionError>.Success(subscription);
+            return new Result<SubscriptionAggregate, CancelSubscriptionError>.Success(subscription);
         }
         catch (Exception ex)
         {
             logger.LogError(ex, "Unexpected error cancelling subscription {Id}", command.SubscriptionId.Value);
-            return new Result<Subscription, CancelSubscriptionError>.Failure(CancelSubscriptionError.UnexpectedError);
+            return new Result<SubscriptionAggregate, CancelSubscriptionError>.Failure(CancelSubscriptionError.UnexpectedError);
         }
     }
 
     /// <inheritdoc />
-    public async Task<Result<Subscription, ChangePlanError>> Handle(
+    public async Task<Result<SubscriptionAggregate, ChangePlanError>> Handle(
         ChangePlanCommand command, CancellationToken cancellationToken = default)
     {
         var subscription = await subscriptionRepository.FindByIdAsync(command.SubscriptionId.Value, cancellationToken);
         if (subscription is null)
         {
             logger.LogWarning("Subscription {Id} not found for plan change", command.SubscriptionId.Value);
-            return new Result<Subscription, ChangePlanError>.Failure(ChangePlanError.SubscriptionNotFound);
+            return new Result<SubscriptionAggregate, ChangePlanError>.Failure(ChangePlanError.SubscriptionNotFound);
         }
 
         try
@@ -105,24 +105,24 @@ public class SubscriptionCommandService(
             subscription.ChangePlan(command);
             subscriptionRepository.Update(subscription);
             await unitOfWork.CompleteAsync(cancellationToken);
-            return new Result<Subscription, ChangePlanError>.Success(subscription);
+            return new Result<SubscriptionAggregate, ChangePlanError>.Success(subscription);
         }
         catch (Exception ex)
         {
             logger.LogError(ex, "Unexpected error changing plan for subscription {Id}", command.SubscriptionId.Value);
-            return new Result<Subscription, ChangePlanError>.Failure(ChangePlanError.UnexpectedError);
+            return new Result<SubscriptionAggregate, ChangePlanError>.Failure(ChangePlanError.UnexpectedError);
         }
     }
 
     /// <inheritdoc />
-    public async Task<Result<Subscription, RenewSubscriptionError>> Handle(
+    public async Task<Result<SubscriptionAggregate, RenewSubscriptionError>> Handle(
         ExpireSubscriptionCommand command, CancellationToken cancellationToken = default)
     {
         var subscription = await subscriptionRepository.FindByIdAsync(command.SubscriptionId.Value, cancellationToken);
         if (subscription is null)
         {
             logger.LogWarning("Subscription {Id} not found for expiry", command.SubscriptionId.Value);
-            return new Result<Subscription, RenewSubscriptionError>.Failure(RenewSubscriptionError.SubscriptionNotFound);
+            return new Result<SubscriptionAggregate, RenewSubscriptionError>.Failure(RenewSubscriptionError.SubscriptionNotFound);
         }
 
         try
@@ -130,12 +130,12 @@ public class SubscriptionCommandService(
             subscription.Expire(command);
             subscriptionRepository.Update(subscription);
             await unitOfWork.CompleteAsync(cancellationToken);
-            return new Result<Subscription, RenewSubscriptionError>.Success(subscription);
+            return new Result<SubscriptionAggregate, RenewSubscriptionError>.Success(subscription);
         }
         catch (Exception ex)
         {
             logger.LogError(ex, "Unexpected error expiring subscription {Id}", command.SubscriptionId.Value);
-            return new Result<Subscription, RenewSubscriptionError>.Failure(RenewSubscriptionError.UnexpectedError);
+            return new Result<SubscriptionAggregate, RenewSubscriptionError>.Failure(RenewSubscriptionError.UnexpectedError);
         }
     }
 }
