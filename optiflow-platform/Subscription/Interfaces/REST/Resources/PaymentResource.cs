@@ -2,8 +2,8 @@ using Swashbuckle.AspNetCore.Annotations;
 
 namespace optiflow_platform.Subscription.Interfaces.REST.Resources;
 
-[SwaggerSchema(Description = "Payment response payload")]
-public record PaymentResource(
+[SwaggerSchema(Description = "Subscription payment response payload")]
+public record SubscriptionPaymentResource(
     [SwaggerParameter(Description = "Payment identifier")] int Id,
     [SwaggerParameter(Description = "Related subscription identifier")] int SubscriptionId,
     [SwaggerParameter(Description = "Amount charged")] decimal Amount,

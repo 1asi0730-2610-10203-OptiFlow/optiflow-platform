@@ -13,19 +13,19 @@ using Swashbuckle.AspNetCore.Annotations;
 namespace optiflow_platform.Subscription.Interfaces.REST;
 
 [ApiController]
-[Route("api/v1/[controller]")]
+[Route("api/v1/subscription-payments")]
 [Produces(MediaTypeNames.Application.Json)]
-[Tags("Payments")]
-public class PaymentsController(
+[Tags("Subscription Payments")]
+public class SubscriptionPaymentsController(
     IPaymentCommandService paymentCommandService,
     IPaymentQueryService paymentQueryService,
-    ILogger<PaymentsController> logger)
+    ILogger<SubscriptionPaymentsController> logger)
     : ControllerBase
 {
     /// <summary>Processes a payment for a subscription.</summary>
     [HttpPost("subscriptions/{subscriptionId:int}")]
-    [SwaggerOperation(Summary = "Processes a payment", OperationId = "ProcessSubscriptionPayment")]
-    [SwaggerResponse(201, "Payment processed", typeof(PaymentResource))]
+    [SwaggerOperation(Summary = "Processes a subscription payment", OperationId = "ProcessSubscriptionPayment")]
+    [SwaggerResponse(201, "Payment processed", typeof(SubscriptionPaymentResource))]
     [SwaggerResponse(400, "Invalid request payload", typeof(string))]
     [SwaggerResponse(500, "Unexpected server error", typeof(ProblemDetails))]
     public async Task<ActionResult> ProcessPayment(int subscriptionId,
@@ -38,9 +38,9 @@ public class PaymentsController(
             return result switch
             {
                 Result<Payment, ProcessSubscriptionPaymentError>.Success success =>
-                    CreatedAtAction(nameof(GetPaymentById),
+                    CreatedAtAction(nameof(GetSubscriptionPaymentById),
                         new { id = success.Value.Id },
-                        PaymentResourceFromEntityAssembler.ToResourceFromEntity(success.Value)),
+                        SubscriptionPaymentResourceFromEntityAssembler.ToResourceFromEntity(success.Value)),
                 _ => Problem(title: "Unexpected error", detail: "Could not process payment.", statusCode: 500)
             };
         }
@@ -56,27 +56,27 @@ public class PaymentsController(
         }
     }
 
-    /// <summary>Gets a payment by id.</summary>
+    /// <summary>Gets a subscription payment by id.</summary>
     [HttpGet("{id:int}")]
-    [SwaggerOperation(Summary = "Gets a payment by id", OperationId = "GetPaymentById")]
-    [SwaggerResponse(200, "The payment was found", typeof(PaymentResource))]
+    [SwaggerOperation(Summary = "Gets a subscription payment by id", OperationId = "GetSubscriptionPaymentById")]
+    [SwaggerResponse(200, "The payment was found", typeof(SubscriptionPaymentResource))]
     [SwaggerResponse(404, "Payment not found")]
-    public async Task<ActionResult> GetPaymentById(int id, CancellationToken cancellationToken = default)
+    public async Task<ActionResult> GetSubscriptionPaymentById(int id, CancellationToken cancellationToken = default)
     {
         var result = await paymentQueryService.Handle(new GetPaymentByIdQuery(new PaymentId(id)), cancellationToken);
         if (result is null) return NotFound();
-        return Ok(PaymentResourceFromEntityAssembler.ToResourceFromEntity(result));
+        return Ok(SubscriptionPaymentResourceFromEntityAssembler.ToResourceFromEntity(result));
     }
 
     /// <summary>Gets all payments for a subscription.</summary>
     [HttpGet("subscriptions/{subscriptionId:int}")]
-    [SwaggerOperation(Summary = "Gets payments by subscription", OperationId = "GetPaymentsBySubscriptionId")]
-    [SwaggerResponse(200, "List of payments for the subscription", typeof(IEnumerable<PaymentResource>))]
-    public async Task<ActionResult> GetPaymentsBySubscriptionId(int subscriptionId,
+    [SwaggerOperation(Summary = "Gets subscription payments by subscription", OperationId = "GetSubscriptionPaymentsBySubscriptionId")]
+    [SwaggerResponse(200, "List of payments for the subscription", typeof(IEnumerable<SubscriptionPaymentResource>))]
+    public async Task<ActionResult> GetSubscriptionPaymentsBySubscriptionId(int subscriptionId,
         CancellationToken cancellationToken = default)
     {
         var query = new GetPaymentsBySubscriptionIdQuery(new SubscriptionId(subscriptionId));
         var result = await paymentQueryService.Handle(query, cancellationToken);
-        return Ok(result.Select(PaymentResourceFromEntityAssembler.ToResourceFromEntity));
+        return Ok(result.Select(SubscriptionPaymentResourceFromEntityAssembler.ToResourceFromEntity));
     }
 }
