@@ -7,9 +7,15 @@ using optiflow_platform.Inventory.Domain.Model.Entities;
 using optiflow_platform.LabAndOrders.Domain.Model.Aggregates;
 using optiflow_platform.LabAndOrders.Domain.Model.Entities;
 using optiflow_platform.Sales.Domain.Model.Aggregates;
+using optiflow_platform.Subscription.Domain.Model.ValueObjects;
 using optiflow_platform.Shared.Infrastructure.Persistence.EFC.Configuration.Extensions;
 using optiflow_platform.Shared.Infrastructure.Persistence.EFC.Interceptors;
 using Microsoft.EntityFrameworkCore;
+using SubscriptionAggregate = optiflow_platform.Subscription.Domain.Model.Aggregates.Subscription;
+using SubscriptionPayment   = optiflow_platform.Subscription.Domain.Model.Aggregates.Payment;
+using SubscriptionBilling   = optiflow_platform.Subscription.Domain.Model.Aggregates.Billing;
+using SubscriptionPlan      = optiflow_platform.Subscription.Domain.Model.Aggregates.Plan;
+
 
 namespace optiflow_platform.Shared.Infrastructure.Persistence.EFC.Configuration;
 
@@ -177,6 +183,51 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
         builder.Entity<StockAuditLog>().Property(a => a.Author).IsRequired().HasMaxLength(255);
         builder.Entity<StockAuditLog>().Property(a => a.Date).IsRequired().HasMaxLength(20);
         builder.Entity<StockAuditLog>().Property(a => a.Time).IsRequired().HasMaxLength(20);
+
+        // ── Subscription Bounded Context ──────────────────────────────────────
+        builder.Entity<SubscriptionPlan>().HasKey(p => p.Id);
+        builder.Entity<SubscriptionPlan>().Property(p => p.Id).IsRequired().ValueGeneratedOnAdd();
+        builder.Entity<SubscriptionPlan>().Property(p => p.Name).IsRequired().HasMaxLength(100);
+        builder.Entity<SubscriptionPlan>().Property(p => p.Price).IsRequired().HasColumnType("decimal(10,2)");
+        builder.Entity<SubscriptionPlan>().Property(p => p.Description).HasMaxLength(500);
+        builder.Entity<SubscriptionPlan>().Property(p => p.Tier)
+            .IsRequired().HasMaxLength(50)
+            .HasConversion(v => v.Value, v => new SubscriptionTier(v));
+        builder.Entity<SubscriptionPlan>().Ignore(p => p.PlanId);
+
+        builder.Entity<SubscriptionAggregate>().HasKey(s => s.Id);
+        builder.Entity<SubscriptionAggregate>().Property(s => s.Id).IsRequired().ValueGeneratedOnAdd();
+        builder.Entity<SubscriptionAggregate>().Property(s => s.AdminId).IsRequired();
+        builder.Entity<SubscriptionAggregate>().Property(s => s.PlanId)
+            .IsRequired()
+            .HasConversion(v => v.Value, v => new PlanId(v));
+        builder.Entity<SubscriptionAggregate>().Property(s => s.Tier)
+            .IsRequired().HasMaxLength(50)
+            .HasConversion(v => v.Value, v => new SubscriptionTier(v));
+        builder.Entity<SubscriptionAggregate>().Property(s => s.Amount).IsRequired().HasColumnType("decimal(10,2)");
+        builder.Entity<SubscriptionAggregate>().Property(s => s.PaymentMethod).IsRequired().HasMaxLength(50);
+        builder.Entity<SubscriptionAggregate>().Property(s => s.Status)
+            .IsRequired().HasMaxLength(50)
+            .HasConversion(v => v.Value, v => new SubscriptionStatus(v));
+
+        builder.Entity<SubscriptionPayment>().HasKey(p => p.Id);
+        builder.Entity<SubscriptionPayment>().Property(p => p.Id).IsRequired().ValueGeneratedOnAdd();
+        builder.Entity<SubscriptionPayment>().Property(p => p.SubscriptionId)
+            .IsRequired()
+            .HasConversion(v => v.Value, v => new SubscriptionId(v));
+        builder.Entity<SubscriptionPayment>().Property(p => p.Amount).IsRequired().HasColumnType("decimal(10,2)");
+        builder.Entity<SubscriptionPayment>().Property(p => p.PaymentMethod).IsRequired().HasMaxLength(50);
+        builder.Entity<SubscriptionPayment>().Property(p => p.Status)
+            .IsRequired().HasMaxLength(50)
+            .HasConversion(v => v.Value, v => new PaymentStatus(v));
+
+        builder.Entity<SubscriptionBilling>().HasKey(b => b.Id);
+        builder.Entity<SubscriptionBilling>().Property(b => b.Id).IsRequired().ValueGeneratedOnAdd();
+        builder.Entity<SubscriptionBilling>().Property(b => b.SubscriptionId)
+            .IsRequired()
+            .HasConversion(v => v.Value, v => new SubscriptionId(v));
+        builder.Entity<SubscriptionBilling>().Property(b => b.BillingStatus).IsRequired().HasMaxLength(50);
+        builder.Entity<SubscriptionBilling>().Property(b => b.AutoRenew).IsRequired();
 
         builder.UseSnakeCaseNamingConvention();
     }
