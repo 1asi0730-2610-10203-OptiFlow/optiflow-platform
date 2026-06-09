@@ -6,6 +6,6 @@ namespace optiflow_platform.Subscription.Interfaces.REST.Transform;
 public static class BillingResourceFromEntityAssembler
 {
     public static BillingResource ToResourceFromEntity(Billing billing) =>
-        new(billing.Id, billing.SubscriptionId, billing.RenewalDate,
+        new(billing.Id, billing.SubscriptionId.Value, billing.RenewalDate,
             billing.AutoRenew, billing.BillingStatus);
 }

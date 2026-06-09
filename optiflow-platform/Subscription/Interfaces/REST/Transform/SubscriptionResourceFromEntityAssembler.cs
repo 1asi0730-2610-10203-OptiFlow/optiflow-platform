@@ -5,8 +5,8 @@ namespace optiflow_platform.Subscription.Interfaces.REST.Transform;
 
 public static class SubscriptionResourceFromEntityAssembler
 {
-    public static SubscriptionResource ToResourceFromEntity(Subscription subscription) =>
-        new(subscription.Id, subscription.AdminId, subscription.PlanId, subscription.Tier,
-            subscription.Amount, subscription.PaymentMethod, subscription.Status,
+    public static SubscriptionResource ToResourceFromEntity(Domain.Model.Aggregates.Subscription subscription) =>
+        new(subscription.Id, subscription.AdminId, subscription.PlanId.Value, subscription.Tier.Value,
+            subscription.Amount, subscription.PaymentMethod, subscription.Status.Value,
             subscription.StartDate, subscription.EndDate);
 }

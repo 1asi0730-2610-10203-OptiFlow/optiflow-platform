@@ -1,4 +1,6 @@
-﻿namespace optiflow_platform.Subscription.Domain.Model.Commands;
+﻿using optiflow_platform.Subscription.Domain.Model.ValueObjects;
+
+namespace optiflow_platform.Subscription.Domain.Model.Commands;
 
 /// <summary>
 /// Issued when admin explicitely selects a plan
@@ -8,5 +10,5 @@
 /// <param name="Tier"></param>
 /// <param name="Amount"></param>
 /// <param name="PaymentMethod"></param>
-public record SelectSubscriptionPlanCommand(int AdminId, string PlanId, string Tier, decimal Amount, string PaymentMethod);
+public record SelectSubscriptionPlanCommand(int AdminId, PlanId PlanId, SubscriptionTier Tier, decimal Amount, string PaymentMethod);
 

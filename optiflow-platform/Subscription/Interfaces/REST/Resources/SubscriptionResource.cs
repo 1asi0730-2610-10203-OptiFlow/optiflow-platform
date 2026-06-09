@@ -6,7 +6,7 @@ namespace optiflow_platform.Subscription.Interfaces.REST.Resources;
 public record SubscriptionResource(
     [SwaggerParameter(Description = "Subscription identifier")] int Id,
     [SwaggerParameter(Description = "Admin owner identifier")] int AdminId,
-    [SwaggerParameter(Description = "Plan identifier")] string PlanId,
+    [SwaggerParameter(Description = "Plan identifier")] int PlanId,
     [SwaggerParameter(Description = "Subscription tier")] string Tier,
     [SwaggerParameter(Description = "Monthly amount")] decimal Amount,
     [SwaggerParameter(Description = "Payment method")] string PaymentMethod,

@@ -1,7 +1,11 @@
 using optiflow_platform.Subscription.Domain.Model.Commands;
+using optiflow_platform.Subscription.Domain.Model.ValueObjects;
 
 namespace optiflow_platform.Subscription.Domain.Model.Aggregates;
-
+/// <summary>
+/// Why constants instead of a separate Value Object? Billing status has no validation rules beyond membership in a fixed set.
+/// Keeping them as string constants on the class itself is simpler and still prevents typos.
+/// </summary>
 public class Billing {
     public const string StatusPending = "PENDING";
     public const string StatusDue     = "DUE";
@@ -22,8 +26,8 @@ public class Billing {
         RenewalDate    = DateTimeOffset.UtcNow.AddMonths(1);
     }
 
-    public int             Id             { get; private set; }
-    public int             SubscriptionId { get; private set; }
+    public int              Id             { get; private set; }
+    public SubscriptionId   SubscriptionId { get; private set; }
     public DateTimeOffset  RenewalDate    { get; private set; }
     public bool            AutoRenew      { get; private set; }
     public string          BillingStatus  { get; private set; }
@@ -42,4 +46,3 @@ public class Billing {
     public void MarkExpired() => BillingStatus = StatusExpired;
 }
 
-}
