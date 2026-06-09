@@ -185,6 +185,7 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
         builder.Entity<StockAuditLog>().Property(a => a.Time).IsRequired().HasMaxLength(20);
 
         // ── Subscription Bounded Context ──────────────────────────────────────
+        builder.Entity<SubscriptionPlan>().ToTable("subscription_plans");
         builder.Entity<SubscriptionPlan>().HasKey(p => p.Id);
         builder.Entity<SubscriptionPlan>().Property(p => p.Id).IsRequired().ValueGeneratedOnAdd();
         builder.Entity<SubscriptionPlan>().Property(p => p.Name).IsRequired().HasMaxLength(100);
@@ -195,6 +196,7 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
             .HasConversion(v => v.Value, v => new SubscriptionTier(v));
         builder.Entity<SubscriptionPlan>().Ignore(p => p.PlanId);
 
+        builder.Entity<SubscriptionAggregate>().ToTable("subscriptions");
         builder.Entity<SubscriptionAggregate>().HasKey(s => s.Id);
         builder.Entity<SubscriptionAggregate>().Property(s => s.Id).IsRequired().ValueGeneratedOnAdd();
         builder.Entity<SubscriptionAggregate>().Property(s => s.AdminId).IsRequired();
@@ -210,6 +212,7 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
             .IsRequired().HasMaxLength(50)
             .HasConversion(v => v.Value, v => new SubscriptionStatus(v));
 
+        builder.Entity<SubscriptionPayment>().ToTable("subscription_payments");
         builder.Entity<SubscriptionPayment>().HasKey(p => p.Id);
         builder.Entity<SubscriptionPayment>().Property(p => p.Id).IsRequired().ValueGeneratedOnAdd();
         builder.Entity<SubscriptionPayment>().Property(p => p.SubscriptionId)
@@ -221,6 +224,7 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
             .IsRequired().HasMaxLength(50)
             .HasConversion(v => v.Value, v => new PaymentStatus(v));
 
+        builder.Entity<SubscriptionBilling>().ToTable("subscription_billings");
         builder.Entity<SubscriptionBilling>().HasKey(b => b.Id);
         builder.Entity<SubscriptionBilling>().Property(b => b.Id).IsRequired().ValueGeneratedOnAdd();
         builder.Entity<SubscriptionBilling>().Property(b => b.SubscriptionId)
