@@ -1,3 +1,4 @@
+using Cortex.Mediator;
 using Microsoft.EntityFrameworkCore;
 using optiflow_platform.Shared.Application.Patterns;
 using optiflow_platform.Shared.Domain.Repositories;
@@ -5,6 +6,7 @@ using optiflow_platform.Subscription.Application.Errors;
 using optiflow_platform.Subscription.Application.Services;
 using optiflow_platform.Subscription.Domain.Model.Aggregates;
 using optiflow_platform.Subscription.Domain.Model.Commands;
+using optiflow_platform.Subscription.Domain.Model.Events;
 using optiflow_platform.Subscription.Domain.Repositories;
 
 namespace optiflow_platform.Subscription.Application.Internal.CommandServices;
@@ -13,6 +15,7 @@ namespace optiflow_platform.Subscription.Application.Internal.CommandServices;
 public class PaymentCommandService(
     IPaymentRepository paymentRepository,
     IUnitOfWork unitOfWork,
+    IMediator domainEventPublisher,
     ILogger<PaymentCommandService> logger)
     : IPaymentCommandService
 {
@@ -26,6 +29,9 @@ public class PaymentCommandService(
             payment.MarkProcessed();
             await paymentRepository.AddAsync(payment, cancellationToken);
             await unitOfWork.CompleteAsync(cancellationToken);
+            await domainEventPublisher.PublishAsync(
+                new PaymentProcessedEvent(payment.Id, payment.SubscriptionId.Value, payment.Amount),
+                cancellationToken);
             return new Result<Payment, ProcessSubscriptionPaymentError>.Success(payment);
         }
         catch (DbUpdateException ex)

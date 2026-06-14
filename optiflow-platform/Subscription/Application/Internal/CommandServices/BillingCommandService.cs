@@ -1,9 +1,11 @@
+using Cortex.Mediator;
 using optiflow_platform.Shared.Application.Patterns;
 using optiflow_platform.Shared.Domain.Repositories;
 using optiflow_platform.Subscription.Application.Errors;
 using optiflow_platform.Subscription.Application.Services;
 using optiflow_platform.Subscription.Domain.Model.Aggregates;
 using optiflow_platform.Subscription.Domain.Model.Commands;
+using optiflow_platform.Subscription.Domain.Model.Events;
 using optiflow_platform.Subscription.Domain.Repositories;
 
 namespace optiflow_platform.Subscription.Application.Internal.CommandServices;
@@ -12,6 +14,7 @@ namespace optiflow_platform.Subscription.Application.Internal.CommandServices;
 public class BillingCommandService(
     IBillingRepository billingRepository,
     IUnitOfWork unitOfWork,
+    IMediator domainEventPublisher,
     ILogger<BillingCommandService> logger)
     : IBillingCommandService
 {
@@ -25,6 +28,9 @@ public class BillingCommandService(
             billing.MarkDue();
             await billingRepository.AddAsync(billing, cancellationToken);
             await unitOfWork.CompleteAsync(cancellationToken);
+            await domainEventPublisher.PublishAsync(
+                new RenewalDueEvent(billing.Id, billing.SubscriptionId.Value),
+                cancellationToken);
             return new Result<Billing, RenewSubscriptionError>.Success(billing);
         }
         catch (Exception ex)
@@ -50,6 +56,9 @@ public class BillingCommandService(
             billing.MarkRenewed();
             billingRepository.Update(billing);
             await unitOfWork.CompleteAsync(cancellationToken);
+            await domainEventPublisher.PublishAsync(
+                new RequestedRenewSubscriptionEvent(billing.Id, billing.SubscriptionId.Value),
+                cancellationToken);
             return new Result<Billing, RenewSubscriptionError>.Success(billing);
         }
         catch (Exception ex)
