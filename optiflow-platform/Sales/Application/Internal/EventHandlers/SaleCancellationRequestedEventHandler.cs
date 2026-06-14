@@ -19,12 +19,15 @@ ISaleCommandService saleCommandService) : IEventHandler<SaleCancellationRequeste
     private async Task On(SaleCancellationRequestedEvent domainEvent, CancellationToken cancellationToken) {
         var status = await labAndOrdersContextFacade.FetchWorkOrderStatusBySaleId(domainEvent.SaleId, cancellationToken);
 
+        //// If the order status is in production, throw an error (policy)
         if (status == "IN_PRODUCTION")
         {
             Console.WriteLine("Cannot cancel sale {0}: lab order is in production", domainEvent.SaleId);
             return;
         }
-        await saleCommandService.Handle(new CancelSaleCommand(domainEvent.SaleId, status ?? "IN_PRODUCTION"),  cancellationToken);
+        
+        
+        await saleCommandService.Handle(new CancelSaleCommand(domainEvent.SaleId, status ?? "NOT_RECEIVED"),  cancellationToken);
         
     }
 }
