@@ -1,3 +1,5 @@
+using optiflow_platform.Shared.Domain.Model.Events;
+
 namespace optiflow_platform.Sales.Domain.Model.Events;
 
-public record OutstandingBalancePayedEvent(int SaleId, int PaymentId, decimal PaidAmount, decimal OutstandingBalance);
+public record OutstandingBalancePayedEvent(int SaleId, int PaymentId, decimal PaidAmount, decimal OutstandingBalance) : IEvent;

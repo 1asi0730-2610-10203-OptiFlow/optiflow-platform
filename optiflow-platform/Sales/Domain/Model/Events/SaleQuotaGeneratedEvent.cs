@@ -1,3 +1,5 @@
-﻿namespace optiflow_platform.Sales.Domain.Model.Events;
+using optiflow_platform.Shared.Domain.Model.Events;
 
-public record SaleQuotaGeneratedEvent(int SaleId, decimal QuotaAmount);
+namespace optiflow_platform.Sales.Domain.Model.Events;
+
+public record SaleQuotaGeneratedEvent(int SaleId, decimal QuotaAmount) : IEvent;
