@@ -14,6 +14,7 @@ using optiflow_platform.Resources;
 using optiflow_platform.Sales.Application.Services;
 using optiflow_platform.Sales.Domain.Repositories;
 using optiflow_platform.Sales.Infrastructure.Persistence.EFC.Repositories;
+using optiflow_platform.Sales.Interfaces.Acl;
 using optiflow_platform.Shared.Domain.Repositories;
 using optiflow_platform.Shared.Infrastructure.Interfaces.ASP.Configuration;
 using optiflow_platform.Shared.Infrastructure.Persistence.EFC.Configuration;
@@ -48,6 +49,7 @@ using SalesPaymentQrySvc  = optiflow_platform.Sales.Application.Services.IPaymen
 using SalesPaymentCmdImpl = optiflow_platform.Sales.Application.Internal.CommandServices.PaymentCommandService;
 using SalesPaymentQryImpl = optiflow_platform.Sales.Application.Internal.QueryServices.PaymentQueryService;
 
+using Cortex.Mediator.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
 
@@ -107,6 +109,9 @@ builder.Services.AddDbContext<AppDbContext>((serviceProvider, options) =>
         options.EnableSensitiveDataLogging();
 });
 
+// Cortex Mediator — scans this assembly for all IEventHandler implementations
+builder.Services.AddCortexMediator([typeof(Program)]);
+
 // Shared Bounded Context Injection
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
@@ -133,6 +138,7 @@ builder.Services.AddScoped<IClinicalRecordQueryService, ClinicalRecordQueryServi
 builder.Services.AddScoped<IPrescriptionCommandService, PrescriptionCommandService>();
 builder.Services.AddScoped<IPrescriptionQueryService, PrescriptionQueryService>();
 // Sales Bounded Context Injection
+builder.Services.AddScoped<ILabAndOrdersContextFacade, LabAndOrdersContextFacade>();
 builder.Services.AddScoped<ISaleRepository, SaleRepository>();
 builder.Services.AddScoped<SalesPaymentRepo, SalesPaymentRepoImpl>();
 builder.Services.AddScoped<ISaleCommandService, SaleCommandService>();

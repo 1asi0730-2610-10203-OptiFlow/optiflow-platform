@@ -17,4 +17,9 @@ public interface IWorkOrderQueryService
     ///     Handles retrieval of a work order by its identifier.
     /// </summary>
     Task<WorkOrder?> Handle(GetWorkOrderByIdQuery query, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    ///     Handles retrieval of the work order linked to a given sale.
+    /// </summary>
+    Task<WorkOrder?> Handle(GetWorkOrderBySaleIdQuery query, CancellationToken cancellationToken = default);
 }
