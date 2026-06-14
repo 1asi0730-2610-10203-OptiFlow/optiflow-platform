@@ -154,9 +154,11 @@ builder.Services.AddScoped<IPlanRepository, PlanRepository>();
 builder.Services.AddScoped<ISubscriptionCommandService, SubscriptionCommandService>();
 builder.Services.AddScoped<SubPaymentCmdSvc, SubPaymentCmdImpl>();
 builder.Services.AddScoped<IBillingCommandService, BillingCommandService>();
+builder.Services.AddScoped<IPlanCommandService, PlanCommandService>();
 builder.Services.AddScoped<ISubscriptionQueryService, SubscriptionQueryService>();
 builder.Services.AddScoped<SubPaymentQrySvc, SubPaymentQryImpl>();
 builder.Services.AddScoped<IBillingQueryService, BillingQueryService>();
+builder.Services.AddScoped<IPlanQueryService, PlanQueryService>();
 
 // Inventory Bounded Context Injection
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
