@@ -1,7 +1,9 @@
+using Cortex.Mediator;
 using optiflow_platform.Sales.Application.Errors;
 using optiflow_platform.Sales.Application.Services;
 using optiflow_platform.Sales.Domain.Model.Aggregates;
 using optiflow_platform.Sales.Domain.Model.Commands;
+using optiflow_platform.Sales.Domain.Model.Events;
 using optiflow_platform.Sales.Domain.Repositories;
 using optiflow_platform.Shared.Application.Patterns;
 using optiflow_platform.Shared.Domain.Repositories;
@@ -20,6 +22,7 @@ public class PaymentCommandService(
     IPaymentRepository paymentRepository,
     ISaleRepository saleRepository,
     IUnitOfWork unitOfWork,
+    IMediator domainEventPublisher,
     ILogger<PaymentCommandService> logger)
     : IPaymentCommandService
 {
@@ -52,6 +55,9 @@ public class PaymentCommandService(
             }
 
             await unitOfWork.CompleteAsync(cancellationToken);
+            await domainEventPublisher.PublishAsync(
+                new OutstandingBalancePayedEvent(payment.SaleId, payment.Id, payment.PaidAmount, payment.OutstandingBalance),
+                cancellationToken);
             return new Result<Payment, PayOutstandingBalanceError>.Success(payment);
         }
         catch (DbUpdateException ex)

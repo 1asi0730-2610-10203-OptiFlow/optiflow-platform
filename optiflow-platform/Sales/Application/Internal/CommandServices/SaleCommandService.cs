@@ -1,7 +1,9 @@
+using Cortex.Mediator;
 using optiflow_platform.Sales.Application.Errors;
 using optiflow_platform.Sales.Application.Services;
 using optiflow_platform.Sales.Domain.Model.Aggregates;
 using optiflow_platform.Sales.Domain.Model.Commands;
+using optiflow_platform.Sales.Domain.Model.Events;
 using optiflow_platform.Sales.Domain.Repositories;
 using optiflow_platform.Shared.Application.Patterns;
 using optiflow_platform.Shared.Domain.Repositories;
@@ -15,6 +17,7 @@ namespace optiflow_platform.Sales.Application.Internal.CommandServices;
 public class SaleCommandService(
     ISaleRepository saleRepository,
     IUnitOfWork unitOfWork,
+    IMediator domainEventPublisher,
     ILogger<SaleCommandService> logger)
     : ISaleCommandService
 {
@@ -27,6 +30,7 @@ public class SaleCommandService(
             var sale = new Sale(command);
             await saleRepository.AddAsync(sale, cancellationToken);
             await unitOfWork.CompleteAsync(cancellationToken);
+            await domainEventPublisher.PublishAsync(new SaleCreatedEvent(sale.Id, sale.ClientName, sale.TotalAmount), cancellationToken);
             return new Result<Sale, CreateSaleError>.Success(sale);
         }
         catch (DbUpdateException ex)
@@ -57,6 +61,7 @@ public class SaleCommandService(
             sale.GenerateQuota(command);
             saleRepository.Update(sale);
             await unitOfWork.CompleteAsync(cancellationToken);
+            await domainEventPublisher.PublishAsync(new SaleQuotaGeneratedEvent(sale.Id, sale.QuotaAmount), cancellationToken);
             return new Result<Sale, GenerateSaleQuotaError>.Success(sale);
         }
         catch (ArgumentException ex)
@@ -87,6 +92,7 @@ public class SaleCommandService(
             sale.RequestCancellation(command);
             saleRepository.Update(sale);
             await unitOfWork.CompleteAsync(cancellationToken);
+            await domainEventPublisher.PublishAsync(new SaleCancellationRequestedEvent(sale.Id), cancellationToken);
             return new Result<Sale, RequestSaleCancellationError>.Success(sale);
         }
         catch (Exception ex)
@@ -112,6 +118,7 @@ public class SaleCommandService(
             sale.Cancel(command);
             saleRepository.Update(sale);
             await unitOfWork.CompleteAsync(cancellationToken);
+            await domainEventPublisher.PublishAsync(new SaleCancelledEvent(sale.Id), cancellationToken);
             return new Result<Sale, CancelSaleError>.Success(sale);
         }
         catch (InvalidOperationException ex) when (ex.Message.Contains("in production"))
@@ -142,6 +149,7 @@ public class SaleCommandService(
             sale.ApplyDiscount(command);
             saleRepository.Update(sale);
             await unitOfWork.CompleteAsync(cancellationToken);
+            await domainEventPublisher.PublishAsync(new DiscountAppliedEvent(sale.Id, sale.DiscountPercentage, sale.TotalAmount), cancellationToken);
             return new Result<Sale, ApplyPromotionalDiscountError>.Success(sale);
         }
         catch (Exception ex)
@@ -167,6 +175,7 @@ public class SaleCommandService(
             sale.Complete();
             saleRepository.Update(sale);
             await unitOfWork.CompleteAsync(cancellationToken);
+            await domainEventPublisher.PublishAsync(new SaleCompletedEvent(sale.Id), cancellationToken);
             return new Result<Sale, CompleteSaleError>.Success(sale);
         }
         catch (Exception ex)
