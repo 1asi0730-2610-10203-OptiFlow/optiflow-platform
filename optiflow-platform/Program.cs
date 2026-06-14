@@ -49,6 +49,7 @@ using SalesPaymentQrySvc  = optiflow_platform.Sales.Application.Services.IPaymen
 using SalesPaymentCmdImpl = optiflow_platform.Sales.Application.Internal.CommandServices.PaymentCommandService;
 using SalesPaymentQryImpl = optiflow_platform.Sales.Application.Internal.QueryServices.PaymentQueryService;
 
+using Cortex.Mediator.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
 
@@ -107,6 +108,9 @@ builder.Services.AddDbContext<AppDbContext>((serviceProvider, options) =>
     if (builder.Environment.IsDevelopment())
         options.EnableSensitiveDataLogging();
 });
+
+// Cortex Mediator — scans this assembly for all IEventHandler implementations
+builder.Services.AddCortexMediator([typeof(Program)]);
 
 // Shared Bounded Context Injection
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
