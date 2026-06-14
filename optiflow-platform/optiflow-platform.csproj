@@ -23,7 +23,6 @@
 
     <ItemGroup>
       <Folder Include="Sales\" />
-      <Folder Include="Sales\Application\Internal\EventHandlers\" />
       <Folder Include="Subscription\Application\" />
       <Folder Include="Subscription\Domain\Model\Queries\" />
       <Folder Include="Subscription\Domain\Repositories\" />
