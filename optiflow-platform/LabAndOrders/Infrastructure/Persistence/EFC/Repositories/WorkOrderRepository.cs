@@ -19,4 +19,9 @@ public class WorkOrderRepository(AppDbContext context)
         await Context.Set<WorkOrder>()
             .Where(w => w.Status == status)
             .ToListAsync(cancellationToken);
+
+    /// <inheritdoc />
+    public async Task<WorkOrder?> FindBySaleIdAsync(int saleId, CancellationToken cancellationToken = default) =>
+        await Context.Set<WorkOrder>()
+            .FirstOrDefaultAsync(w => w.SaleId == saleId, cancellationToken);
 }

@@ -20,4 +20,9 @@ public class WorkOrderQueryService(IWorkOrderRepository workOrderRepository) : I
     public async Task<WorkOrder?> Handle(GetWorkOrderByIdQuery query,
         CancellationToken cancellationToken = default) =>
         await workOrderRepository.FindByIdAsync(query.Id, cancellationToken);
+
+    /// <inheritdoc />
+    public async Task<WorkOrder?> Handle(GetWorkOrderBySaleIdQuery query,
+        CancellationToken cancellationToken = default) =>
+        await workOrderRepository.FindBySaleIdAsync(query.SaleId, cancellationToken);
 }
