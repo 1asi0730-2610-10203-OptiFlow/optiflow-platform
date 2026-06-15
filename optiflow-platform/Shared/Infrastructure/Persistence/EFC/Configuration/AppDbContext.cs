@@ -5,7 +5,7 @@ using optiflow_platform.Clinical.Domain.Model.Entities;
 using optiflow_platform.Inventory.Domain.Model.Aggregates;
 using optiflow_platform.Inventory.Domain.Model.Entities;
 using optiflow_platform.LabAndOrders.Domain.Model.Aggregates;
-using optiflow_platform.LabAndOrders.Domain.Model.Entities;
+using optiflow_platform.LabAndOrders.Domain.Model.ValueObjects;
 using optiflow_platform.Sales.Domain.Model.Aggregates;
 using optiflow_platform.Subscription.Domain.Model.ValueObjects;
 using optiflow_platform.Shared.Infrastructure.Persistence.EFC.Configuration.Extensions;
@@ -46,7 +46,9 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
         builder.Entity<WorkOrder>().Property(w => w.Id).IsRequired().ValueGeneratedOnAdd();
         builder.Entity<WorkOrder>().Property(w => w.SaleId).IsRequired();
         builder.Entity<WorkOrder>().Property(w => w.RecipeId).IsRequired();
-        builder.Entity<WorkOrder>().Property(w => w.LabId).IsRequired();
+        builder.Entity<WorkOrder>().Property(w => w.LaboratoryId)
+            .IsRequired()
+            .HasConversion(v => v.Value, v => new LaboratoryId(v));
         builder.Entity<WorkOrder>().Property(w => w.Status).IsRequired().HasMaxLength(50);
         builder.Entity<WorkOrder>().Property(w => w.Priority).IsRequired().HasMaxLength(20);
         builder.Entity<WorkOrder>().Property(w => w.PatientName).IsRequired().HasMaxLength(255);
