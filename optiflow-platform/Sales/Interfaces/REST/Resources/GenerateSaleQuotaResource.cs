@@ -5,4 +5,4 @@ namespace optiflow_platform.Sales.Interfaces.REST.Resources;
 
 [SwaggerSchema(Description = "Payload to generate a sale quota")]
 public record GenerateSaleQuotaResource(
-    [Required] [SwaggerParameter(Description = "Advance quota amount (must be at least 30% of total)")] decimal QuotaAmount);
+    [Required] [SwaggerParameter(Description = "Advance payment amount (must be at least 30% of total)")] decimal Adelanto);

@@ -4,10 +4,22 @@ namespace optiflow_platform.Sales.Interfaces.REST.Resources;
 
 [SwaggerSchema(Description = "A sale resource")]
 public record SaleResource(
-    [SwaggerParameter(Description = "The server-generated ID of the sale")] int Id,
-    [SwaggerParameter(Description = "Full name of the client")] string ClientName,
-    [SwaggerParameter(Description = "Total amount of the sale after any discount")] decimal TotalAmount,
-    [SwaggerParameter(Description = "Advance quota amount (minimum 30% of full sale)")] decimal QuotaAmount,
-    [SwaggerParameter(Description = "Promotional discount percentage applied")] decimal DiscountPercentage,
+    [SwaggerParameter(Description = "Server-generated sale ID")] int Id,
+    [SwaggerParameter(Description = "Invoice number")] string InvoiceNumber,
+    [SwaggerParameter(Description = "Associated lab order number")] string LabOrderNumber,
+    [SwaggerParameter(Description = "Patient ID")] int PatientId,
+    [SwaggerParameter(Description = "Full name of the patient")] string PatientName,
+    [SwaggerParameter(Description = "Patient prescription reference")] string PatientRx,
+    [SwaggerParameter(Description = "ID of the staff member who created the sale")] int UserId,
+    [SwaggerParameter(Description = "Name of the staff member who created the sale")] string UserName,
+    [SwaggerParameter(Description = "Line items in the sale")] IEnumerable<SaleItemResource> Articulos,
+    [SwaggerParameter(Description = "Total sale amount after discount")] decimal TotalAmount,
+    [SwaggerParameter(Description = "Advance payment amount")] decimal Adelanto,
+    [SwaggerParameter(Description = "Remaining balance to pay")] decimal PendingBalance,
+    [SwaggerParameter(Description = "Discount code applied")] string DiscountCode,
+    [SwaggerParameter(Description = "Fixed discount amount applied")] decimal DiscountAmount,
     [SwaggerParameter(Description = "Current status of the sale")] string Status,
-    [SwaggerParameter(Description = "Date the sale was created")] string SaleDate);
+    [SwaggerParameter(Description = "Payment method")] string PaymentMethod,
+    [SwaggerParameter(Description = "Sale creation date")] string CreatedAt,
+    [SwaggerParameter(Description = "Delivery date")] string DeliveredAt,
+    [SwaggerParameter(Description = "Additional notes")] string Notes);

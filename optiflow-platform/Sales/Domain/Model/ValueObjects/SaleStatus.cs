@@ -7,9 +7,10 @@ public sealed record SaleStatus
     public const string CancellationRequested = "CANCELLATION_REQUESTED";
     public const string Cancelled = "CANCELLED";
     public const string Completed = "COMPLETED";
+    public const string Returned = "RETURNED";
 
     private static readonly HashSet<string> ValidValues =
-        [Active, QuotaGenerated, CancellationRequested, Cancelled, Completed];
+        [Active, QuotaGenerated, CancellationRequested, Cancelled, Completed, Returned];
 
     public string Value { get; }
 

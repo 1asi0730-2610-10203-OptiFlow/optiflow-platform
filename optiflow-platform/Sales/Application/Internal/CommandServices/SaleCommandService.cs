@@ -30,17 +30,17 @@ public class SaleCommandService(
             var sale = new Sale(command);
             await saleRepository.AddAsync(sale, cancellationToken);
             await unitOfWork.CompleteAsync(cancellationToken);
-            await domainEventPublisher.PublishAsync(new SaleCreatedEvent(sale.Id, sale.ClientName, sale.TotalAmount), cancellationToken);
+            await domainEventPublisher.PublishAsync(new SaleCreatedEvent(sale.Id, sale.PatientName, sale.TotalAmount), cancellationToken);
             return new Result<Sale, CreateSaleError>.Success(sale);
         }
         catch (DbUpdateException ex)
         {
-            logger.LogError(ex, "Database error while creating sale for client {ClientName}", command.ClientName);
+            logger.LogError(ex, "Database error while creating sale for patient {PatientName}", command.PatientName);
             return new Result<Sale, CreateSaleError>.Failure(CreateSaleError.UnexpectedError);
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Unexpected error while creating sale for client {ClientName}", command.ClientName);
+            logger.LogError(ex, "Unexpected error while creating sale for patient {PatientName}", command.PatientName);
             return new Result<Sale, CreateSaleError>.Failure(CreateSaleError.UnexpectedError);
         }
     }
@@ -61,7 +61,7 @@ public class SaleCommandService(
             sale.GenerateQuota(command);
             saleRepository.Update(sale);
             await unitOfWork.CompleteAsync(cancellationToken);
-            await domainEventPublisher.PublishAsync(new SaleQuotaGeneratedEvent(sale.Id, sale.QuotaAmount), cancellationToken);
+            await domainEventPublisher.PublishAsync(new SaleQuotaGeneratedEvent(sale.Id, sale.Adelanto), cancellationToken);
             return new Result<Sale, GenerateSaleQuotaError>.Success(sale);
         }
         catch (ArgumentException ex)
@@ -149,7 +149,7 @@ public class SaleCommandService(
             sale.ApplyDiscount(command);
             saleRepository.Update(sale);
             await unitOfWork.CompleteAsync(cancellationToken);
-            await domainEventPublisher.PublishAsync(new DiscountAppliedEvent(sale.Id, sale.DiscountPercentage, sale.TotalAmount), cancellationToken);
+            await domainEventPublisher.PublishAsync(new DiscountAppliedEvent(sale.Id, sale.DiscountCode, sale.DiscountAmount, sale.TotalAmount), cancellationToken);
             return new Result<Sale, ApplyPromotionalDiscountError>.Success(sale);
         }
         catch (Exception ex)

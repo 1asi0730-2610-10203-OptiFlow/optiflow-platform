@@ -3,77 +3,92 @@ using optiflow_platform.Sales.Domain.Model.ValueObjects;
 
 namespace optiflow_platform.Sales.Domain.Model.Aggregates;
 
-/// <summary>
-///     Sale aggregate root representing a commercial transaction.
-/// </summary>
-/// <remarks>
-///     A sale tracks the full lifecycle from creation through quota generation,
-///     optional cancellation, discount application, and final completion.
-///     Status flow: ACTIVE → QUOTA_GENERATED → CANCELLATION_REQUESTED → CANCELLED or COMPLETED.
-/// </remarks>
 public class Sale
 {
     private const decimal MinimumQuotaPercentage = 0.30m;
 
-    /// <summary>
-    ///     Protected parameterless constructor for EF Core.
-    /// </summary>
+    private List<SaleItem> _items = [];
+
     protected Sale()
     {
-        ClientName = null!;
+        InvoiceNumber = null!;
+        PatientName = null!;
+        UserName = null!;
+        PaymentMethod = null!;
         Status = null!;
-        SaleDate = null!;
+        CreatedAt = null!;
+        LabOrderNumber = string.Empty;
+        PatientRx = string.Empty;
+        DiscountCode = string.Empty;
+        DeliveredAt = string.Empty;
+        Notes = string.Empty;
     }
 
-    /// <summary>
-    ///     Creates a new sale from a creation command.
-    /// </summary>
     public Sale(CreateSaleCommand command)
     {
         ArgumentNullException.ThrowIfNull(command);
-        ClientName = command.ClientName;
+        InvoiceNumber = command.InvoiceNumber;
+        LabOrderNumber = command.LabOrderNumber ?? string.Empty;
+        PatientId = command.PatientId;
+        PatientName = command.PatientName;
+        PatientRx = command.PatientRx ?? string.Empty;
+        UserId = command.UserId;
+        UserName = command.UserName;
         TotalAmount = command.TotalAmount;
-        QuotaAmount = 0;
-        DiscountPercentage = 0;
+        Adelanto = command.Adelanto;
+        PendingBalance = command.TotalAmount - command.Adelanto;
+        DiscountCode = command.DiscountCode ?? string.Empty;
+        DiscountAmount = command.DiscountAmount;
+        PaymentMethod = command.PaymentMethod;
         Status = SaleStatus.Active;
-        SaleDate = command.SaleDate;
+        CreatedAt = command.CreatedAt;
+        DeliveredAt = command.DeliveredAt ?? string.Empty;
+        Notes = command.Notes ?? string.Empty;
+        _items = [];
     }
 
     public int Id { get; private set; }
-    public string ClientName { get; private set; }
+    public string InvoiceNumber { get; private set; }
+    public string LabOrderNumber { get; private set; }
+    public int PatientId { get; private set; }
+    public string PatientName { get; private set; }
+    public string PatientRx { get; private set; }
+    public int UserId { get; private set; }
+    public string UserName { get; private set; }
     public decimal TotalAmount { get; private set; }
-    public decimal QuotaAmount { get; private set; }
-    public decimal DiscountPercentage { get; private set; }
+    public decimal Adelanto { get; private set; }
+    public decimal PendingBalance { get; private set; }
+    public string DiscountCode { get; private set; }
+    public decimal DiscountAmount { get; private set; }
+    public string PaymentMethod { get; private set; }
     public string Status { get; private set; }
-    public string SaleDate { get; private set; }
+    public string CreatedAt { get; private set; }
+    public string DeliveredAt { get; private set; }
+    public string Notes { get; private set; }
+
+    public IReadOnlyCollection<SaleItem> Items => _items.AsReadOnly();
 
     /// <summary>
-    ///     Generates a sale quota. Quota must be at least 30% of the total amount.
+    ///     Sets the advance (adelanto). Adelanto must be at least 30% of the total amount.
     /// </summary>
-    /// <exception cref="ArgumentException">Thrown when quota is below the 30% minimum.</exception>
     public void GenerateQuota(GenerateSaleQuotaCommand command)
     {
         ArgumentNullException.ThrowIfNull(command);
         var minimumQuota = TotalAmount * MinimumQuotaPercentage;
-        if (command.QuotaAmount < minimumQuota)
+        if (command.Adelanto < minimumQuota)
             throw new ArgumentException(
-                $"Quota amount must be at least 30% of the total amount ({minimumQuota:F2}).");
-        QuotaAmount = command.QuotaAmount;
+                $"Adelanto must be at least 30% of the total amount ({minimumQuota:F2}).");
+        Adelanto = command.Adelanto;
+        PendingBalance = TotalAmount - Adelanto;
         Status = SaleStatus.QuotaGenerated;
     }
 
-    /// <summary>
-    ///     Marks the sale as pending cancellation review.
-    /// </summary>
     public void RequestCancellation(RequestSaleCancellationCommand command)
     {
         ArgumentNullException.ThrowIfNull(command);
         Status = SaleStatus.CancellationRequested;
     }
 
-    /// <summary>
-    ///     Cancels the sale. Throws if the lab order is currently in production.
-    /// </summary>
     /// <exception cref="InvalidOperationException">Thrown when lab order is in production.</exception>
     public void Cancel(CancelSaleCommand command)
     {
@@ -83,21 +98,18 @@ public class Sale
         Status = SaleStatus.Cancelled;
     }
 
-    /// <summary>
-    ///     Applies a promotional discount, reducing the total amount.
-    /// </summary>
     public void ApplyDiscount(ApplyPromotionalDiscountCommand command)
     {
         ArgumentNullException.ThrowIfNull(command);
-        DiscountPercentage = command.DiscountPercentage;
-        TotalAmount = TotalAmount * (1 - command.DiscountPercentage / 100m);
+        DiscountCode = command.DiscountCode;
+        DiscountAmount = command.DiscountAmount;
+        TotalAmount -= command.DiscountAmount;
+        PendingBalance = TotalAmount - Adelanto;
     }
 
-    /// <summary>
-    ///     Marks the sale as completed after full payment.
-    /// </summary>
     public void Complete()
     {
+        PendingBalance = 0;
         Status = SaleStatus.Completed;
     }
 }

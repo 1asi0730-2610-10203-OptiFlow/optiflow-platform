@@ -12,7 +12,7 @@ public class SaleQuotaGeneratedEventHandler : IEventHandler<SaleQuotaGeneratedEv
 
     private static Task On(SaleQuotaGeneratedEvent domainEvent)
     {
-        Console.WriteLine("Sale quota generated - Id: " + domainEvent.SaleId + ", Quota: " + domainEvent.QuotaAmount);
+        Console.WriteLine("Sale adelanto set - Id: " + domainEvent.SaleId + ", Adelanto: " + domainEvent.Adelanto);
         return Task.CompletedTask;
     }
 }

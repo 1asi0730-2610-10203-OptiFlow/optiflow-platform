@@ -6,5 +6,19 @@ namespace optiflow_platform.Sales.Interfaces.REST.Transform;
 public static class CreateSaleCommandFromResourceAssembler
 {
     public static CreateSaleCommand ToCommandFromResource(CreateSaleResource resource) =>
-        new(resource.ClientName, resource.TotalAmount, resource.SaleDate);
+        new(resource.InvoiceNumber,
+            resource.LabOrderNumber,
+            resource.PatientId,
+            resource.PatientName,
+            resource.PatientRx,
+            resource.UserId,
+            resource.UserName,
+            resource.TotalAmount,
+            resource.Adelanto,
+            resource.DiscountCode,
+            resource.DiscountAmount,
+            resource.PaymentMethod,
+            resource.CreatedAt,
+            resource.DeliveredAt,
+            resource.Notes);
 }

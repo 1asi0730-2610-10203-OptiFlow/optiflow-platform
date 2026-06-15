@@ -12,7 +12,7 @@ public class DiscountAppliedEventHandler : IEventHandler<DiscountAppliedEvent>
 
     private static Task On(DiscountAppliedEvent domainEvent)
     {
-        Console.WriteLine("Discount applied - Id: " + domainEvent.SaleId + ", Discount: " + domainEvent.DiscountPercentage + "%, New total: " + domainEvent.NewTotalAmount);
+        Console.WriteLine("Discount applied - Id: " + domainEvent.SaleId + ", Code: " + domainEvent.DiscountCode + ", Amount: " + domainEvent.DiscountAmount + ", New total: " + domainEvent.NewTotalAmount);
         return Task.CompletedTask;
     }
 }
