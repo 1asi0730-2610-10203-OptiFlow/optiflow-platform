@@ -121,6 +121,7 @@ builder.Services.AddScoped<ILaboratoryRepository, LaboratoryRepository>();
 builder.Services.AddScoped<IWorkOrderCommandService, WorkOrderCommandService>();
 builder.Services.AddScoped<IWorkOrderQueryService, WorkOrderQueryService>();
 builder.Services.AddScoped<ILaboratoryQueryService, LaboratoryQueryService>();
+builder.Services.AddScoped<ILaboratoryCommandService, LaboratoryCommandService>();
 
 // Analytics Bounded Context Injection
 builder.Services.AddScoped<IAnalyticsReportRepository, AnalyticsReportRepository>();
