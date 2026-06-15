@@ -10,7 +10,6 @@ public static class CreateSaleCommandFromResourceAssembler
             resource.LabOrderNumber,
             resource.PatientId,
             resource.PatientName,
-            resource.PatientRx,
             resource.UserId,
             resource.UserName,
             resource.TotalAmount,

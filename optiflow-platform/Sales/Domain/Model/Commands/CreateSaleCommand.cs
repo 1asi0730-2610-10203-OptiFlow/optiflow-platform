@@ -5,7 +5,6 @@ public record CreateSaleCommand(
     string? LabOrderNumber,
     int PatientId,
     string PatientName,
-    string? PatientRx,
     int UserId,
     string UserName,
     decimal TotalAmount,

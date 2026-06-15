@@ -7,8 +7,6 @@ public class Sale
 {
     private const decimal MinimumQuotaPercentage = 0.30m;
 
-    private List<SaleItem> _items = [];
-
     protected Sale()
     {
         InvoiceNumber = null!;
@@ -18,7 +16,6 @@ public class Sale
         Status = null!;
         CreatedAt = null!;
         LabOrderNumber = string.Empty;
-        PatientRx = string.Empty;
         DiscountCode = string.Empty;
         DeliveredAt = string.Empty;
         Notes = string.Empty;
@@ -31,7 +28,6 @@ public class Sale
         LabOrderNumber = command.LabOrderNumber ?? string.Empty;
         PatientId = command.PatientId;
         PatientName = command.PatientName;
-        PatientRx = command.PatientRx ?? string.Empty;
         UserId = command.UserId;
         UserName = command.UserName;
         TotalAmount = command.TotalAmount;
@@ -44,7 +40,6 @@ public class Sale
         CreatedAt = command.CreatedAt;
         DeliveredAt = command.DeliveredAt ?? string.Empty;
         Notes = command.Notes ?? string.Empty;
-        _items = [];
     }
 
     public int Id { get; private set; }
@@ -52,7 +47,6 @@ public class Sale
     public string LabOrderNumber { get; private set; }
     public int PatientId { get; private set; }
     public string PatientName { get; private set; }
-    public string PatientRx { get; private set; }
     public int UserId { get; private set; }
     public string UserName { get; private set; }
     public decimal TotalAmount { get; private set; }
@@ -66,11 +60,6 @@ public class Sale
     public string DeliveredAt { get; private set; }
     public string Notes { get; private set; }
 
-    public IReadOnlyCollection<SaleItem> Items => _items.AsReadOnly();
-
-    /// <summary>
-    ///     Sets the advance (adelanto). Adelanto must be at least 30% of the total amount.
-    /// </summary>
     public void GenerateQuota(GenerateSaleQuotaCommand command)
     {
         ArgumentNullException.ThrowIfNull(command);
@@ -80,7 +69,7 @@ public class Sale
                 $"Adelanto must be at least 30% of the total amount ({minimumQuota:F2}).");
         Adelanto = command.Adelanto;
         PendingBalance = TotalAmount - Adelanto;
-        Status = SaleStatus.QuotaGenerated;
+        Status = SaleStatus.Partial;
     }
 
     public void RequestCancellation(RequestSaleCancellationCommand command)
@@ -110,6 +99,6 @@ public class Sale
     public void Complete()
     {
         PendingBalance = 0;
-        Status = SaleStatus.Completed;
+        Status = SaleStatus.Paid;
     }
 }

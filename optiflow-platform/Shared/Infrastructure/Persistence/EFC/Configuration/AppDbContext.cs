@@ -140,7 +140,6 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
         builder.Entity<Sale>().Property(s => s.LabOrderNumber).HasMaxLength(50);
         builder.Entity<Sale>().Property(s => s.PatientId).IsRequired();
         builder.Entity<Sale>().Property(s => s.PatientName).IsRequired().HasMaxLength(255);
-        builder.Entity<Sale>().Property(s => s.PatientRx).HasMaxLength(255);
         builder.Entity<Sale>().Property(s => s.UserId).IsRequired();
         builder.Entity<Sale>().Property(s => s.UserName).IsRequired().HasMaxLength(255);
         builder.Entity<Sale>().Property(s => s.TotalAmount).IsRequired().HasColumnType("decimal(10,2)");
@@ -153,15 +152,6 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
         builder.Entity<Sale>().Property(s => s.CreatedAt).IsRequired().HasMaxLength(50);
         builder.Entity<Sale>().Property(s => s.DeliveredAt).HasMaxLength(50);
         builder.Entity<Sale>().Property(s => s.Notes).HasMaxLength(1000);
-        builder.Entity<Sale>().HasMany(s => s.Items).WithOne().HasForeignKey(i => i.SaleId).OnDelete(DeleteBehavior.Cascade);
-
-        builder.Entity<SaleItem>().HasKey(i => i.Id);
-        builder.Entity<SaleItem>().Property(i => i.Id).IsRequired().ValueGeneratedOnAdd();
-        builder.Entity<SaleItem>().Property(i => i.SaleId).IsRequired();
-        builder.Entity<SaleItem>().Property(i => i.Name).IsRequired().HasMaxLength(255);
-        builder.Entity<SaleItem>().Property(i => i.Quantity).IsRequired();
-        builder.Entity<SaleItem>().Property(i => i.UnitPrice).IsRequired().HasColumnType("decimal(10,2)");
-        builder.Entity<SaleItem>().Property(i => i.Subtotal).IsRequired().HasColumnType("decimal(10,2)");
 
         builder.Entity<Payment>().HasKey(p => p.Id);
         builder.Entity<Payment>().Property(p => p.Id).IsRequired().ValueGeneratedOnAdd();
