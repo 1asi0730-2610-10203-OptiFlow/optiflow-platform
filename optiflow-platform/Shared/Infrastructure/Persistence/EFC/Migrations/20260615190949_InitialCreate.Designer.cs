@@ -11,8 +11,8 @@ using optiflow_platform.Shared.Infrastructure.Persistence.EFC.Configuration;
 namespace optiflow_platform.Shared.Infrastructure.Persistence.EFC.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260615181958_UpdateSaleFields")]
-    partial class UpdateSaleFields
+    [Migration("20260615190949_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -671,12 +671,6 @@ namespace optiflow_platform.Shared.Infrastructure.Persistence.EFC.Migrations
                         .HasColumnType("varchar(255)")
                         .HasColumnName("patient_name");
 
-                    b.Property<string>("PatientRx")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("varchar(255)")
-                        .HasColumnName("patient_rx");
-
                     b.Property<string>("PaymentMethod")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -711,44 +705,6 @@ namespace optiflow_platform.Shared.Infrastructure.Persistence.EFC.Migrations
                         .HasName("p_k_sales");
 
                     b.ToTable("sales");
-                });
-
-            modelBuilder.Entity("optiflow_platform.Sales.Domain.Model.Aggregates.SaleItem", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("id");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("varchar(255)")
-                        .HasColumnName("name");
-
-                    b.Property<int>("Quantity")
-                        .HasColumnType("int")
-                        .HasColumnName("quantity");
-
-                    b.Property<int>("SaleId")
-                        .HasColumnType("int")
-                        .HasColumnName("sale_id");
-
-                    b.Property<decimal>("Subtotal")
-                        .HasColumnType("decimal(10,2)")
-                        .HasColumnName("subtotal");
-
-                    b.Property<decimal>("UnitPrice")
-                        .HasColumnType("decimal(10,2)")
-                        .HasColumnName("unit_price");
-
-                    b.HasKey("Id")
-                        .HasName("p_k_sale_items");
-
-                    b.HasIndex("SaleId")
-                        .HasDatabaseName("i_x_sale_items_sale_id");
-
-                    b.ToTable("sale_items");
                 });
 
             modelBuilder.Entity("optiflow_platform.Subscription.Domain.Model.Aggregates.Billing", b =>
@@ -967,21 +923,6 @@ namespace optiflow_platform.Shared.Infrastructure.Persistence.EFC.Migrations
 
                     b.Navigation("ContactInfo")
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("optiflow_platform.Sales.Domain.Model.Aggregates.SaleItem", b =>
-                {
-                    b.HasOne("optiflow_platform.Sales.Domain.Model.Aggregates.Sale", null)
-                        .WithMany("Items")
-                        .HasForeignKey("SaleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("f_k_sale_items_sales_sale_id");
-                });
-
-            modelBuilder.Entity("optiflow_platform.Sales.Domain.Model.Aggregates.Sale", b =>
-                {
-                    b.Navigation("Items");
                 });
 #pragma warning restore 612, 618
         }
