@@ -136,12 +136,22 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
         // Sales Bounded Context
         builder.Entity<Sale>().HasKey(s => s.Id);
         builder.Entity<Sale>().Property(s => s.Id).IsRequired().ValueGeneratedOnAdd();
-        builder.Entity<Sale>().Property(s => s.ClientName).IsRequired().HasMaxLength(255);
+        builder.Entity<Sale>().Property(s => s.InvoiceNumber).IsRequired().HasMaxLength(50);
+        builder.Entity<Sale>().Property(s => s.LabOrderNumber).HasMaxLength(50);
+        builder.Entity<Sale>().Property(s => s.PatientId).IsRequired();
+        builder.Entity<Sale>().Property(s => s.PatientName).IsRequired().HasMaxLength(255);
+        builder.Entity<Sale>().Property(s => s.UserId).IsRequired();
+        builder.Entity<Sale>().Property(s => s.UserName).IsRequired().HasMaxLength(255);
         builder.Entity<Sale>().Property(s => s.TotalAmount).IsRequired().HasColumnType("decimal(10,2)");
-        builder.Entity<Sale>().Property(s => s.QuotaAmount).HasColumnType("decimal(10,2)");
-        builder.Entity<Sale>().Property(s => s.DiscountPercentage).HasColumnType("decimal(5,2)");
+        builder.Entity<Sale>().Property(s => s.Advance).HasColumnType("decimal(10,2)");
+        builder.Entity<Sale>().Property(s => s.PendingBalance).HasColumnType("decimal(10,2)");
+        builder.Entity<Sale>().Property(s => s.DiscountCode).HasMaxLength(50);
+        builder.Entity<Sale>().Property(s => s.DiscountAmount).HasColumnType("decimal(10,2)");
+        builder.Entity<Sale>().Property(s => s.PaymentMethod).IsRequired().HasMaxLength(50);
         builder.Entity<Sale>().Property(s => s.Status).IsRequired().HasMaxLength(50);
-        builder.Entity<Sale>().Property(s => s.SaleDate).IsRequired().HasMaxLength(50);
+        builder.Entity<Sale>().Property(s => s.CreatedAt).IsRequired().HasMaxLength(50);
+        builder.Entity<Sale>().Property(s => s.DeliveredAt).HasMaxLength(50);
+        builder.Entity<Sale>().Property(s => s.Notes).HasMaxLength(1000);
 
         builder.Entity<Payment>().HasKey(p => p.Id);
         builder.Entity<Payment>().Property(p => p.Id).IsRequired().ValueGeneratedOnAdd();
@@ -150,6 +160,8 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
         builder.Entity<Payment>().Property(p => p.PaidAmount).HasColumnType("decimal(10,2)");
         builder.Entity<Payment>().Property(p => p.OutstandingBalance).HasColumnType("decimal(10,2)");
         builder.Entity<Payment>().Property(p => p.Status).IsRequired().HasMaxLength(20);
+        builder.Entity<Payment>().Property(p => p.Method).IsRequired().HasMaxLength(50);
+        builder.Entity<Payment>().Property(p => p.PaidAt).IsRequired().HasMaxLength(50);
 
         // Inventory Bounded Context
         builder.Entity<Category>().HasKey(c => c.Id);

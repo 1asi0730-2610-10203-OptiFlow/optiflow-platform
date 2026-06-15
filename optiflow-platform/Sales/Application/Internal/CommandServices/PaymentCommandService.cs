@@ -33,26 +33,28 @@ public class PaymentCommandService(
         try
         {
             var payment = await paymentRepository.FindBySaleIdAsync(command.SaleId, cancellationToken);
+            var sale = await saleRepository.FindByIdAsync(command.SaleId, cancellationToken);
+            if (sale is null)
+            {
+                logger.LogWarning("Sale {SaleId} not found while processing payment", command.SaleId);
+                return new Result<Payment, PayOutstandingBalanceError>.Failure(
+                    PayOutstandingBalanceError.SaleNotFound);
+            }
 
             if (payment is null)
             {
-                var sale = await saleRepository.FindByIdAsync(command.SaleId, cancellationToken);
-                if (sale is null)
-                {
-                    logger.LogWarning("Sale {SaleId} not found while processing payment", command.SaleId);
-                    return new Result<Payment, PayOutstandingBalanceError>.Failure(
-                        PayOutstandingBalanceError.SaleNotFound);
-                }
-
                 payment = new Payment(command.SaleId, sale.TotalAmount);
-                payment.PayBalance(command.Amount);
+                payment.PayBalance(command.AmountPaid, command.Method);
                 await paymentRepository.AddAsync(payment, cancellationToken);
             }
             else
             {
-                payment.PayBalance(command.Amount);
+                payment.PayBalance(command.AmountPaid, command.Method);
                 paymentRepository.Update(payment);
             }
+
+            sale.RecordPayment(payment.OutstandingBalance);
+            saleRepository.Update(sale);
 
             await unitOfWork.CompleteAsync(cancellationToken);
             await domainEventPublisher.PublishAsync(

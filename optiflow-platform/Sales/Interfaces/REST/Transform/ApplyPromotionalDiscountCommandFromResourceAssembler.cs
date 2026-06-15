@@ -7,5 +7,5 @@ public static class ApplyPromotionalDiscountCommandFromResourceAssembler
 {
     public static ApplyPromotionalDiscountCommand ToCommandFromResource(int saleId,
         ApplyPromotionalDiscountResource resource) =>
-        new(saleId, resource.DiscountPercentage);
+        new(saleId, resource.DiscountCode, resource.DiscountAmount);
 }

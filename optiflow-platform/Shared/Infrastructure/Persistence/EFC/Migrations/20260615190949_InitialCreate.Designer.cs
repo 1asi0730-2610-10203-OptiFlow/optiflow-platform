@@ -11,8 +11,8 @@ using optiflow_platform.Shared.Infrastructure.Persistence.EFC.Configuration;
 namespace optiflow_platform.Shared.Infrastructure.Persistence.EFC.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260615062439_AddLaboratoryContactInfoVO")]
-    partial class AddLaboratoryContactInfoVO
+    [Migration("20260615190949_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -617,25 +617,69 @@ namespace optiflow_platform.Shared.Infrastructure.Persistence.EFC.Migrations
                         .HasColumnType("int")
                         .HasColumnName("id");
 
-                    b.Property<string>("ClientName")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("varchar(255)")
-                        .HasColumnName("client_name");
-
-                    b.Property<decimal>("DiscountPercentage")
-                        .HasColumnType("decimal(5,2)")
-                        .HasColumnName("discount_percentage");
-
-                    b.Property<decimal>("QuotaAmount")
+                    b.Property<decimal>("Adelanto")
                         .HasColumnType("decimal(10,2)")
-                        .HasColumnName("quota_amount");
+                        .HasColumnName("adelanto");
 
-                    b.Property<string>("SaleDate")
+                    b.Property<string>("CreatedAt")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("varchar(50)")
-                        .HasColumnName("sale_date");
+                        .HasColumnName("created_at");
+
+                    b.Property<string>("DeliveredAt")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)")
+                        .HasColumnName("delivered_at");
+
+                    b.Property<decimal>("DiscountAmount")
+                        .HasColumnType("decimal(10,2)")
+                        .HasColumnName("discount_amount");
+
+                    b.Property<string>("DiscountCode")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)")
+                        .HasColumnName("discount_code");
+
+                    b.Property<string>("InvoiceNumber")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)")
+                        .HasColumnName("invoice_number");
+
+                    b.Property<string>("LabOrderNumber")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)")
+                        .HasColumnName("lab_order_number");
+
+                    b.Property<string>("Notes")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("varchar(1000)")
+                        .HasColumnName("notes");
+
+                    b.Property<int>("PatientId")
+                        .HasColumnType("int")
+                        .HasColumnName("patient_id");
+
+                    b.Property<string>("PatientName")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)")
+                        .HasColumnName("patient_name");
+
+                    b.Property<string>("PaymentMethod")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)")
+                        .HasColumnName("payment_method");
+
+                    b.Property<decimal>("PendingBalance")
+                        .HasColumnType("decimal(10,2)")
+                        .HasColumnName("pending_balance");
 
                     b.Property<string>("Status")
                         .IsRequired()
@@ -646,6 +690,16 @@ namespace optiflow_platform.Shared.Infrastructure.Persistence.EFC.Migrations
                     b.Property<decimal>("TotalAmount")
                         .HasColumnType("decimal(10,2)")
                         .HasColumnName("total_amount");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int")
+                        .HasColumnName("user_id");
+
+                    b.Property<string>("UserName")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)")
+                        .HasColumnName("user_name");
 
                     b.HasKey("Id")
                         .HasName("p_k_sales");

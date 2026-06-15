@@ -7,5 +7,5 @@ public static class PayOutstandingBalanceCommandFromResourceAssembler
 {
     public static PayOutstandingBalanceCommand ToCommandFromResource(int saleId,
         PayOutstandingBalanceResource resource) =>
-        new(saleId, resource.Amount);
+        new(saleId, resource.AmountPaid, resource.Method);
 }

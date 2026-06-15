@@ -30,9 +30,9 @@ public class SaleCreatedEventHandler : IEventHandler<SaleCreatedEvent>
     /// </param>
     private static Task On(SaleCreatedEvent domainEvent)
     {
-        Console.WriteLine("Sale created — Id: {0}, Client: {1}, Amount: {2}",
+        Console.WriteLine("Sale created — Id: {0}, Patient: {1}, Amount: {2}",
             domainEvent.SaleId,
-            domainEvent.ClientName,
+            domainEvent.PatientName,
             domainEvent.TotalAmount);
 
         return Task.CompletedTask;

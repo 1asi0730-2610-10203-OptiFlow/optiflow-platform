@@ -3,13 +3,14 @@ namespace optiflow_platform.Sales.Domain.Model.ValueObjects;
 public sealed record SaleStatus
 {
     public const string Active = "ACTIVE";
-    public const string QuotaGenerated = "QUOTA_GENERATED";
-    public const string CancellationRequested = "CANCELLATION_REQUESTED";
+    public const string Partial = "PARTIAL";
+    public const string Paid = "PAID";
+    public const string Returned = "RETURNED";
     public const string Cancelled = "CANCELLED";
-    public const string Completed = "COMPLETED";
+    public const string CancellationRequested = "CANCELLATION_REQUESTED";
 
     private static readonly HashSet<string> ValidValues =
-        [Active, QuotaGenerated, CancellationRequested, Cancelled, Completed];
+        [Active, Partial, Paid, Returned, Cancelled, CancellationRequested];
 
     public string Value { get; }
 
