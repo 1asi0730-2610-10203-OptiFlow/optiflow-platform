@@ -40,7 +40,13 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
         builder.Entity<Laboratory>().HasKey(l => l.Id);
         builder.Entity<Laboratory>().Property(l => l.Id).IsRequired().ValueGeneratedOnAdd();
         builder.Entity<Laboratory>().Property(l => l.Name).IsRequired().HasMaxLength(255);
-        builder.Entity<Laboratory>().Property(l => l.ContactInfo).HasMaxLength(500);
+        builder.Entity<Laboratory>().HasIndex(l => l.Name).IsUnique();
+        builder.Entity<Laboratory>().OwnsOne(l => l.ContactInfo, ci =>
+        {
+            ci.WithOwner().HasForeignKey("Id");
+            ci.Property(c => c.Phone).HasColumnName("contact_phone").IsRequired().HasMaxLength(50);
+            ci.Property(c => c.Email).HasColumnName("contact_email").IsRequired().HasMaxLength(255);
+        });
 
         builder.Entity<WorkOrder>().HasKey(w => w.Id);
         builder.Entity<WorkOrder>().Property(w => w.Id).IsRequired().ValueGeneratedOnAdd();
