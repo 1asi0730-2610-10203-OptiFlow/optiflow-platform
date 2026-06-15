@@ -464,6 +464,29 @@ namespace optiflow_platform.Shared.Infrastructure.Persistence.EFC.Migrations
                     b.ToTable("suppliers");
                 });
 
+            modelBuilder.Entity("optiflow_platform.LabAndOrders.Domain.Model.Aggregates.Laboratory", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("id");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)")
+                        .HasColumnName("name");
+
+                    b.HasKey("Id")
+                        .HasName("p_k_laboratories");
+
+                    b.HasIndex("Name")
+                        .IsUnique()
+                        .HasDatabaseName("i_x_laboratories_name");
+
+                    b.ToTable("laboratories");
+                });
+
             modelBuilder.Entity("optiflow_platform.LabAndOrders.Domain.Model.Aggregates.WorkOrder", b =>
                 {
                     b.Property<int>("Id")
@@ -491,9 +514,9 @@ namespace optiflow_platform.Shared.Infrastructure.Persistence.EFC.Migrations
                         .HasColumnType("tinyint(1)")
                         .HasColumnName("is_rework");
 
-                    b.Property<int>("LabId")
+                    b.Property<int>("LaboratoryId")
                         .HasColumnType("int")
-                        .HasColumnName("lab_id");
+                        .HasColumnName("laboratory_id");
 
                     b.Property<string>("LaboratoryName")
                         .IsRequired()
@@ -547,31 +570,6 @@ namespace optiflow_platform.Shared.Infrastructure.Persistence.EFC.Migrations
                         .HasName("p_k_work_orders");
 
                     b.ToTable("work_orders");
-                });
-
-            modelBuilder.Entity("optiflow_platform.LabAndOrders.Domain.Model.Entities.Laboratory", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("id");
-
-                    b.Property<string>("ContactInfo")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("varchar(500)")
-                        .HasColumnName("contact_info");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("varchar(255)")
-                        .HasColumnName("name");
-
-                    b.HasKey("Id")
-                        .HasName("p_k_laboratories");
-
-                    b.ToTable("laboratories");
                 });
 
             modelBuilder.Entity("optiflow_platform.Sales.Domain.Model.Aggregates.Payment", b =>
@@ -834,6 +832,40 @@ namespace optiflow_platform.Shared.Infrastructure.Persistence.EFC.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("f_k_prescriptions_clinical_records_clinical_record_id");
+                });
+
+            modelBuilder.Entity("optiflow_platform.LabAndOrders.Domain.Model.Aggregates.Laboratory", b =>
+                {
+                    b.OwnsOne("optiflow_platform.LabAndOrders.Domain.Model.ValueObjects.ContactInfo", "ContactInfo", b1 =>
+                        {
+                            b1.Property<int>("Id")
+                                .HasColumnType("int")
+                                .HasColumnName("id");
+
+                            b1.Property<string>("Email")
+                                .IsRequired()
+                                .HasMaxLength(255)
+                                .HasColumnType("varchar(255)")
+                                .HasColumnName("contact_email");
+
+                            b1.Property<string>("Phone")
+                                .IsRequired()
+                                .HasMaxLength(50)
+                                .HasColumnType("varchar(50)")
+                                .HasColumnName("contact_phone");
+
+                            b1.HasKey("Id")
+                                .HasName("p_k_laboratories");
+
+                            b1.ToTable("laboratories");
+
+                            b1.WithOwner()
+                                .HasForeignKey("Id")
+                                .HasConstraintName("f_k_laboratories_laboratories_id");
+                        });
+
+                    b.Navigation("ContactInfo")
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }
