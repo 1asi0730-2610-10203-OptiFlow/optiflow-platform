@@ -10,7 +10,7 @@ public record WorkOrderResource(
     [SwaggerParameter(Description = "The server-generated ID of the work order")] int Id,
     [SwaggerParameter(Description = "Reference to the related sale")] int SaleId,
     [SwaggerParameter(Description = "Reference to the optical prescription")] int RecipeId,
-    [SwaggerParameter(Description = "Reference to the laboratory")] int LabId,
+    [SwaggerParameter(Description = "Reference to the laboratory")] int LaboratoryId,
     [SwaggerParameter(Description = "Current status of the work order")] string Status,
     [SwaggerParameter(Description = "Priority of the work order")] string Priority,
     [SwaggerParameter(Description = "Full name of the patient")] string PatientName,
