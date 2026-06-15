@@ -160,6 +160,8 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
         builder.Entity<Payment>().Property(p => p.PaidAmount).HasColumnType("decimal(10,2)");
         builder.Entity<Payment>().Property(p => p.OutstandingBalance).HasColumnType("decimal(10,2)");
         builder.Entity<Payment>().Property(p => p.Status).IsRequired().HasMaxLength(20);
+        builder.Entity<Payment>().Property(p => p.Method).IsRequired().HasMaxLength(50);
+        builder.Entity<Payment>().Property(p => p.PaidAt).IsRequired().HasMaxLength(50);
 
         // Inventory Bounded Context
         builder.Entity<Category>().HasKey(c => c.Id);

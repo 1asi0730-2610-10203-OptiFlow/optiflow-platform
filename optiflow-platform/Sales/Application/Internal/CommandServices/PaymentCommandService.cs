@@ -45,12 +45,12 @@ public class PaymentCommandService(
                 }
 
                 payment = new Payment(command.SaleId, sale.TotalAmount);
-                payment.PayBalance(command.Amount);
+                payment.PayBalance(command.AmountPaid, command.Method);
                 await paymentRepository.AddAsync(payment, cancellationToken);
             }
             else
             {
-                payment.PayBalance(command.Amount);
+                payment.PayBalance(command.AmountPaid, command.Method);
                 paymentRepository.Update(payment);
             }
 
