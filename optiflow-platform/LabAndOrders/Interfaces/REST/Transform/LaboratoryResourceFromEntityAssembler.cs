@@ -12,5 +12,5 @@ public static class LaboratoryResourceFromEntityAssembler
     ///     Converts a Laboratory entity to a LaboratoryResource.
     /// </summary>
     public static LaboratoryResource ToResourceFromEntity(Laboratory laboratory) =>
-        new(laboratory.Id, laboratory.Name, laboratory.ContactInfo);
+        new(laboratory.Id, laboratory.Name, laboratory.ContactInfo.Phone, laboratory.ContactInfo.Email);
 }
