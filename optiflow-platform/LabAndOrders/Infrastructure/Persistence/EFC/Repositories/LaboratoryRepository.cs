@@ -1,4 +1,4 @@
-using optiflow_platform.LabAndOrders.Domain.Model.Entities;
+using optiflow_platform.LabAndOrders.Domain.Model.Aggregates;
 using optiflow_platform.LabAndOrders.Domain.Repositories;
 using optiflow_platform.Shared.Infrastructure.Persistence.EFC.Configuration;
 using optiflow_platform.Shared.Infrastructure.Persistence.EFC.Repositories;
