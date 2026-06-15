@@ -2,4 +2,4 @@ using optiflow_platform.Shared.Domain.Model.Events;
 
 namespace optiflow_platform.Sales.Domain.Model.Events;
 
-public record SaleQuotaGeneratedEvent(int SaleId, decimal Adelanto) : IEvent;
+public record SaleQuotaGeneratedEvent(int SaleId, decimal Advance) : IEvent;

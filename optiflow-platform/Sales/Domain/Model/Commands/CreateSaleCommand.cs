@@ -8,7 +8,7 @@ public record CreateSaleCommand(
     int UserId,
     string UserName,
     decimal TotalAmount,
-    decimal Adelanto,
+    decimal Advance,
     string? DiscountCode,
     decimal DiscountAmount,
     string PaymentMethod,

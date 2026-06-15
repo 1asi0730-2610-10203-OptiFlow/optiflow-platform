@@ -143,7 +143,7 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
         builder.Entity<Sale>().Property(s => s.UserId).IsRequired();
         builder.Entity<Sale>().Property(s => s.UserName).IsRequired().HasMaxLength(255);
         builder.Entity<Sale>().Property(s => s.TotalAmount).IsRequired().HasColumnType("decimal(10,2)");
-        builder.Entity<Sale>().Property(s => s.Adelanto).HasColumnType("decimal(10,2)");
+        builder.Entity<Sale>().Property(s => s.Advance).HasColumnType("decimal(10,2)");
         builder.Entity<Sale>().Property(s => s.PendingBalance).HasColumnType("decimal(10,2)");
         builder.Entity<Sale>().Property(s => s.DiscountCode).HasMaxLength(50);
         builder.Entity<Sale>().Property(s => s.DiscountAmount).HasColumnType("decimal(10,2)");

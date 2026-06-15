@@ -12,7 +12,7 @@ public record CreateSaleResource(
     [Required] [SwaggerParameter(Description = "ID of the staff member creating the sale")] int UserId,
     [Required] [SwaggerParameter(Description = "Name of the staff member creating the sale")] string UserName,
     [Required] [SwaggerParameter(Description = "Total sale amount")] decimal TotalAmount,
-    [SwaggerParameter(Description = "Advance payment amount")] decimal Adelanto,
+    [SwaggerParameter(Description = "Advance payment amount")] decimal Advance,
     [SwaggerParameter(Description = "Discount code applied")] string? DiscountCode,
     [SwaggerParameter(Description = "Fixed discount amount")] decimal DiscountAmount,
     [Required] [SwaggerParameter(Description = "Payment method (e.g. CREDIT_CARD, CASH, DEBIT_CARD, TRANSFER)")] string PaymentMethod,

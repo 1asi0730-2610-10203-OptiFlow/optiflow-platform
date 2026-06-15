@@ -61,7 +61,7 @@ public class SaleCommandService(
             sale.GenerateQuota(command);
             saleRepository.Update(sale);
             await unitOfWork.CompleteAsync(cancellationToken);
-            await domainEventPublisher.PublishAsync(new SaleQuotaGeneratedEvent(sale.Id, sale.Adelanto), cancellationToken);
+            await domainEventPublisher.PublishAsync(new SaleQuotaGeneratedEvent(sale.Id, sale.Advance), cancellationToken);
             return new Result<Sale, GenerateSaleQuotaError>.Success(sale);
         }
         catch (ArgumentException ex)

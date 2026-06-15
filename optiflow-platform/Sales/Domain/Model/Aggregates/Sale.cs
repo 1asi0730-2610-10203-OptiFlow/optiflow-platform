@@ -31,8 +31,8 @@ public class Sale
         UserId = command.UserId;
         UserName = command.UserName;
         TotalAmount = command.TotalAmount;
-        Adelanto = command.Adelanto;
-        PendingBalance = command.TotalAmount - command.Adelanto;
+        Advance = command.Advance;
+        PendingBalance = command.TotalAmount - command.Advance;
         DiscountCode = command.DiscountCode ?? string.Empty;
         DiscountAmount = command.DiscountAmount;
         PaymentMethod = command.PaymentMethod;
@@ -50,7 +50,7 @@ public class Sale
     public int UserId { get; private set; }
     public string UserName { get; private set; }
     public decimal TotalAmount { get; private set; }
-    public decimal Adelanto { get; private set; }
+    public decimal Advance { get; private set; }
     public decimal PendingBalance { get; private set; }
     public string DiscountCode { get; private set; }
     public decimal DiscountAmount { get; private set; }
@@ -64,11 +64,11 @@ public class Sale
     {
         ArgumentNullException.ThrowIfNull(command);
         var minimumQuota = TotalAmount * MinimumQuotaPercentage;
-        if (command.Adelanto < minimumQuota)
+        if (command.Advance < minimumQuota)
             throw new ArgumentException(
-                $"Adelanto must be at least 30% of the total amount ({minimumQuota:F2}).");
-        Adelanto = command.Adelanto;
-        PendingBalance = TotalAmount - Adelanto;
+                $"Advance payment must be at least 30% of the total amount ({minimumQuota:F2}).");
+        Advance = command.Advance;
+        PendingBalance = TotalAmount - Advance;
         Status = SaleStatus.Partial;
     }
 
@@ -93,12 +93,18 @@ public class Sale
         DiscountCode = command.DiscountCode;
         DiscountAmount = command.DiscountAmount;
         TotalAmount -= command.DiscountAmount;
-        PendingBalance = TotalAmount - Adelanto;
+        PendingBalance = TotalAmount - Advance;
     }
 
     public void Complete()
     {
         PendingBalance = 0;
         Status = SaleStatus.Paid;
+    }
+
+    public void RecordPayment(decimal remaining)
+    {
+        PendingBalance = remaining;
+        Status = remaining == 0 ? SaleStatus.Paid : SaleStatus.Partial;
     }
 }

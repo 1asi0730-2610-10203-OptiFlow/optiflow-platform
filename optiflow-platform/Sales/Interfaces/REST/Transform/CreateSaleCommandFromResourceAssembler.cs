@@ -13,7 +13,7 @@ public static class CreateSaleCommandFromResourceAssembler
             resource.UserId,
             resource.UserName,
             resource.TotalAmount,
-            resource.Adelanto,
+            resource.Advance,
             resource.DiscountCode,
             resource.DiscountAmount,
             resource.PaymentMethod,

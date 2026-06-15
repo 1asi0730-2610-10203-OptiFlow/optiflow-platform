@@ -14,7 +14,7 @@ public static class SaleResourceFromEntityAssembler
             sale.UserId,
             sale.UserName,
             sale.TotalAmount,
-            sale.Adelanto,
+            sale.Advance,
             sale.PendingBalance,
             sale.DiscountCode,
             sale.DiscountAmount,
