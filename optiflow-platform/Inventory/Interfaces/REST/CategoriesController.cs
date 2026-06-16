@@ -12,7 +12,7 @@ namespace optiflow_platform.Inventory.Interfaces.REST;
 ///     Categories controller.
 /// </summary>
 [ApiController]
-[Route("api/v1/[controller]")]
+[Route("/[controller]")]
 [Produces(MediaTypeNames.Application.Json)]
 [Tags("Categories")]
 public class CategoriesController(ICategoryQueryService categoryQueryService) : ControllerBase

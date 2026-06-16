@@ -12,7 +12,7 @@ namespace optiflow_platform.Inventory.Interfaces.REST;
 ///     Suppliers controller.
 /// </summary>
 [ApiController]
-[Route("api/v1/[controller]")]
+[Route("/[controller]")]
 [Produces(MediaTypeNames.Application.Json)]
 [Tags("Suppliers")]
 public class SuppliersController(ISupplierQueryService supplierQueryService) : ControllerBase
