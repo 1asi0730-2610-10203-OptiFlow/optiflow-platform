@@ -1,5 +1,5 @@
 using optiflow_platform.Inventory.Application.Services;
-using optiflow_platform.Inventory.Domain.Model.Entities;
+using optiflow_platform.Inventory.Domain.Model.Aggregates;
 using optiflow_platform.Inventory.Domain.Model.Queries;
 using optiflow_platform.Inventory.Domain.Repositories;
 
@@ -15,4 +15,9 @@ public class SupplierQueryService(ISupplierRepository supplierRepository) : ISup
     public async Task<IEnumerable<Supplier>> Handle(GetAllSuppliersQuery query,
         CancellationToken cancellationToken = default) =>
         await supplierRepository.ListAsync(cancellationToken);
+
+    /// <inheritdoc />
+    public async Task<Supplier?> Handle(GetSupplierByIdQuery query,
+        CancellationToken cancellationToken = default) =>
+        await supplierRepository.FindByIdAsync(query.Id, cancellationToken);
 }

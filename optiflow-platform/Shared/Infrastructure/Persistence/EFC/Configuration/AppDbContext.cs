@@ -172,9 +172,14 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
         builder.Entity<Supplier>().HasKey(s => s.Id);
         builder.Entity<Supplier>().Property(s => s.Id).IsRequired().ValueGeneratedOnAdd();
         builder.Entity<Supplier>().Property(s => s.Name).IsRequired().HasMaxLength(255);
-        builder.Entity<Supplier>().Property(s => s.ContactPerson).HasMaxLength(255);
-        builder.Entity<Supplier>().Property(s => s.Phone).HasMaxLength(50);
-        builder.Entity<Supplier>().Property(s => s.Email).HasMaxLength(255);
+        builder.Entity<Supplier>().HasIndex(s => s.Name).IsUnique();
+        builder.Entity<Supplier>().OwnsOne(s => s.Contact, c =>
+        {
+            c.WithOwner().HasForeignKey("Id");
+            c.Property(x => x.ContactPerson).HasColumnName("contact_person").IsRequired().HasMaxLength(255);
+            c.Property(x => x.Phone).HasColumnName("contact_phone").IsRequired().HasMaxLength(50);
+            c.Property(x => x.Email).HasColumnName("contact_email").IsRequired().HasMaxLength(255);
+        });
 
         builder.Entity<Product>().HasKey(p => p.Id);
         builder.Entity<Product>().Property(p => p.Id).IsRequired().ValueGeneratedOnAdd();
