@@ -15,7 +15,7 @@ namespace optiflow_platform.LabAndOrders.Interfaces.REST;
 ///     Work orders controller.
 /// </summary>
 [ApiController]
-[Route("api/v1/[controller]")]
+[Route("/[controller]")]
 [Produces(MediaTypeNames.Application.Json)]
 [Tags("Work Orders")]
 public class WorkOrdersController(
