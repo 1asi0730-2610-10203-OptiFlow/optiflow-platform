@@ -1,4 +1,5 @@
-using optiflow_platform.Inventory.Domain.Model.Entities;
+using Microsoft.EntityFrameworkCore;
+using optiflow_platform.Inventory.Domain.Model.Aggregates;
 using optiflow_platform.Inventory.Domain.Repositories;
 using optiflow_platform.Shared.Infrastructure.Persistence.EFC.Configuration;
 using optiflow_platform.Shared.Infrastructure.Persistence.EFC.Repositories;
@@ -12,4 +13,7 @@ namespace optiflow_platform.Inventory.Infrastructure.Persistence.EFC.Repositorie
 public class SupplierRepository(AppDbContext context)
     : BaseRepository<Supplier>(context), ISupplierRepository
 {
+    /// <inheritdoc />
+    public async Task<Supplier?> FindByNameAsync(string name, CancellationToken cancellationToken = default) =>
+        await Context.Set<Supplier>().FirstOrDefaultAsync(s => s.Name == name, cancellationToken);
 }
