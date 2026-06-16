@@ -33,6 +33,10 @@ using optiflow_platform.Subscription.Application.Internal.QueryServices;
 using optiflow_platform.Subscription.Application.Services;
 using optiflow_platform.Subscription.Domain.Repositories;
 using optiflow_platform.Subscription.Infrastructure.Persistence.EFC.Repositories;
+using optiflow_platform.PatientCenter.Application.Internal.QueryServices;
+using optiflow_platform.PatientCenter.Application.Services;
+using optiflow_platform.PatientCenter.Domain.Repositories;
+using optiflow_platform.PatientCenter.Infrastructure.Persistence.EFC.Repositories;
 
 // Subscription aliases — disambiguate from Sales types with the same short name
 using SubPaymentRepo      = optiflow_platform.Subscription.Domain.Repositories.IPaymentRepository;
@@ -172,6 +176,11 @@ builder.Services.AddScoped<ICategoryQueryService, CategoryQueryService>();
 builder.Services.AddScoped<ISupplierQueryService, SupplierQueryService>();
 builder.Services.AddScoped<IStockAuditLogQueryService, StockAuditLogQueryService>();
 
+// PatientCenter Bounded Context Injection
+builder.Services.AddScoped<IPatientNotificationRepository, PatientNotificationRepository>();
+builder.Services.AddScoped<ILensMaterialRepository, LensMaterialRepository>();
+builder.Services.AddScoped<IPatientNotificationQueryService, PatientNotificationQueryService>();
+builder.Services.AddScoped<ILensMaterialQueryService, LensMaterialQueryService>();
 var app = builder.Build();
 
 // Apply pending EF Core migrations on startup
