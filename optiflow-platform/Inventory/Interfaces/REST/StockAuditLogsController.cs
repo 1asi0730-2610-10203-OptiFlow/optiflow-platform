@@ -12,7 +12,7 @@ namespace optiflow_platform.Inventory.Interfaces.REST;
 ///     Stock audit logs controller.
 /// </summary>
 [ApiController]
-[Route("api/v1/[controller]")]
+[Route("/[controller]")]
 [Produces(MediaTypeNames.Application.Json)]
 [Tags("Stock Audit Logs")]
 public class StockAuditLogsController(IStockAuditLogQueryService stockAuditLogQueryService) : ControllerBase

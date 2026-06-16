@@ -16,7 +16,7 @@ namespace optiflow_platform.Inventory.Interfaces.REST;
 ///     Products controller.
 /// </summary>
 [ApiController]
-[Route("api/v1/[controller]")]
+[Route("/[controller]")]
 [Produces(MediaTypeNames.Application.Json)]
 [Tags("Products")]
 public class ProductsController(
