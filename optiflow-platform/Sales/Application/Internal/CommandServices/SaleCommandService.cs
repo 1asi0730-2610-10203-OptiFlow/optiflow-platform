@@ -1,7 +1,9 @@
+using Cortex.Mediator;
 using optiflow_platform.Sales.Application.Errors;
 using optiflow_platform.Sales.Application.Services;
 using optiflow_platform.Sales.Domain.Model.Aggregates;
 using optiflow_platform.Sales.Domain.Model.Commands;
+using optiflow_platform.Sales.Domain.Model.Events;
 using optiflow_platform.Sales.Domain.Repositories;
 using optiflow_platform.Shared.Application.Patterns;
 using optiflow_platform.Shared.Domain.Repositories;
@@ -15,6 +17,7 @@ namespace optiflow_platform.Sales.Application.Internal.CommandServices;
 public class SaleCommandService(
     ISaleRepository saleRepository,
     IUnitOfWork unitOfWork,
+    IMediator domainEventPublisher,
     ILogger<SaleCommandService> logger)
     : ISaleCommandService
 {
@@ -27,16 +30,17 @@ public class SaleCommandService(
             var sale = new Sale(command);
             await saleRepository.AddAsync(sale, cancellationToken);
             await unitOfWork.CompleteAsync(cancellationToken);
+            await domainEventPublisher.PublishAsync(new SaleCreatedEvent(sale.Id, sale.PatientName, sale.TotalAmount), cancellationToken);
             return new Result<Sale, CreateSaleError>.Success(sale);
         }
         catch (DbUpdateException ex)
         {
-            logger.LogError(ex, "Database error while creating sale for client {ClientName}", command.ClientName);
+            logger.LogError(ex, "Database error while creating sale for patient {PatientName}", command.PatientName);
             return new Result<Sale, CreateSaleError>.Failure(CreateSaleError.UnexpectedError);
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Unexpected error while creating sale for client {ClientName}", command.ClientName);
+            logger.LogError(ex, "Unexpected error while creating sale for patient {PatientName}", command.PatientName);
             return new Result<Sale, CreateSaleError>.Failure(CreateSaleError.UnexpectedError);
         }
     }
@@ -57,6 +61,7 @@ public class SaleCommandService(
             sale.GenerateQuota(command);
             saleRepository.Update(sale);
             await unitOfWork.CompleteAsync(cancellationToken);
+            await domainEventPublisher.PublishAsync(new SaleQuotaGeneratedEvent(sale.Id, sale.Advance), cancellationToken);
             return new Result<Sale, GenerateSaleQuotaError>.Success(sale);
         }
         catch (ArgumentException ex)
@@ -87,6 +92,7 @@ public class SaleCommandService(
             sale.RequestCancellation(command);
             saleRepository.Update(sale);
             await unitOfWork.CompleteAsync(cancellationToken);
+            await domainEventPublisher.PublishAsync(new SaleCancellationRequestedEvent(sale.Id), cancellationToken);
             return new Result<Sale, RequestSaleCancellationError>.Success(sale);
         }
         catch (Exception ex)
@@ -112,6 +118,7 @@ public class SaleCommandService(
             sale.Cancel(command);
             saleRepository.Update(sale);
             await unitOfWork.CompleteAsync(cancellationToken);
+            await domainEventPublisher.PublishAsync(new SaleCancelledEvent(sale.Id), cancellationToken);
             return new Result<Sale, CancelSaleError>.Success(sale);
         }
         catch (InvalidOperationException ex) when (ex.Message.Contains("in production"))
@@ -142,6 +149,7 @@ public class SaleCommandService(
             sale.ApplyDiscount(command);
             saleRepository.Update(sale);
             await unitOfWork.CompleteAsync(cancellationToken);
+            await domainEventPublisher.PublishAsync(new DiscountAppliedEvent(sale.Id, sale.DiscountCode, sale.DiscountAmount, sale.TotalAmount), cancellationToken);
             return new Result<Sale, ApplyPromotionalDiscountError>.Success(sale);
         }
         catch (Exception ex)
@@ -167,6 +175,7 @@ public class SaleCommandService(
             sale.Complete();
             saleRepository.Update(sale);
             await unitOfWork.CompleteAsync(cancellationToken);
+            await domainEventPublisher.PublishAsync(new SaleCompletedEvent(sale.Id), cancellationToken);
             return new Result<Sale, CompleteSaleError>.Success(sale);
         }
         catch (Exception ex)

@@ -1,5 +1,5 @@
 using optiflow_platform.LabAndOrders.Application.Services;
-using optiflow_platform.LabAndOrders.Domain.Model.Entities;
+using optiflow_platform.LabAndOrders.Domain.Model.Aggregates;
 using optiflow_platform.LabAndOrders.Domain.Model.Queries;
 using optiflow_platform.LabAndOrders.Domain.Repositories;
 

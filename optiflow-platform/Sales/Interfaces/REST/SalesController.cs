@@ -16,7 +16,7 @@ namespace optiflow_platform.Sales.Interfaces.REST;
 ///     Sales controller.
 /// </summary>
 [ApiController]
-[Route("api/v1/[controller]")]
+[Route("/[controller]")]
 [Produces(MediaTypeNames.Application.Json)]
 [Tags("Sales")]
 public class SalesController(
@@ -56,7 +56,7 @@ public class SalesController(
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Unexpected error creating sale for client {ClientName}", resource.ClientName);
+            logger.LogError(ex, "Unexpected error creating sale for patient {PatientName}", resource.PatientName);
             return Problem(title: "Unexpected server error",
                 detail: "An unexpected error occurred while creating the sale.", statusCode: 500);
         }

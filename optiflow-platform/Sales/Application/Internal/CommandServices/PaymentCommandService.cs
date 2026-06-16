@@ -1,7 +1,9 @@
+using Cortex.Mediator;
 using optiflow_platform.Sales.Application.Errors;
 using optiflow_platform.Sales.Application.Services;
 using optiflow_platform.Sales.Domain.Model.Aggregates;
 using optiflow_platform.Sales.Domain.Model.Commands;
+using optiflow_platform.Sales.Domain.Model.Events;
 using optiflow_platform.Sales.Domain.Repositories;
 using optiflow_platform.Shared.Application.Patterns;
 using optiflow_platform.Shared.Domain.Repositories;
@@ -20,6 +22,7 @@ public class PaymentCommandService(
     IPaymentRepository paymentRepository,
     ISaleRepository saleRepository,
     IUnitOfWork unitOfWork,
+    IMediator domainEventPublisher,
     ILogger<PaymentCommandService> logger)
     : IPaymentCommandService
 {
@@ -30,28 +33,33 @@ public class PaymentCommandService(
         try
         {
             var payment = await paymentRepository.FindBySaleIdAsync(command.SaleId, cancellationToken);
+            var sale = await saleRepository.FindByIdAsync(command.SaleId, cancellationToken);
+            if (sale is null)
+            {
+                logger.LogWarning("Sale {SaleId} not found while processing payment", command.SaleId);
+                return new Result<Payment, PayOutstandingBalanceError>.Failure(
+                    PayOutstandingBalanceError.SaleNotFound);
+            }
 
             if (payment is null)
             {
-                var sale = await saleRepository.FindByIdAsync(command.SaleId, cancellationToken);
-                if (sale is null)
-                {
-                    logger.LogWarning("Sale {SaleId} not found while processing payment", command.SaleId);
-                    return new Result<Payment, PayOutstandingBalanceError>.Failure(
-                        PayOutstandingBalanceError.SaleNotFound);
-                }
-
                 payment = new Payment(command.SaleId, sale.TotalAmount);
-                payment.PayBalance(command.Amount);
+                payment.PayBalance(command.AmountPaid, command.Method);
                 await paymentRepository.AddAsync(payment, cancellationToken);
             }
             else
             {
-                payment.PayBalance(command.Amount);
+                payment.PayBalance(command.AmountPaid, command.Method);
                 paymentRepository.Update(payment);
             }
 
+            sale.RecordPayment(payment.OutstandingBalance);
+            saleRepository.Update(sale);
+
             await unitOfWork.CompleteAsync(cancellationToken);
+            await domainEventPublisher.PublishAsync(
+                new OutstandingBalancePayedEvent(payment.SaleId, payment.Id, payment.PaidAmount, payment.OutstandingBalance),
+                cancellationToken);
             return new Result<Payment, PayOutstandingBalanceError>.Success(payment);
         }
         catch (DbUpdateException ex)

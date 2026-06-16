@@ -15,4 +15,9 @@ public interface IWorkOrderRepository : IBaseRepository<WorkOrder>
     /// <param name="cancellationToken">Token to cancel the asynchronous operation.</param>
     /// <returns>An enumerable of work orders matching the given status.</returns>
     Task<IEnumerable<WorkOrder>> FindByStatusAsync(string status, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    ///     Find the work order associated with a given sale.
+    /// </summary>
+    Task<WorkOrder?> FindBySaleIdAsync(int saleId, CancellationToken cancellationToken = default);
 }

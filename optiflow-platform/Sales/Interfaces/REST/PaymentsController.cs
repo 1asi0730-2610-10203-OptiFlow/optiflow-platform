@@ -17,7 +17,7 @@ namespace optiflow_platform.Sales.Interfaces.REST;
 ///     Payments controller.
 /// </summary>
 [ApiController]
-[Route("api/v1/[controller]")]
+[Route("/[controller]")]
 [Produces(MediaTypeNames.Application.Json)]
 [Tags("Payments")]
 public class PaymentsController(

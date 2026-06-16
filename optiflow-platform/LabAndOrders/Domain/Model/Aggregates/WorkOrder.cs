@@ -28,6 +28,7 @@ public class WorkOrder
     /// </summary>
     protected WorkOrder()
     {
+        LaboratoryId = null!;
         Status = null!;
         Priority = null!;
         PatientName = null!;
@@ -48,7 +49,7 @@ public class WorkOrder
         ArgumentNullException.ThrowIfNull(command);
         SaleId = command.SaleId;
         RecipeId = command.RecipeId;
-        LabId = command.LabId;
+        LaboratoryId = new LaboratoryId(command.LabId);
         Status = OrderStatus.Pending;
         Priority = command.Priority;
         PatientName = command.PatientName;
@@ -65,7 +66,7 @@ public class WorkOrder
     public int Id { get; private set; }
     public int SaleId { get; private set; }
     public int RecipeId { get; private set; }
-    public int LabId { get; private set; }
+    public LaboratoryId LaboratoryId { get; private set; }
     public string Status { get; private set; }
     public string Priority { get; private set; }
     public string PatientName { get; private set; }

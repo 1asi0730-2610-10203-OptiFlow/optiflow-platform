@@ -1,4 +1,4 @@
-using optiflow_platform.LabAndOrders.Domain.Model.Entities;
+using optiflow_platform.LabAndOrders.Domain.Model.Aggregates;
 using optiflow_platform.LabAndOrders.Interfaces.REST.Resources;
 
 namespace optiflow_platform.LabAndOrders.Interfaces.REST.Transform;
@@ -12,5 +12,5 @@ public static class LaboratoryResourceFromEntityAssembler
     ///     Converts a Laboratory entity to a LaboratoryResource.
     /// </summary>
     public static LaboratoryResource ToResourceFromEntity(Laboratory laboratory) =>
-        new(laboratory.Id, laboratory.Name, laboratory.ContactInfo);
+        new(laboratory.Id, laboratory.Name, laboratory.ContactInfo.Phone, laboratory.ContactInfo.Email);
 }

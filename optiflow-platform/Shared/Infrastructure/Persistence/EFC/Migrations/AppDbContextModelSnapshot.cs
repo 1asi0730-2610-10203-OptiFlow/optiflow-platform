@@ -464,6 +464,29 @@ namespace optiflow_platform.Shared.Infrastructure.Persistence.EFC.Migrations
                     b.ToTable("suppliers");
                 });
 
+            modelBuilder.Entity("optiflow_platform.LabAndOrders.Domain.Model.Aggregates.Laboratory", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("id");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)")
+                        .HasColumnName("name");
+
+                    b.HasKey("Id")
+                        .HasName("p_k_laboratories");
+
+                    b.HasIndex("Name")
+                        .IsUnique()
+                        .HasDatabaseName("i_x_laboratories_name");
+
+                    b.ToTable("laboratories");
+                });
+
             modelBuilder.Entity("optiflow_platform.LabAndOrders.Domain.Model.Aggregates.WorkOrder", b =>
                 {
                     b.Property<int>("Id")
@@ -491,9 +514,9 @@ namespace optiflow_platform.Shared.Infrastructure.Persistence.EFC.Migrations
                         .HasColumnType("tinyint(1)")
                         .HasColumnName("is_rework");
 
-                    b.Property<int>("LabId")
+                    b.Property<int>("LaboratoryId")
                         .HasColumnType("int")
-                        .HasColumnName("lab_id");
+                        .HasColumnName("laboratory_id");
 
                     b.Property<string>("LaboratoryName")
                         .IsRequired()
@@ -549,105 +572,18 @@ namespace optiflow_platform.Shared.Infrastructure.Persistence.EFC.Migrations
                     b.ToTable("work_orders");
                 });
 
-            modelBuilder.Entity("optiflow_platform.LabAndOrders.Domain.Model.Entities.Laboratory", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("id");
-
-                    b.Property<string>("ContactInfo")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("varchar(500)")
-                        .HasColumnName("contact_info");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("varchar(255)")
-                        .HasColumnName("name");
-
-                    b.HasKey("Id")
-                        .HasName("p_k_laboratories");
-
-                    b.ToTable("laboratories");
-                });
-
-            modelBuilder.Entity("optiflow_platform.PatientCenter.Domain.Model.Entities.LensMaterial", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("id");
-
-                    b.Property<decimal>("BasePrice")
-                        .HasColumnType("decimal(10,2)")
-                        .HasColumnName("base_price");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("varchar(500)")
-                        .HasColumnName("description");
-
-                    b.Property<string>("FullName")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("varchar(255)")
-                        .HasColumnName("full_name");
-
-                    b.Property<string>("IndexValue")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("varchar(50)")
-                        .HasColumnName("index_value");
-
-                    b.HasKey("Id")
-                        .HasName("p_k_lens_materials");
-
-                    b.ToTable("lens_materials");
-                });
-
-            modelBuilder.Entity("optiflow_platform.PatientCenter.Domain.Model.Entities.PatientNotification", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("id");
-
-                    b.Property<string>("Message")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("varchar(500)")
-                        .HasColumnName("message");
-
-                    b.Property<int>("PatientId")
-                        .HasColumnType("int")
-                        .HasColumnName("patient_id");
-
-                    b.Property<DateTime>("SentAt")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("sent_at");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("varchar(20)")
-                        .HasColumnName("status");
-
-                    b.HasKey("Id")
-                        .HasName("p_k_patient_notifications");
-
-                    b.ToTable("patient_notifications");
-                });
-
             modelBuilder.Entity("optiflow_platform.Sales.Domain.Model.Aggregates.Payment", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasColumnName("id");
+
+                    b.Property<string>("Method")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)")
+                        .HasColumnName("method");
 
                     b.Property<decimal>("OutstandingBalance")
                         .HasColumnType("decimal(10,2)")
@@ -656,6 +592,12 @@ namespace optiflow_platform.Shared.Infrastructure.Persistence.EFC.Migrations
                     b.Property<decimal>("PaidAmount")
                         .HasColumnType("decimal(10,2)")
                         .HasColumnName("paid_amount");
+
+                    b.Property<string>("PaidAt")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)")
+                        .HasColumnName("paid_at");
 
                     b.Property<int>("SaleId")
                         .HasColumnType("int")
@@ -684,25 +626,69 @@ namespace optiflow_platform.Shared.Infrastructure.Persistence.EFC.Migrations
                         .HasColumnType("int")
                         .HasColumnName("id");
 
-                    b.Property<string>("ClientName")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("varchar(255)")
-                        .HasColumnName("client_name");
-
-                    b.Property<decimal>("DiscountPercentage")
-                        .HasColumnType("decimal(5,2)")
-                        .HasColumnName("discount_percentage");
-
-                    b.Property<decimal>("QuotaAmount")
+                    b.Property<decimal>("Advance")
                         .HasColumnType("decimal(10,2)")
-                        .HasColumnName("quota_amount");
+                        .HasColumnName("advance");
 
-                    b.Property<string>("SaleDate")
+                    b.Property<string>("CreatedAt")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("varchar(50)")
-                        .HasColumnName("sale_date");
+                        .HasColumnName("created_at");
+
+                    b.Property<string>("DeliveredAt")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)")
+                        .HasColumnName("delivered_at");
+
+                    b.Property<decimal>("DiscountAmount")
+                        .HasColumnType("decimal(10,2)")
+                        .HasColumnName("discount_amount");
+
+                    b.Property<string>("DiscountCode")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)")
+                        .HasColumnName("discount_code");
+
+                    b.Property<string>("InvoiceNumber")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)")
+                        .HasColumnName("invoice_number");
+
+                    b.Property<string>("LabOrderNumber")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)")
+                        .HasColumnName("lab_order_number");
+
+                    b.Property<string>("Notes")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("varchar(1000)")
+                        .HasColumnName("notes");
+
+                    b.Property<int>("PatientId")
+                        .HasColumnType("int")
+                        .HasColumnName("patient_id");
+
+                    b.Property<string>("PatientName")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)")
+                        .HasColumnName("patient_name");
+
+                    b.Property<string>("PaymentMethod")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)")
+                        .HasColumnName("payment_method");
+
+                    b.Property<decimal>("PendingBalance")
+                        .HasColumnType("decimal(10,2)")
+                        .HasColumnName("pending_balance");
 
                     b.Property<string>("Status")
                         .IsRequired()
@@ -714,10 +700,174 @@ namespace optiflow_platform.Shared.Infrastructure.Persistence.EFC.Migrations
                         .HasColumnType("decimal(10,2)")
                         .HasColumnName("total_amount");
 
+                    b.Property<int>("UserId")
+                        .HasColumnType("int")
+                        .HasColumnName("user_id");
+
+                    b.Property<string>("UserName")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)")
+                        .HasColumnName("user_name");
+
                     b.HasKey("Id")
                         .HasName("p_k_sales");
 
                     b.ToTable("sales");
+                });
+
+            modelBuilder.Entity("optiflow_platform.Subscription.Domain.Model.Aggregates.Billing", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("id");
+
+                    b.Property<bool>("AutoRenew")
+                        .HasColumnType("tinyint(1)")
+                        .HasColumnName("auto_renew");
+
+                    b.Property<string>("BillingStatus")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)")
+                        .HasColumnName("billing_status");
+
+                    b.Property<DateTimeOffset>("RenewalDate")
+                        .HasColumnType("datetime")
+                        .HasColumnName("renewal_date");
+
+                    b.Property<int>("SubscriptionId")
+                        .HasColumnType("int")
+                        .HasColumnName("subscription_id");
+
+                    b.HasKey("Id")
+                        .HasName("p_k_subscription_billings");
+
+                    b.ToTable("subscription_billings", (string)null);
+                });
+
+            modelBuilder.Entity("optiflow_platform.Subscription.Domain.Model.Aggregates.Payment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("id");
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("decimal(10,2)")
+                        .HasColumnName("amount");
+
+                    b.Property<string>("PaymentMethod")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)")
+                        .HasColumnName("payment_method");
+
+                    b.Property<DateTimeOffset?>("ProcessedAt")
+                        .HasColumnType("datetime")
+                        .HasColumnName("processed_at");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)")
+                        .HasColumnName("status");
+
+                    b.Property<int>("SubscriptionId")
+                        .HasColumnType("int")
+                        .HasColumnName("subscription_id");
+
+                    b.HasKey("Id")
+                        .HasName("p_k_subscription_payments");
+
+                    b.ToTable("subscription_payments", (string)null);
+                });
+
+            modelBuilder.Entity("optiflow_platform.Subscription.Domain.Model.Aggregates.Plan", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("id");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("varchar(500)")
+                        .HasColumnName("description");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)")
+                        .HasColumnName("name");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(10,2)")
+                        .HasColumnName("price");
+
+                    b.Property<string>("Tier")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)")
+                        .HasColumnName("tier");
+
+                    b.HasKey("Id")
+                        .HasName("p_k_subscription_plans");
+
+                    b.ToTable("subscription_plans", (string)null);
+                });
+
+            modelBuilder.Entity("optiflow_platform.Subscription.Domain.Model.Aggregates.Subscription", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("id");
+
+                    b.Property<int>("AdminId")
+                        .HasColumnType("int")
+                        .HasColumnName("admin_id");
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("decimal(10,2)")
+                        .HasColumnName("amount");
+
+                    b.Property<DateTimeOffset?>("EndDate")
+                        .HasColumnType("datetime")
+                        .HasColumnName("end_date");
+
+                    b.Property<string>("PaymentMethod")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)")
+                        .HasColumnName("payment_method");
+
+                    b.Property<int>("PlanId")
+                        .HasColumnType("int")
+                        .HasColumnName("plan_id");
+
+                    b.Property<DateTimeOffset?>("StartDate")
+                        .HasColumnType("datetime")
+                        .HasColumnName("start_date");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)")
+                        .HasColumnName("status");
+
+                    b.Property<string>("Tier")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)")
+                        .HasColumnName("tier");
+
+                    b.HasKey("Id")
+                        .HasName("p_k_subscriptions");
+
+                    b.ToTable("subscriptions", (string)null);
                 });
 
             modelBuilder.Entity("optiflow_platform.Analytics.Domain.Model.Entities.StaffMetric", b =>
@@ -748,6 +898,40 @@ namespace optiflow_platform.Shared.Infrastructure.Persistence.EFC.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("f_k_prescriptions_clinical_records_clinical_record_id");
+                });
+
+            modelBuilder.Entity("optiflow_platform.LabAndOrders.Domain.Model.Aggregates.Laboratory", b =>
+                {
+                    b.OwnsOne("optiflow_platform.LabAndOrders.Domain.Model.ValueObjects.ContactInfo", "ContactInfo", b1 =>
+                        {
+                            b1.Property<int>("Id")
+                                .HasColumnType("int")
+                                .HasColumnName("id");
+
+                            b1.Property<string>("Email")
+                                .IsRequired()
+                                .HasMaxLength(255)
+                                .HasColumnType("varchar(255)")
+                                .HasColumnName("contact_email");
+
+                            b1.Property<string>("Phone")
+                                .IsRequired()
+                                .HasMaxLength(50)
+                                .HasColumnType("varchar(50)")
+                                .HasColumnName("contact_phone");
+
+                            b1.HasKey("Id")
+                                .HasName("p_k_laboratories");
+
+                            b1.ToTable("laboratories");
+
+                            b1.WithOwner()
+                                .HasForeignKey("Id")
+                                .HasConstraintName("f_k_laboratories_laboratories_id");
+                        });
+
+                    b.Navigation("ContactInfo")
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

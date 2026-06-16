@@ -12,7 +12,7 @@ public static class WorkOrderResourceFromEntityAssembler
     ///     Converts a WorkOrder entity to a WorkOrderResource.
     /// </summary>
     public static WorkOrderResource ToResourceFromEntity(WorkOrder workOrder) =>
-        new(workOrder.Id, workOrder.SaleId, workOrder.RecipeId, workOrder.LabId,
+        new(workOrder.Id, workOrder.SaleId, workOrder.RecipeId, workOrder.LaboratoryId.Value,
             workOrder.Status, workOrder.Priority, workOrder.PatientName,
             workOrder.LaboratoryName, workOrder.LensType, workOrder.Frame,
             workOrder.Prescription, workOrder.DeliveryDate,

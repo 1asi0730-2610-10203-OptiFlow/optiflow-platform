@@ -1,4 +1,6 @@
-﻿namespace optiflow_platform.Subscription.Domain.Model.Commands;
+using optiflow_platform.Subscription.Domain.Model.ValueObjects;
+
+namespace optiflow_platform.Subscription.Domain.Model.Commands;
 
 /// <summary>
 ///  Issued to charge the payment for a given subscription.
@@ -7,6 +9,6 @@
 /// <param name="Amount"></param>
 /// <param name="PaymentMethod"></param>
 public record ProcessSubscriptionPaymentCommand(
-    int SubscriptionId,
+    SubscriptionId SubscriptionId,
     decimal Amount,
     string PaymentMethod);

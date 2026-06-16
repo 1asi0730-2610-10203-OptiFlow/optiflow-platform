@@ -14,6 +14,7 @@ using optiflow_platform.Resources;
 using optiflow_platform.Sales.Application.Services;
 using optiflow_platform.Sales.Domain.Repositories;
 using optiflow_platform.Sales.Infrastructure.Persistence.EFC.Repositories;
+using optiflow_platform.Sales.Interfaces.Acl;
 using optiflow_platform.Shared.Domain.Repositories;
 using optiflow_platform.Shared.Infrastructure.Interfaces.ASP.Configuration;
 using optiflow_platform.Shared.Infrastructure.Persistence.EFC.Configuration;
@@ -32,6 +33,22 @@ using optiflow_platform.PatientCenter.Application.Services;
 using optiflow_platform.PatientCenter.Domain.Repositories;
 using optiflow_platform.PatientCenter.Infrastructure.Persistence.EFC.Repositories;
 
+// Subscription aliases — disambiguate from Sales types with the same short name
+using SubPaymentRepo      = optiflow_platform.Subscription.Domain.Repositories.IPaymentRepository;
+using SubPaymentCmdSvc    = optiflow_platform.Subscription.Application.Services.IPaymentCommandService;
+using SubPaymentQrySvc    = optiflow_platform.Subscription.Application.Services.IPaymentQueryService;
+using SubPaymentCmdImpl   = optiflow_platform.Subscription.Application.Internal.CommandServices.PaymentCommandService;
+using SubPaymentQryImpl   = optiflow_platform.Subscription.Application.Internal.QueryServices.PaymentQueryService;
+using SubPaymentRepoImpl  = optiflow_platform.Subscription.Infrastructure.Persistence.EFC.Repositories.PaymentRepository;
+// Sales aliases — needed now that both contexts are imported
+using SalesPaymentRepo    = optiflow_platform.Sales.Domain.Repositories.IPaymentRepository;
+using SalesPaymentRepoImpl= optiflow_platform.Sales.Infrastructure.Persistence.EFC.Repositories.PaymentRepository;
+using SalesPaymentCmdSvc  = optiflow_platform.Sales.Application.Services.IPaymentCommandService;
+using SalesPaymentQrySvc  = optiflow_platform.Sales.Application.Services.IPaymentQueryService;
+using SalesPaymentCmdImpl = optiflow_platform.Sales.Application.Internal.CommandServices.PaymentCommandService;
+using SalesPaymentQryImpl = optiflow_platform.Sales.Application.Internal.QueryServices.PaymentQueryService;
+
+using Cortex.Mediator.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
 
@@ -91,6 +108,9 @@ builder.Services.AddDbContext<AppDbContext>((serviceProvider, options) =>
         options.EnableSensitiveDataLogging();
 });
 
+// Cortex Mediator — scans this assembly for all IEventHandler implementations
+builder.Services.AddCortexMediator([typeof(Program)]);
+
 // Shared Bounded Context Injection
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
@@ -100,6 +120,7 @@ builder.Services.AddScoped<ILaboratoryRepository, LaboratoryRepository>();
 builder.Services.AddScoped<IWorkOrderCommandService, WorkOrderCommandService>();
 builder.Services.AddScoped<IWorkOrderQueryService, WorkOrderQueryService>();
 builder.Services.AddScoped<ILaboratoryQueryService, LaboratoryQueryService>();
+builder.Services.AddScoped<ILaboratoryCommandService, LaboratoryCommandService>();
 
 // Analytics Bounded Context Injection
 builder.Services.AddScoped<IAnalyticsReportRepository, AnalyticsReportRepository>();
@@ -117,12 +138,27 @@ builder.Services.AddScoped<IClinicalRecordQueryService, ClinicalRecordQueryServi
 builder.Services.AddScoped<IPrescriptionCommandService, PrescriptionCommandService>();
 builder.Services.AddScoped<IPrescriptionQueryService, PrescriptionQueryService>();
 // Sales Bounded Context Injection
+builder.Services.AddScoped<ILabAndOrdersContextFacade, LabAndOrdersContextFacade>();
 builder.Services.AddScoped<ISaleRepository, SaleRepository>();
-builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
+builder.Services.AddScoped<SalesPaymentRepo, SalesPaymentRepoImpl>();
 builder.Services.AddScoped<ISaleCommandService, SaleCommandService>();
 builder.Services.AddScoped<ISaleQueryService, SaleQueryService>();
-builder.Services.AddScoped<IPaymentCommandService, PaymentCommandService>();
-builder.Services.AddScoped<IPaymentQueryService, PaymentQueryService>();
+builder.Services.AddScoped<SalesPaymentCmdSvc, SalesPaymentCmdImpl>();
+builder.Services.AddScoped<SalesPaymentQrySvc, SalesPaymentQryImpl>();
+
+// Subscription Bounded Context Injection
+builder.Services.AddScoped<ISubscriptionRepository, SubscriptionRepository>();
+builder.Services.AddScoped<SubPaymentRepo, SubPaymentRepoImpl>();
+builder.Services.AddScoped<IBillingRepository, BillingRepository>();
+builder.Services.AddScoped<IPlanRepository, PlanRepository>();
+builder.Services.AddScoped<ISubscriptionCommandService, SubscriptionCommandService>();
+builder.Services.AddScoped<SubPaymentCmdSvc, SubPaymentCmdImpl>();
+builder.Services.AddScoped<IBillingCommandService, BillingCommandService>();
+builder.Services.AddScoped<IPlanCommandService, PlanCommandService>();
+builder.Services.AddScoped<ISubscriptionQueryService, SubscriptionQueryService>();
+builder.Services.AddScoped<SubPaymentQrySvc, SubPaymentQryImpl>();
+builder.Services.AddScoped<IBillingQueryService, BillingQueryService>();
+builder.Services.AddScoped<IPlanQueryService, PlanQueryService>();
 
 // Inventory Bounded Context Injection
 builder.Services.AddScoped<IProductRepository, ProductRepository>();

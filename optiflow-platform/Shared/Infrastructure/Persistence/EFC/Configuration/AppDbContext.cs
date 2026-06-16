@@ -5,12 +5,18 @@ using optiflow_platform.Clinical.Domain.Model.Entities;
 using optiflow_platform.Inventory.Domain.Model.Aggregates;
 using optiflow_platform.Inventory.Domain.Model.Entities;
 using optiflow_platform.LabAndOrders.Domain.Model.Aggregates;
-using optiflow_platform.LabAndOrders.Domain.Model.Entities;
+using optiflow_platform.LabAndOrders.Domain.Model.ValueObjects;
 using optiflow_platform.Sales.Domain.Model.Aggregates;
+using optiflow_platform.Subscription.Domain.Model.ValueObjects;
 using optiflow_platform.Shared.Infrastructure.Persistence.EFC.Configuration.Extensions;
 using optiflow_platform.Shared.Infrastructure.Persistence.EFC.Interceptors;
 using Microsoft.EntityFrameworkCore;
 using optiflow_platform.PatientCenter.Domain.Model.Entities;
+using SubscriptionAggregate = optiflow_platform.Subscription.Domain.Model.Aggregates.Subscription;
+using SubscriptionPayment   = optiflow_platform.Subscription.Domain.Model.Aggregates.Payment;
+using SubscriptionBilling   = optiflow_platform.Subscription.Domain.Model.Aggregates.Billing;
+using SubscriptionPlan      = optiflow_platform.Subscription.Domain.Model.Aggregates.Plan;
+
 
 namespace optiflow_platform.Shared.Infrastructure.Persistence.EFC.Configuration;
 
@@ -35,13 +41,21 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
         builder.Entity<Laboratory>().HasKey(l => l.Id);
         builder.Entity<Laboratory>().Property(l => l.Id).IsRequired().ValueGeneratedOnAdd();
         builder.Entity<Laboratory>().Property(l => l.Name).IsRequired().HasMaxLength(255);
-        builder.Entity<Laboratory>().Property(l => l.ContactInfo).HasMaxLength(500);
+        builder.Entity<Laboratory>().HasIndex(l => l.Name).IsUnique();
+        builder.Entity<Laboratory>().OwnsOne(l => l.ContactInfo, ci =>
+        {
+            ci.WithOwner().HasForeignKey("Id");
+            ci.Property(c => c.Phone).HasColumnName("contact_phone").IsRequired().HasMaxLength(50);
+            ci.Property(c => c.Email).HasColumnName("contact_email").IsRequired().HasMaxLength(255);
+        });
 
         builder.Entity<WorkOrder>().HasKey(w => w.Id);
         builder.Entity<WorkOrder>().Property(w => w.Id).IsRequired().ValueGeneratedOnAdd();
         builder.Entity<WorkOrder>().Property(w => w.SaleId).IsRequired();
         builder.Entity<WorkOrder>().Property(w => w.RecipeId).IsRequired();
-        builder.Entity<WorkOrder>().Property(w => w.LabId).IsRequired();
+        builder.Entity<WorkOrder>().Property(w => w.LaboratoryId)
+            .IsRequired()
+            .HasConversion(v => v.Value, v => new LaboratoryId(v));
         builder.Entity<WorkOrder>().Property(w => w.Status).IsRequired().HasMaxLength(50);
         builder.Entity<WorkOrder>().Property(w => w.Priority).IsRequired().HasMaxLength(20);
         builder.Entity<WorkOrder>().Property(w => w.PatientName).IsRequired().HasMaxLength(255);
@@ -123,12 +137,22 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
         // Sales Bounded Context
         builder.Entity<Sale>().HasKey(s => s.Id);
         builder.Entity<Sale>().Property(s => s.Id).IsRequired().ValueGeneratedOnAdd();
-        builder.Entity<Sale>().Property(s => s.ClientName).IsRequired().HasMaxLength(255);
+        builder.Entity<Sale>().Property(s => s.InvoiceNumber).IsRequired().HasMaxLength(50);
+        builder.Entity<Sale>().Property(s => s.LabOrderNumber).HasMaxLength(50);
+        builder.Entity<Sale>().Property(s => s.PatientId).IsRequired();
+        builder.Entity<Sale>().Property(s => s.PatientName).IsRequired().HasMaxLength(255);
+        builder.Entity<Sale>().Property(s => s.UserId).IsRequired();
+        builder.Entity<Sale>().Property(s => s.UserName).IsRequired().HasMaxLength(255);
         builder.Entity<Sale>().Property(s => s.TotalAmount).IsRequired().HasColumnType("decimal(10,2)");
-        builder.Entity<Sale>().Property(s => s.QuotaAmount).HasColumnType("decimal(10,2)");
-        builder.Entity<Sale>().Property(s => s.DiscountPercentage).HasColumnType("decimal(5,2)");
+        builder.Entity<Sale>().Property(s => s.Advance).HasColumnType("decimal(10,2)");
+        builder.Entity<Sale>().Property(s => s.PendingBalance).HasColumnType("decimal(10,2)");
+        builder.Entity<Sale>().Property(s => s.DiscountCode).HasMaxLength(50);
+        builder.Entity<Sale>().Property(s => s.DiscountAmount).HasColumnType("decimal(10,2)");
+        builder.Entity<Sale>().Property(s => s.PaymentMethod).IsRequired().HasMaxLength(50);
         builder.Entity<Sale>().Property(s => s.Status).IsRequired().HasMaxLength(50);
-        builder.Entity<Sale>().Property(s => s.SaleDate).IsRequired().HasMaxLength(50);
+        builder.Entity<Sale>().Property(s => s.CreatedAt).IsRequired().HasMaxLength(50);
+        builder.Entity<Sale>().Property(s => s.DeliveredAt).HasMaxLength(50);
+        builder.Entity<Sale>().Property(s => s.Notes).HasMaxLength(1000);
 
         builder.Entity<Payment>().HasKey(p => p.Id);
         builder.Entity<Payment>().Property(p => p.Id).IsRequired().ValueGeneratedOnAdd();
@@ -137,6 +161,8 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
         builder.Entity<Payment>().Property(p => p.PaidAmount).HasColumnType("decimal(10,2)");
         builder.Entity<Payment>().Property(p => p.OutstandingBalance).HasColumnType("decimal(10,2)");
         builder.Entity<Payment>().Property(p => p.Status).IsRequired().HasMaxLength(20);
+        builder.Entity<Payment>().Property(p => p.Method).IsRequired().HasMaxLength(50);
+        builder.Entity<Payment>().Property(p => p.PaidAt).IsRequired().HasMaxLength(50);
 
         // Inventory Bounded Context
         builder.Entity<Category>().HasKey(c => c.Id);
@@ -194,6 +220,55 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
         builder.Entity<PatientNotification>().Property(n => n.Status).IsRequired().HasMaxLength(20);
         builder.Entity<PatientNotification>().Property(n => n.SentAt).IsRequired();
         
+        // ── Subscription Bounded Context ──────────────────────────────────────
+        builder.Entity<SubscriptionPlan>().ToTable("subscription_plans");
+        builder.Entity<SubscriptionPlan>().HasKey(p => p.Id);
+        builder.Entity<SubscriptionPlan>().Property(p => p.Id).IsRequired().ValueGeneratedOnAdd();
+        builder.Entity<SubscriptionPlan>().Property(p => p.Name).IsRequired().HasMaxLength(100);
+        builder.Entity<SubscriptionPlan>().Property(p => p.Price).IsRequired().HasColumnType("decimal(10,2)");
+        builder.Entity<SubscriptionPlan>().Property(p => p.Description).HasMaxLength(500);
+        builder.Entity<SubscriptionPlan>().Property(p => p.Tier)
+            .IsRequired().HasMaxLength(50)
+            .HasConversion(v => v.Value, v => new SubscriptionTier(v));
+        builder.Entity<SubscriptionPlan>().Ignore(p => p.PlanId);
+
+        builder.Entity<SubscriptionAggregate>().ToTable("subscriptions");
+        builder.Entity<SubscriptionAggregate>().HasKey(s => s.Id);
+        builder.Entity<SubscriptionAggregate>().Property(s => s.Id).IsRequired().ValueGeneratedOnAdd();
+        builder.Entity<SubscriptionAggregate>().Property(s => s.AdminId).IsRequired();
+        builder.Entity<SubscriptionAggregate>().Property(s => s.PlanId)
+            .IsRequired()
+            .HasConversion(v => v.Value, v => new PlanId(v));
+        builder.Entity<SubscriptionAggregate>().Property(s => s.Tier)
+            .IsRequired().HasMaxLength(50)
+            .HasConversion(v => v.Value, v => new SubscriptionTier(v));
+        builder.Entity<SubscriptionAggregate>().Property(s => s.Amount).IsRequired().HasColumnType("decimal(10,2)");
+        builder.Entity<SubscriptionAggregate>().Property(s => s.PaymentMethod).IsRequired().HasMaxLength(50);
+        builder.Entity<SubscriptionAggregate>().Property(s => s.Status)
+            .IsRequired().HasMaxLength(50)
+            .HasConversion(v => v.Value, v => new SubscriptionStatus(v));
+
+        builder.Entity<SubscriptionPayment>().ToTable("subscription_payments");
+        builder.Entity<SubscriptionPayment>().HasKey(p => p.Id);
+        builder.Entity<SubscriptionPayment>().Property(p => p.Id).IsRequired().ValueGeneratedOnAdd();
+        builder.Entity<SubscriptionPayment>().Property(p => p.SubscriptionId)
+            .IsRequired()
+            .HasConversion(v => v.Value, v => new SubscriptionId(v));
+        builder.Entity<SubscriptionPayment>().Property(p => p.Amount).IsRequired().HasColumnType("decimal(10,2)");
+        builder.Entity<SubscriptionPayment>().Property(p => p.PaymentMethod).IsRequired().HasMaxLength(50);
+        builder.Entity<SubscriptionPayment>().Property(p => p.Status)
+            .IsRequired().HasMaxLength(50)
+            .HasConversion(v => v.Value, v => new PaymentStatus(v));
+
+        builder.Entity<SubscriptionBilling>().ToTable("subscription_billings");
+        builder.Entity<SubscriptionBilling>().HasKey(b => b.Id);
+        builder.Entity<SubscriptionBilling>().Property(b => b.Id).IsRequired().ValueGeneratedOnAdd();
+        builder.Entity<SubscriptionBilling>().Property(b => b.SubscriptionId)
+            .IsRequired()
+            .HasConversion(v => v.Value, v => new SubscriptionId(v));
+        builder.Entity<SubscriptionBilling>().Property(b => b.BillingStatus).IsRequired().HasMaxLength(50);
+        builder.Entity<SubscriptionBilling>().Property(b => b.AutoRenew).IsRequired();
+
         builder.UseSnakeCaseNamingConvention();
     }
 }
