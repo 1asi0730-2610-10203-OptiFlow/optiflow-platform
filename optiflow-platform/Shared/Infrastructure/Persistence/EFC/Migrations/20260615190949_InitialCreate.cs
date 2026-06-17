@@ -95,7 +95,7 @@ namespace optiflow_platform.Shared.Infrastructure.Persistence.EFC.Migrations
                 `user_id` int NOT NULL,
                 `user_name` varchar(255) NOT NULL,
                 `total_amount` decimal(10,2) NOT NULL,
-                `adelanto` decimal(10,2) NOT NULL,
+                `advance` decimal(10,2) NOT NULL,
                 `pending_balance` decimal(10,2) NOT NULL,
                 `discount_code` varchar(50) NOT NULL,
                 `discount_amount` decimal(10,2) NOT NULL,

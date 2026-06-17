@@ -1,7 +1,7 @@
-using optiflow_platform.Shared.Infrastructure.Interfaces.ASP.Configuration.Extensions;
+using optiflow_platform.Shared.Interfaces.ASP.Configuration.Extensions;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 
-namespace optiflow_platform.Shared.Infrastructure.Interfaces.ASP.Configuration;
+namespace optiflow_platform.Shared.Interfaces.ASP.Configuration;
 
 /// <summary>
 ///     An MVC controller-model convention that rewrites <c>[controller]</c> route tokens
