@@ -16,7 +16,7 @@ using optiflow_platform.Sales.Domain.Repositories;
 using optiflow_platform.Sales.Infrastructure.Persistence.EFC.Repositories;
 using optiflow_platform.Sales.Interfaces.Acl;
 using optiflow_platform.Shared.Domain.Repositories;
-using optiflow_platform.Shared.Infrastructure.Interfaces.ASP.Configuration;
+using optiflow_platform.Shared.Interfaces.ASP.Configuration;
 using optiflow_platform.Shared.Infrastructure.Persistence.EFC.Configuration;
 using optiflow_platform.Shared.Infrastructure.Persistence.EFC.Repositories;
 using optiflow_platform.Analytics.Application.Internal.QueryServices;

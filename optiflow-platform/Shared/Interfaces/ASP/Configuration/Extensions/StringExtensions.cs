@@ -1,6 +1,6 @@
 using System.Text.RegularExpressions;
 
-namespace optiflow_platform.Shared.Infrastructure.Interfaces.ASP.Configuration.Extensions;
+namespace optiflow_platform.Shared.Interfaces.ASP.Configuration.Extensions;
 
 /// <summary>
 ///     String utility extensions used by the ASP.NET Core infrastructure layer.
