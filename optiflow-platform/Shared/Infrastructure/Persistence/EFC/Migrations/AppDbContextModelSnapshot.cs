@@ -141,6 +141,11 @@ namespace optiflow_platform.Shared.Infrastructure.Persistence.EFC.Migrations
                         .HasColumnType("date")
                         .HasColumnName("birth_date");
 
+                    b.Property<string>("CustomerUuid")
+                        .IsRequired()
+                        .HasColumnType("longtext")
+                        .HasColumnName("customer_uuid");
+
                     b.Property<string>("Dni")
                         .IsRequired()
                         .HasMaxLength(20)
@@ -185,6 +190,11 @@ namespace optiflow_platform.Shared.Infrastructure.Persistence.EFC.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasColumnName("id");
+
+                    b.Property<string>("ClinicalRecordUuid")
+                        .IsRequired()
+                        .HasColumnType("longtext")
+                        .HasColumnName("clinical_record_uuid");
 
                     b.Property<int>("PatientId")
                         .HasColumnType("int")
@@ -254,6 +264,11 @@ namespace optiflow_platform.Shared.Infrastructure.Persistence.EFC.Migrations
                     b.Property<decimal>("OiSphere")
                         .HasColumnType("decimal(5,2)")
                         .HasColumnName("oi_sphere");
+
+                    b.Property<string>("PrescriptionUuid")
+                        .IsRequired()
+                        .HasColumnType("longtext")
+                        .HasColumnName("prescription_uuid");
 
                     b.HasKey("Id")
                         .HasName("p_k_prescriptions");
@@ -408,6 +423,29 @@ namespace optiflow_platform.Shared.Infrastructure.Persistence.EFC.Migrations
                     b.ToTable("stock_audit_logs");
                 });
 
+            modelBuilder.Entity("optiflow_platform.Inventory.Domain.Model.Aggregates.Supplier", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("id");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)")
+                        .HasColumnName("name");
+
+                    b.HasKey("Id")
+                        .HasName("p_k_suppliers");
+
+                    b.HasIndex("Name")
+                        .IsUnique()
+                        .HasDatabaseName("i_x_suppliers_name");
+
+                    b.ToTable("suppliers");
+                });
+
             modelBuilder.Entity("optiflow_platform.Inventory.Domain.Model.Entities.Category", b =>
                 {
                     b.Property<int>("Id")
@@ -425,43 +463,6 @@ namespace optiflow_platform.Shared.Infrastructure.Persistence.EFC.Migrations
                         .HasName("p_k_categories");
 
                     b.ToTable("categories");
-                });
-
-            modelBuilder.Entity("optiflow_platform.Inventory.Domain.Model.Entities.Supplier", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("id");
-
-                    b.Property<string>("ContactPerson")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("varchar(255)")
-                        .HasColumnName("contact_person");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("varchar(255)")
-                        .HasColumnName("email");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("varchar(255)")
-                        .HasColumnName("name");
-
-                    b.Property<string>("Phone")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("varchar(50)")
-                        .HasColumnName("phone");
-
-                    b.HasKey("Id")
-                        .HasName("p_k_suppliers");
-
-                    b.ToTable("suppliers");
                 });
 
             modelBuilder.Entity("optiflow_platform.LabAndOrders.Domain.Model.Aggregates.Laboratory", b =>
@@ -970,6 +971,46 @@ namespace optiflow_platform.Shared.Infrastructure.Persistence.EFC.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("f_k_prescriptions_clinical_records_clinical_record_id");
+                });
+
+            modelBuilder.Entity("optiflow_platform.Inventory.Domain.Model.Aggregates.Supplier", b =>
+                {
+                    b.OwnsOne("optiflow_platform.Inventory.Domain.Model.ValueObjects.SupplierContact", "Contact", b1 =>
+                        {
+                            b1.Property<int>("Id")
+                                .HasColumnType("int")
+                                .HasColumnName("id");
+
+                            b1.Property<string>("ContactPerson")
+                                .IsRequired()
+                                .HasMaxLength(255)
+                                .HasColumnType("varchar(255)")
+                                .HasColumnName("contact_person");
+
+                            b1.Property<string>("Email")
+                                .IsRequired()
+                                .HasMaxLength(255)
+                                .HasColumnType("varchar(255)")
+                                .HasColumnName("contact_email");
+
+                            b1.Property<string>("Phone")
+                                .IsRequired()
+                                .HasMaxLength(50)
+                                .HasColumnType("varchar(50)")
+                                .HasColumnName("contact_phone");
+
+                            b1.HasKey("Id")
+                                .HasName("p_k_suppliers");
+
+                            b1.ToTable("suppliers");
+
+                            b1.WithOwner()
+                                .HasForeignKey("Id")
+                                .HasConstraintName("f_k_suppliers_suppliers_id");
+                        });
+
+                    b.Navigation("Contact")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("optiflow_platform.LabAndOrders.Domain.Model.Aggregates.Laboratory", b =>
