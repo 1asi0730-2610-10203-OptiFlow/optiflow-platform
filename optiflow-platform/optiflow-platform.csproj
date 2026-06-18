@@ -6,9 +6,6 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <InvariantGlobalization>false</InvariantGlobalization>
         <RootNamespace>optiflow_platform</RootNamespace>
-        <RuntimeIdentifier>win-x86</RuntimeIdentifier>
-        <SelfContained>true</SelfContained>
-        <PublishSingleFile>false</PublishSingleFile>
     </PropertyGroup>
 
     <ItemGroup>
