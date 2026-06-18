@@ -39,7 +39,7 @@ public class PatientOrdersController(
 
             var patientSales = sales
                 .Where(s => s.PatientId == patientId)
-                .ToDictionary(s => s.Id);
+                .ToDictionary(s => s.Id.Value);
 
             var patientOrders = workOrders
                 .Where(wo => patientSales.ContainsKey(wo.SaleId))
