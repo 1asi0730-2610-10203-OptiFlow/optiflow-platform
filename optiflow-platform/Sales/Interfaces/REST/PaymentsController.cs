@@ -56,7 +56,7 @@ public class PaymentsController(
     [SwaggerResponse(404, "The payment was not found")]
     public async Task<ActionResult> GetPaymentById(int id, CancellationToken cancellationToken = default)
     {
-        var query = new GetPaymentByIdQuery(id);
+        var query = new GetPaymentByIdQuery(new PaymentId(id));
         var result = await paymentQueryService.Handle(query, cancellationToken);
         if (result is null) return NotFound();
         return Ok(PaymentResourceFromEntityAssembler.ToResourceFromEntity(result));

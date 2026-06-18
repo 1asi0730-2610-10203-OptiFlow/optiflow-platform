@@ -163,7 +163,10 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
         builder.Entity<Sale>().Property(s => s.Notes).HasMaxLength(1000);
 
         builder.Entity<Payment>().HasKey(p => p.Id);
-        builder.Entity<Payment>().Property(p => p.Id).IsRequired().ValueGeneratedOnAdd();
+        builder.Entity<Payment>().Property(p => p.Id)
+            .HasConversion(id => id.Value, v => new PaymentId(v))
+            .IsRequired()
+            .ValueGeneratedOnAdd();
         builder.Entity<Payment>().Property(p => p.SaleId).IsRequired();
         builder.Entity<Payment>().Property(p => p.TotalAmount).IsRequired().HasColumnType("decimal(10,2)");
         builder.Entity<Payment>().Property(p => p.PaidAmount).HasColumnType("decimal(10,2)");
