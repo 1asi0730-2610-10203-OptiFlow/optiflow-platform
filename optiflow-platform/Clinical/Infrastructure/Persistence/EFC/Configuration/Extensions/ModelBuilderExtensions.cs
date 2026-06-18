@@ -16,8 +16,11 @@ public static class ModelBuilderExtensions
         builder.Entity<Patient>().HasIndex(p => p.Dni).IsUnique();
         builder.Entity<Patient>().Property(p => p.Phone).HasMaxLength(20);
         builder.Entity<Patient>().Property(p => p.Email).HasMaxLength(255);
-        builder.Entity<Patient>().Property(p => p.BirthDate).IsRequired();
-
+        builder.Entity<Patient>().Property(p => p.BirthDate).IsRequired()
+            .HasConversion(
+                v => v.ToDateTime(TimeOnly.MinValue),
+                v => DateOnly.FromDateTime(v)
+            );
         builder.Entity<ClinicalRecord>().HasKey(r => r.Id);
         builder.Entity<ClinicalRecord>().Property(r => r.Id).IsRequired().ValueGeneratedOnAdd();
         builder.Entity<ClinicalRecord>().Property(r => r.PatientId).IsRequired();
