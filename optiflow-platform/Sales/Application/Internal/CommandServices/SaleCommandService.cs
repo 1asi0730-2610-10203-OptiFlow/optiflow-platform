@@ -25,6 +25,9 @@ public class SaleCommandService(
     public async Task<Result<Sale, CreateSaleError>> Handle(CreateSaleCommand command,
         CancellationToken cancellationToken = default)
     {
+        if (await saleRepository.ExistsByInvoiceNumberAsync(command.InvoiceNumber, cancellationToken))
+            return new Result<Sale, CreateSaleError>.Failure(CreateSaleError.DuplicateInvoiceNumber);
+
         try
         {
             var sale = new Sale(command);

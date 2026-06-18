@@ -14,6 +14,7 @@ using optiflow_platform.Shared.Infrastructure.Persistence.EFC.Configuration.Exte
 using optiflow_platform.Shared.Infrastructure.Persistence.EFC.Interceptors;
 using Microsoft.EntityFrameworkCore;
 using optiflow_platform.PatientCenter.Domain.Model.Entities;
+using PaymentId = optiflow_platform.Sales.Domain.Model.ValueObjects.PaymentId;
 using SubscriptionAggregate = optiflow_platform.Subscription.Domain.Model.Aggregates.Subscription;
 using SubscriptionPayment   = optiflow_platform.Subscription.Domain.Model.Aggregates.Payment;
 using SubscriptionBilling   = optiflow_platform.Subscription.Domain.Model.Aggregates.Billing;

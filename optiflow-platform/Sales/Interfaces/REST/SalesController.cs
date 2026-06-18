@@ -36,6 +36,7 @@ public class SalesController(
         OperationId = "CreateSale")]
     [SwaggerResponse(201, "The sale was created", typeof(SaleResource))]
     [SwaggerResponse(400, "The request payload is invalid", typeof(string))]
+    [SwaggerResponse(409, "A sale with this invoice number already exists")]
     [SwaggerResponse(500, "Unexpected server error", typeof(ProblemDetails))]
     public async Task<ActionResult> CreateSale([FromBody] CreateSaleResource resource,
         CancellationToken cancellationToken)
@@ -50,6 +51,8 @@ public class SalesController(
                     CreatedAtAction(nameof(GetSaleById),
                         new { id = success.Value.Id },
                         SaleResourceFromEntityAssembler.ToResourceFromEntity(success.Value)),
+                Result<Sale, CreateSaleError>.Failure { Error: CreateSaleError.DuplicateInvoiceNumber } =>
+                    Conflict("A sale with this invoice number already exists."),
                 Result<Sale, CreateSaleError>.Failure =>
                     Problem(title: "Unexpected error", detail: "Could not create sale.", statusCode: 500),
                 _ => Problem(statusCode: 500)

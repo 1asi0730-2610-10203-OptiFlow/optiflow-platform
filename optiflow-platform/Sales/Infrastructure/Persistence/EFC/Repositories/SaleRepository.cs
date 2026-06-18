@@ -12,4 +12,7 @@ public class SaleRepository(AppDbContext context)
 {
     public override async Task<Sale?> FindByIdAsync(int id, CancellationToken cancellationToken = default) =>
         await Context.Set<Sale>().FirstOrDefaultAsync(s => s.Id == new SaleId(id), cancellationToken);
+
+    public async Task<bool> ExistsByInvoiceNumberAsync(InvoiceNumber invoiceNumber, CancellationToken cancellationToken = default) =>
+        await Context.Set<Sale>().AnyAsync(s => s.InvoiceNumber == invoiceNumber, cancellationToken);
 }
