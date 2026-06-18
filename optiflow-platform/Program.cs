@@ -37,6 +37,7 @@ using optiflow_platform.PatientCenter.Application.Internal.QueryServices;
 using optiflow_platform.PatientCenter.Application.Services;
 using optiflow_platform.PatientCenter.Domain.Repositories;
 using optiflow_platform.PatientCenter.Infrastructure.Persistence.EFC.Repositories;
+using optiflow_platform.PatientCenter.Application.Internal.CommandServices;
 
 // Subscription aliases — disambiguate from Sales types with the same short name
 using SubPaymentRepo      = optiflow_platform.Subscription.Domain.Repositories.IPaymentRepository;
@@ -181,6 +182,7 @@ builder.Services.AddScoped<IPatientNotificationRepository, PatientNotificationRe
 builder.Services.AddScoped<ILensMaterialRepository, LensMaterialRepository>();
 builder.Services.AddScoped<IPatientNotificationQueryService, PatientNotificationQueryService>();
 builder.Services.AddScoped<ILensMaterialQueryService, LensMaterialQueryService>();
+builder.Services.AddScoped<IPatientNotificationCommandService, PatientNotificationCommandService>();
 var app = builder.Build();
 
 // Apply pending EF Core migrations on startup
