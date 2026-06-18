@@ -103,8 +103,8 @@ builder.Services.AddDbContext<AppDbContext>((serviceProvider, options) =>
         throw new InvalidOperationException("Database connection string is not set in the configuration.");
 
     var connectionString = Environment.ExpandEnvironmentVariables(connectionStringTemplate);
-    if (string.IsNullOrWhiteSpace(connectionString))
-        throw new InvalidOperationException("Database connection string is not set in the configuration.");
+    if (string.IsNullOrWhiteSpace(connectionString) || connectionString.Contains('%'))
+        throw new InvalidOperationException($"Database connection string contains unresolved environment variables: {connectionString}");
 
     options.UseMySQL(connectionString)
         .UseLoggerFactory(serviceProvider.GetRequiredService<ILoggerFactory>())
@@ -189,8 +189,16 @@ var app = builder.Build();
 // Apply pending EF Core migrations on startup
 using (var scope = app.Services.CreateScope())
 {
-    var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    context.Database.Migrate();
+    var logger = scope.ServiceProvider.GetRequiredService<ILogger<AppDbContext>>();
+    try
+    {
+        var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        context.Database.Migrate();
+    }
+    catch (Exception ex)
+    {
+        logger.LogCritical(ex, "Database migration failed on startup. App will continue but DB may be unavailable.");
+    }
 }
 
 // Configure the HTTP request pipeline.
