@@ -98,6 +98,9 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
         // ── Clinical Bounded Context ──────────────────────────────────────
         builder.Entity<Patient>().HasKey(p => p.Id);
         builder.Entity<Patient>().Property(p => p.Id).IsRequired().ValueGeneratedOnAdd();
+        builder.Entity<Patient>().Property(p => p.CustomerUuid).IsRequired().HasMaxLength(100);
+        builder.Entity<Patient>().HasIndex(p => p.CustomerUuid).IsUnique();
+        builder.Entity<Patient>().Ignore(p => p.PatientId);          // computed alias
         builder.Entity<Patient>().Property(p => p.FirstName).IsRequired().HasMaxLength(100);
         builder.Entity<Patient>().Property(p => p.LastName).IsRequired().HasMaxLength(100);
         builder.Entity<Patient>().Property(p => p.Dni).IsRequired().HasMaxLength(20);
@@ -105,9 +108,12 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
         builder.Entity<Patient>().Property(p => p.Phone).HasMaxLength(20);
         builder.Entity<Patient>().Property(p => p.Email).HasMaxLength(255);
         builder.Entity<Patient>().Property(p => p.BirthDate).IsRequired();
-
+ 
         builder.Entity<ClinicalRecord>().HasKey(r => r.Id);
         builder.Entity<ClinicalRecord>().Property(r => r.Id).IsRequired().ValueGeneratedOnAdd();
+        builder.Entity<ClinicalRecord>().Property(r => r.ClinicalRecordUuid).IsRequired().HasMaxLength(100);
+        builder.Entity<ClinicalRecord>().HasIndex(r => r.ClinicalRecordUuid).IsUnique();
+        builder.Entity<ClinicalRecord>().Ignore(r => r.RecordId);    // computed alias
         builder.Entity<ClinicalRecord>().Property(r => r.PatientId).IsRequired();
         builder.Entity<ClinicalRecord>().HasIndex(r => r.PatientId).IsUnique();
         builder.Entity<ClinicalRecord>()
@@ -115,11 +121,13 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
             .WithMany()
             .HasForeignKey(r => r.PatientId)
             .OnDelete(DeleteBehavior.Cascade);
-        // Ignore the navigation collection — loaded explicitly
         builder.Entity<ClinicalRecord>().Ignore(r => r.Prescriptions);
-
+ 
         builder.Entity<Prescription>().HasKey(p => p.Id);
         builder.Entity<Prescription>().Property(p => p.Id).IsRequired().ValueGeneratedOnAdd();
+        builder.Entity<Prescription>().Property(p => p.PrescriptionUuid).IsRequired().HasMaxLength(100);
+        builder.Entity<Prescription>().HasIndex(p => p.PrescriptionUuid).IsUnique();
+        builder.Entity<Prescription>().Ignore(p => p.PrescriptionId); // computed alias
         builder.Entity<Prescription>().Property(p => p.ClinicalRecordId).IsRequired();
         builder.Entity<Prescription>().Property(p => p.OdSphere).HasColumnType("decimal(5,2)");
         builder.Entity<Prescription>().Property(p => p.OdCylinder).HasColumnType("decimal(5,2)");
@@ -134,6 +142,7 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
             .WithMany()
             .HasForeignKey(p => p.ClinicalRecordId)
             .OnDelete(DeleteBehavior.Cascade);
+        
         // Sales Bounded Context
         builder.Entity<Sale>().HasKey(s => s.Id);
         builder.Entity<Sale>().Property(s => s.Id).IsRequired().ValueGeneratedOnAdd();

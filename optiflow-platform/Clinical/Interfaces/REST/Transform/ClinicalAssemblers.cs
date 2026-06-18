@@ -5,7 +5,6 @@ using optiflow_platform.Clinical.Interfaces.REST.Resources;
 
 namespace optiflow_platform.Clinical.Interfaces.REST.Transform;
 
-/// <summary>Assembler between <see cref="CreatePatientResource"/> and <see cref="CreatePatientCommand"/>.</summary>
 public static class CreatePatientCommandFromResourceAssembler
 {
     public static CreatePatientCommand ToCommandFromResource(CreatePatientResource resource) =>
@@ -17,7 +16,6 @@ public static class CreatePatientCommandFromResourceAssembler
             DateOnly.Parse(resource.BirthDate));
 }
 
-/// <summary>Assembler between <see cref="UpdatePatientResource"/> and <see cref="UpdatePatientCommand"/>.</summary>
 public static class UpdatePatientCommandFromResourceAssembler
 {
     public static UpdatePatientCommand ToCommandFromResource(int patientId, UpdatePatientResource resource) =>
@@ -30,11 +28,12 @@ public static class UpdatePatientCommandFromResourceAssembler
             DateOnly.Parse(resource.BirthDate));
 }
 
-/// <summary>Assembler that converts a <see cref="Patient"/> entity to a <see cref="PatientResource"/>.</summary>
 public static class PatientResourceFromEntityAssembler
 {
     public static PatientResource ToResourceFromEntity(Patient entity) =>
         new(entity.Id,
+            entity.PatientId,        // alias → mismo valor que Id
+            entity.CustomerUuid,
             entity.FirstName,
             entity.LastName,
             entity.Dni,
@@ -43,14 +42,15 @@ public static class PatientResourceFromEntityAssembler
             entity.BirthDate.ToString("yyyy-MM-dd"));
 }
 
-/// <summary>Assembler that converts a <see cref="ClinicalRecord"/> entity to a <see cref="ClinicalRecordResource"/>.</summary>
 public static class ClinicalRecordResourceFromEntityAssembler
 {
     public static ClinicalRecordResource ToResourceFromEntity(ClinicalRecord entity) =>
-        new(entity.Id, entity.PatientId);
+        new(entity.Id,
+            entity.RecordId,             // alias → mismo valor que Id
+            entity.ClinicalRecordUuid,
+            entity.PatientId);
 }
 
-/// <summary>Assembler between <see cref="CreatePrescriptionResource"/> and <see cref="CreatePrescriptionCommand"/>.</summary>
 public static class CreatePrescriptionCommandFromResourceAssembler
 {
     public static CreatePrescriptionCommand ToCommandFromResource(CreatePrescriptionResource resource) =>
@@ -66,11 +66,12 @@ public static class CreatePrescriptionCommandFromResourceAssembler
             resource.DoctorName);
 }
 
-/// <summary>Assembler that converts a <see cref="Prescription"/> entity to a <see cref="PrescriptionResource"/>.</summary>
 public static class PrescriptionResourceFromEntityAssembler
 {
     public static PrescriptionResource ToResourceFromEntity(Prescription entity) =>
         new(entity.Id,
+            entity.PrescriptionId,       // alias → mismo valor que Id
+            entity.PrescriptionUuid,
             entity.ClinicalRecordId,
             entity.OdSphere,
             entity.OdCylinder,

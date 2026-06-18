@@ -3,22 +3,17 @@ using optiflow_platform.Clinical.Domain.Model.Commands;
 namespace optiflow_platform.Clinical.Domain.Model.Entities;
 
 /// <summary>
-///     Prescription entity containing the optical measurements for both eyes
-///     captured during a clinical examination.
+///     Prescription entity containing optical measurements for both eyes.
+///     OD = right eye (Oculus Dexter), OI = left eye (Oculus Sinister).
 /// </summary>
-/// <remarks>
-///     A prescription belongs to a <see cref="ClinicalRecord"/>. OD = right eye (Oculus Dexter),
-///     OI = left eye (Oculus Sinister). Addition is optional and applies to progressive lenses.
-/// </remarks>
 public class Prescription
 {
-    /// <summary>Protected parameterless constructor for EF Core.</summary>
     protected Prescription()
     {
-        DoctorName = null!;
+        DoctorName       = null!;
+        PrescriptionUuid = null!;
     }
 
-    /// <summary>Creates a new prescription from a creation command.</summary>
     public Prescription(CreatePrescriptionCommand command)
     {
         ArgumentNullException.ThrowIfNull(command);
@@ -33,25 +28,33 @@ public class Prescription
         Notes            = command.Notes;
         DoctorName       = command.DoctorName;
         CreatedAt        = DateTime.UtcNow;
+        PrescriptionUuid = $"presc-{Guid.NewGuid():N}";
     }
 
-    public int       Id               { get; private set; }
-    public int       ClinicalRecordId { get; private set; }
+    public int      Id               { get; private set; }
 
-    // Right eye (OD)
-    public decimal  OdSphere   { get; private set; }
-    public decimal  OdCylinder { get; private set; }
-    public int      OdAxis     { get; private set; }
+    /// <summary>Alias of Id — kept for mockapi compatibility.</summary>
+    public int      PrescriptionId   => Id;
 
-    // Left eye (OI)
-    public decimal  OiSphere   { get; private set; }
-    public decimal  OiCylinder { get; private set; }
-    public int      OiAxis     { get; private set; }
+    /// <summary>Stable UUID for external references.</summary>
+    public string   PrescriptionUuid { get; private set; }
+
+    public int      ClinicalRecordId { get; private set; }
+
+    // Right eye (OD — Oculus Dexter)
+    public decimal  OdSphere         { get; private set; }
+    public decimal  OdCylinder       { get; private set; }
+    public int      OdAxis           { get; private set; }
+
+    // Left eye (OI — Oculus Sinister)
+    public decimal  OiSphere         { get; private set; }
+    public decimal  OiCylinder       { get; private set; }
+    public int      OiAxis           { get; private set; }
 
     // Optional progressive addition
-    public decimal?  Addition  { get; private set; }
+    public decimal? Addition         { get; private set; }
 
-    public string    Notes      { get; private set; } = string.Empty;
-    public string    DoctorName { get; private set; }
-    public DateTime  CreatedAt  { get; private set; }
+    public string   Notes            { get; private set; } = string.Empty;
+    public string   DoctorName       { get; private set; }
+    public DateTime CreatedAt        { get; private set; }
 }
