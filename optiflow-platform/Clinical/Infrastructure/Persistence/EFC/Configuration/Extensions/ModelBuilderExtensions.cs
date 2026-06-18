@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using optiflow_platform.Clinical.Domain.Model.Aggregates;
 using optiflow_platform.Clinical.Domain.Model.Entities;
 
@@ -6,20 +7,37 @@ namespace optiflow_platform.Clinical.Infrastructure.Persistence.EFC.Configuratio
 
 public static class ModelBuilderExtensions
 {
+    // MySql.Data no soporta DateOnly nativo — necesita conversión explícita DateTime ↔ DateOnly
+    private static readonly ValueConverter<DateOnly, DateTime> DateOnlyConverter = new(
+        dateOnly  => dateOnly.ToDateTime(TimeOnly.MinValue),   // DateOnly → DateTime (guardar)
+        dateTime  => DateOnly.FromDateTime(dateTime)            // DateTime → DateOnly (leer)
+    );
+
     public static void ApplyClinicalConfiguration(this ModelBuilder builder)
     {
+        // ── Patient ───────────────────────────────────────────────────────
         builder.Entity<Patient>().HasKey(p => p.Id);
         builder.Entity<Patient>().Property(p => p.Id).IsRequired().ValueGeneratedOnAdd();
+        builder.Entity<Patient>().Ignore(p => p.PatientId);          // computed alias, no column
+        builder.Entity<Patient>().Property(p => p.CustomerUuid).IsRequired().HasMaxLength(100);
+        builder.Entity<Patient>().HasIndex(p => p.CustomerUuid).IsUnique();
         builder.Entity<Patient>().Property(p => p.FirstName).IsRequired().HasMaxLength(100);
         builder.Entity<Patient>().Property(p => p.LastName).IsRequired().HasMaxLength(100);
         builder.Entity<Patient>().Property(p => p.Dni).IsRequired().HasMaxLength(20);
         builder.Entity<Patient>().HasIndex(p => p.Dni).IsUnique();
         builder.Entity<Patient>().Property(p => p.Phone).HasMaxLength(20);
         builder.Entity<Patient>().Property(p => p.Email).HasMaxLength(255);
-        builder.Entity<Patient>().Property(p => p.BirthDate).IsRequired();
+        builder.Entity<Patient>().Property(p => p.BirthDate)
+            .IsRequired()
+            .HasColumnType("date")
+            .HasConversion(DateOnlyConverter);   // ← conversión explícita, no el genérico
 
+        // ── ClinicalRecord ────────────────────────────────────────────────
         builder.Entity<ClinicalRecord>().HasKey(r => r.Id);
         builder.Entity<ClinicalRecord>().Property(r => r.Id).IsRequired().ValueGeneratedOnAdd();
+        builder.Entity<ClinicalRecord>().Ignore(r => r.RecordId);    // computed alias, no column
+        builder.Entity<ClinicalRecord>().Property(r => r.ClinicalRecordUuid).IsRequired().HasMaxLength(100);
+        builder.Entity<ClinicalRecord>().HasIndex(r => r.ClinicalRecordUuid).IsUnique();
         builder.Entity<ClinicalRecord>().Property(r => r.PatientId).IsRequired();
         builder.Entity<ClinicalRecord>().HasIndex(r => r.PatientId).IsUnique();
         builder.Entity<ClinicalRecord>()
@@ -29,8 +47,12 @@ public static class ModelBuilderExtensions
             .OnDelete(DeleteBehavior.Cascade);
         builder.Entity<ClinicalRecord>().Ignore(r => r.Prescriptions);
 
+        // ── Prescription ──────────────────────────────────────────────────
         builder.Entity<Prescription>().HasKey(p => p.Id);
         builder.Entity<Prescription>().Property(p => p.Id).IsRequired().ValueGeneratedOnAdd();
+        builder.Entity<Prescription>().Ignore(p => p.PrescriptionId); // computed alias, no column
+        builder.Entity<Prescription>().Property(p => p.PrescriptionUuid).IsRequired().HasMaxLength(100);
+        builder.Entity<Prescription>().HasIndex(p => p.PrescriptionUuid).IsUnique();
         builder.Entity<Prescription>().Property(p => p.ClinicalRecordId).IsRequired();
         builder.Entity<Prescription>().Property(p => p.OdSphere).HasColumnType("decimal(5,2)");
         builder.Entity<Prescription>().Property(p => p.OdCylinder).HasColumnType("decimal(5,2)");
