@@ -20,17 +20,12 @@ jobs:
       - name: Restore dependencies
         run: dotnet restore optiflow-platform/optiflow-platform.csproj
 
-      - name: Publish (self-contained, win-x64)
-        run: >
-          dotnet publish optiflow-platform/optiflow-platform.csproj
-          -c Release
-          -r win-x86
-          --self-contained true
-          -o ./publish
+      - name: Publish
+        run: dotnet publish optiflow-platform/optiflow-platform.csproj -c Release -r win-x86 --self-contained true -o ./publish
 
-      - name: Deploy to Azure App Service
+      - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
         with:
-          app-name: ${{ secrets.AZURE_APP_NAME }}
-          publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE }}
+          app-name: opti-flow-apiv1
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
           package: ./publish
