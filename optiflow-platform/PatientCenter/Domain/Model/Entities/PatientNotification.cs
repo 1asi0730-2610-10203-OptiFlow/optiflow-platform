@@ -14,17 +14,19 @@ public class PatientNotification
     public PatientNotification(CreateNotificationCommand command)
     {
         ArgumentNullException.ThrowIfNull(command);
-        PatientId = command.PatientId;
-        Message   = command.Message;
-        Status    = NotificationStatus.Pending;
-        SentAt    = DateTime.UtcNow;
+        PatientId   = command.PatientId;
+        WorkOrderId = command.WorkOrderId;
+        Message     = command.Message;
+        Status      = NotificationStatus.Pending;
+        SentAt      = DateTime.UtcNow;
     }
 
-    public int      Id        { get; private set; }
-    public int      PatientId { get; private set; }
-    public string   Message   { get; private set; }
-    public string   Status    { get; private set; }
-    public DateTime SentAt    { get; private set; }
+    public int       Id          { get; private set; }
+    public int       PatientId   { get; private set; }
+    public int       WorkOrderId { get; private set; }
+    public string    Message     { get; private set; }
+    public string    Status      { get; private set; }
+    public DateTime? SentAt      { get; private set; }
 
     public void MarkAsRead()
     {
