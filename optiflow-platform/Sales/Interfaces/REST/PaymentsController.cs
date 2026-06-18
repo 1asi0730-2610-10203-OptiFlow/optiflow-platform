@@ -100,7 +100,7 @@ public class PaymentsController(
     {
         try
         {
-            var command = PayOutstandingBalanceCommandFromResourceAssembler.ToCommandFromResource(saleId, resource);
+            var command = PayOutstandingBalanceCommandFromResourceAssembler.ToCommandFromResource(new SaleId(saleId), resource);
             var result = await paymentCommandService.Handle(command, cancellationToken);
 
             if (result is Result<Payment, PayOutstandingBalanceError>.Failure { Error: PayOutstandingBalanceError.SaleNotFound })
@@ -117,7 +117,7 @@ public class PaymentsController(
             // Policy: Payment finished successfully → Complete Sale
             if (payment.Status == PaymentStatus.Completed)
             {
-                var completeResult = await saleCommandService.Handle(new CompleteSaleCommand(saleId), cancellationToken);
+                var completeResult = await saleCommandService.Handle(new CompleteSaleCommand(new SaleId(saleId)), cancellationToken);
                 if (completeResult is Result<Sale, CompleteSaleError>.Failure)
                     logger.LogWarning("Payment completed for sale {SaleId} but could not mark sale as completed", saleId);
             }

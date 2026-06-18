@@ -17,5 +17,5 @@ public class SaleQueryService(ISaleRepository saleRepository) : ISaleQueryServic
 
     /// <inheritdoc />
     public async Task<Sale?> Handle(GetSaleByIdQuery query, CancellationToken cancellationToken = default) =>
-        await saleRepository.FindByIdAsync(query.Id, cancellationToken);
+        await saleRepository.FindByIdAsync(query.Id.Value, cancellationToken);
 }

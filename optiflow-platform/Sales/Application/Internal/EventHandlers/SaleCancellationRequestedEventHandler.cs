@@ -17,7 +17,7 @@ ISaleCommandService saleCommandService) : IEventHandler<SaleCancellationRequeste
 
 
     private async Task On(SaleCancellationRequestedEvent domainEvent, CancellationToken cancellationToken) {
-        var status = await labAndOrdersContextFacade.FetchWorkOrderStatusBySaleId(domainEvent.SaleId, cancellationToken);
+        var status = await labAndOrdersContextFacade.FetchWorkOrderStatusBySaleId(domainEvent.SaleId.Value, cancellationToken);
 
         //// If the order status is in production, throw an error (policy)
         if (status == "IN_PRODUCTION")

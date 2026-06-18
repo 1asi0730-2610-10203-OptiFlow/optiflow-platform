@@ -49,7 +49,7 @@ public class SaleCommandService(
     public async Task<Result<Sale, GenerateSaleQuotaError>> Handle(GenerateSaleQuotaCommand command,
         CancellationToken cancellationToken = default)
     {
-        var sale = await saleRepository.FindByIdAsync(command.SaleId, cancellationToken);
+        var sale = await saleRepository.FindByIdAsync(command.SaleId.Value, cancellationToken);
         if (sale is null)
         {
             logger.LogWarning("Sale {SaleId} not found for quota generation", command.SaleId);
@@ -80,7 +80,7 @@ public class SaleCommandService(
     public async Task<Result<Sale, RequestSaleCancellationError>> Handle(RequestSaleCancellationCommand command,
         CancellationToken cancellationToken = default)
     {
-        var sale = await saleRepository.FindByIdAsync(command.SaleId, cancellationToken);
+        var sale = await saleRepository.FindByIdAsync(command.SaleId.Value, cancellationToken);
         if (sale is null)
         {
             logger.LogWarning("Sale {SaleId} not found for cancellation request", command.SaleId);
@@ -106,7 +106,7 @@ public class SaleCommandService(
     public async Task<Result<Sale, CancelSaleError>> Handle(CancelSaleCommand command,
         CancellationToken cancellationToken = default)
     {
-        var sale = await saleRepository.FindByIdAsync(command.SaleId, cancellationToken);
+        var sale = await saleRepository.FindByIdAsync(command.SaleId.Value, cancellationToken);
         if (sale is null)
         {
             logger.LogWarning("Sale {SaleId} not found for cancellation", command.SaleId);
@@ -137,7 +137,7 @@ public class SaleCommandService(
     public async Task<Result<Sale, ApplyPromotionalDiscountError>> Handle(ApplyPromotionalDiscountCommand command,
         CancellationToken cancellationToken = default)
     {
-        var sale = await saleRepository.FindByIdAsync(command.SaleId, cancellationToken);
+        var sale = await saleRepository.FindByIdAsync(command.SaleId.Value, cancellationToken);
         if (sale is null)
         {
             logger.LogWarning("Sale {SaleId} not found for discount application", command.SaleId);
@@ -163,7 +163,7 @@ public class SaleCommandService(
     public async Task<Result<Sale, CompleteSaleError>> Handle(CompleteSaleCommand command,
         CancellationToken cancellationToken = default)
     {
-        var sale = await saleRepository.FindByIdAsync(command.SaleId, cancellationToken);
+        var sale = await saleRepository.FindByIdAsync(command.SaleId.Value, cancellationToken);
         if (sale is null)
         {
             logger.LogWarning("Sale {SaleId} not found for completion", command.SaleId);

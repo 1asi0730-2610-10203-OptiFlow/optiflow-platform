@@ -7,7 +7,9 @@ using optiflow_platform.Inventory.Domain.Model.Entities;
 using optiflow_platform.LabAndOrders.Domain.Model.Aggregates;
 using optiflow_platform.LabAndOrders.Domain.Model.ValueObjects;
 using optiflow_platform.Sales.Domain.Model.Aggregates;
+using optiflow_platform.Sales.Domain.Model.ValueObjects;
 using optiflow_platform.Subscription.Domain.Model.ValueObjects;
+using SubscriptionPaymentStatus = optiflow_platform.Subscription.Domain.Model.ValueObjects.PaymentStatus;
 using optiflow_platform.Shared.Infrastructure.Persistence.EFC.Configuration.Extensions;
 using optiflow_platform.Shared.Infrastructure.Persistence.EFC.Interceptors;
 using Microsoft.EntityFrameworkCore;
@@ -136,8 +138,14 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
             .OnDelete(DeleteBehavior.Cascade);
         // Sales Bounded Context
         builder.Entity<Sale>().HasKey(s => s.Id);
-        builder.Entity<Sale>().Property(s => s.Id).IsRequired().ValueGeneratedOnAdd();
-        builder.Entity<Sale>().Property(s => s.InvoiceNumber).IsRequired().HasMaxLength(50);
+        builder.Entity<Sale>().Property(s => s.Id)
+            .HasConversion(id => id.Value, v => new SaleId(v))
+            .IsRequired()
+            .ValueGeneratedOnAdd();
+        builder.Entity<Sale>().Property(s => s.InvoiceNumber)
+            .HasConversion(inv => inv.Value, v => new InvoiceNumber(v))
+            .IsRequired()
+            .HasMaxLength(50);
         builder.Entity<Sale>().Property(s => s.LabOrderNumber).HasMaxLength(50);
         builder.Entity<Sale>().Property(s => s.PatientId).IsRequired();
         builder.Entity<Sale>().Property(s => s.PatientName).IsRequired().HasMaxLength(255);
@@ -263,7 +271,7 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
         builder.Entity<SubscriptionPayment>().Property(p => p.PaymentMethod).IsRequired().HasMaxLength(50);
         builder.Entity<SubscriptionPayment>().Property(p => p.Status)
             .IsRequired().HasMaxLength(50)
-            .HasConversion(v => v.Value, v => new PaymentStatus(v));
+            .HasConversion(v => v.Value, v => new SubscriptionPaymentStatus(v));
 
         builder.Entity<SubscriptionBilling>().ToTable("subscription_billings");
         builder.Entity<SubscriptionBilling>().HasKey(b => b.Id);

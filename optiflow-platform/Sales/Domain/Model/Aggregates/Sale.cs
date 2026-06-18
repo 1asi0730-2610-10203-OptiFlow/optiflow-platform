@@ -9,6 +9,7 @@ public class Sale
 
     protected Sale()
     {
+        Id = null!;
         InvoiceNumber = null!;
         PatientName = null!;
         UserName = null!;
@@ -42,8 +43,8 @@ public class Sale
         Notes = command.Notes ?? string.Empty;
     }
 
-    public int Id { get; private set; }
-    public string InvoiceNumber { get; private set; }
+    public SaleId Id { get; private set; }
+    public InvoiceNumber InvoiceNumber { get; private set; }
     public string LabOrderNumber { get; private set; }
     public int PatientId { get; private set; }
     public string PatientName { get; private set; }

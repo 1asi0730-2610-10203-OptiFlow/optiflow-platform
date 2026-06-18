@@ -1,5 +1,6 @@
+using optiflow_platform.Sales.Domain.Model.ValueObjects;
 using optiflow_platform.Shared.Domain.Model.Events;
 
 namespace optiflow_platform.Sales.Domain.Model.Events;
 
-public record SaleQuotaGeneratedEvent(int SaleId, decimal Advance) : IEvent;
+public record SaleQuotaGeneratedEvent(SaleId SaleId, decimal Advance) : IEvent;
