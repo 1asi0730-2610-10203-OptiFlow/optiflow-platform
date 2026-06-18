@@ -1,3 +1,5 @@
+using optiflow_platform.Sales.Domain.Model.ValueObjects;
+
 namespace optiflow_platform.Sales.Domain.Model.Commands;
 
-public record ApplyPromotionalDiscountCommand(int SaleId, string DiscountCode, decimal DiscountAmount);
+public record ApplyPromotionalDiscountCommand(SaleId SaleId, string DiscountCode, decimal DiscountAmount);

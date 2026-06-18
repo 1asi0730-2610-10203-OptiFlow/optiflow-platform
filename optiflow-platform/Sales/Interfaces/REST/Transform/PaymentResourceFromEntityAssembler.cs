@@ -6,5 +6,5 @@ namespace optiflow_platform.Sales.Interfaces.REST.Transform;
 public static class PaymentResourceFromEntityAssembler
 {
     public static PaymentResource ToResourceFromEntity(Payment payment) =>
-        new(payment.Id, payment.SaleId, payment.PaidAmount, payment.Method, payment.PaidAt);
+        new(payment.Id.Value, payment.SaleId, payment.PaidAmount, payment.Method, payment.PaidAt);
 }

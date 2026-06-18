@@ -7,11 +7,14 @@ using optiflow_platform.Inventory.Domain.Model.Entities;
 using optiflow_platform.LabAndOrders.Domain.Model.Aggregates;
 using optiflow_platform.LabAndOrders.Domain.Model.ValueObjects;
 using optiflow_platform.Sales.Domain.Model.Aggregates;
+using optiflow_platform.Sales.Domain.Model.ValueObjects;
 using optiflow_platform.Subscription.Domain.Model.ValueObjects;
+using SubscriptionPaymentStatus = optiflow_platform.Subscription.Domain.Model.ValueObjects.PaymentStatus;
 using optiflow_platform.Shared.Infrastructure.Persistence.EFC.Configuration.Extensions;
 using optiflow_platform.Shared.Infrastructure.Persistence.EFC.Interceptors;
 using Microsoft.EntityFrameworkCore;
 using optiflow_platform.PatientCenter.Domain.Model.Entities;
+using PaymentId = optiflow_platform.Sales.Domain.Model.ValueObjects.PaymentId;
 using SubscriptionAggregate = optiflow_platform.Subscription.Domain.Model.Aggregates.Subscription;
 using SubscriptionPayment   = optiflow_platform.Subscription.Domain.Model.Aggregates.Payment;
 using SubscriptionBilling   = optiflow_platform.Subscription.Domain.Model.Aggregates.Billing;
@@ -145,8 +148,14 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
         
         // Sales Bounded Context
         builder.Entity<Sale>().HasKey(s => s.Id);
-        builder.Entity<Sale>().Property(s => s.Id).IsRequired().ValueGeneratedOnAdd();
-        builder.Entity<Sale>().Property(s => s.InvoiceNumber).IsRequired().HasMaxLength(50);
+        builder.Entity<Sale>().Property(s => s.Id)
+            .HasConversion(id => id.Value, v => new SaleId(v))
+            .IsRequired()
+            .ValueGeneratedOnAdd();
+        builder.Entity<Sale>().Property(s => s.InvoiceNumber)
+            .HasConversion(inv => inv.Value, v => new InvoiceNumber(v))
+            .IsRequired()
+            .HasMaxLength(50);
         builder.Entity<Sale>().Property(s => s.LabOrderNumber).HasMaxLength(50);
         builder.Entity<Sale>().Property(s => s.PatientId).IsRequired();
         builder.Entity<Sale>().Property(s => s.PatientName).IsRequired().HasMaxLength(255);
@@ -164,7 +173,10 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
         builder.Entity<Sale>().Property(s => s.Notes).HasMaxLength(1000);
 
         builder.Entity<Payment>().HasKey(p => p.Id);
-        builder.Entity<Payment>().Property(p => p.Id).IsRequired().ValueGeneratedOnAdd();
+        builder.Entity<Payment>().Property(p => p.Id)
+            .HasConversion(id => id.Value, v => new PaymentId(v))
+            .IsRequired()
+            .ValueGeneratedOnAdd();
         builder.Entity<Payment>().Property(p => p.SaleId).IsRequired();
         builder.Entity<Payment>().Property(p => p.TotalAmount).IsRequired().HasColumnType("decimal(10,2)");
         builder.Entity<Payment>().Property(p => p.PaidAmount).HasColumnType("decimal(10,2)");
@@ -272,7 +284,7 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
         builder.Entity<SubscriptionPayment>().Property(p => p.PaymentMethod).IsRequired().HasMaxLength(50);
         builder.Entity<SubscriptionPayment>().Property(p => p.Status)
             .IsRequired().HasMaxLength(50)
-            .HasConversion(v => v.Value, v => new PaymentStatus(v));
+            .HasConversion(v => v.Value, v => new SubscriptionPaymentStatus(v));
 
         builder.Entity<SubscriptionBilling>().ToTable("subscription_billings");
         builder.Entity<SubscriptionBilling>().HasKey(b => b.Id);

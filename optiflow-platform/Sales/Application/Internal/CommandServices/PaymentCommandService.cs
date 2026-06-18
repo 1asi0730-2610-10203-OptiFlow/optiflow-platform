@@ -4,6 +4,7 @@ using optiflow_platform.Sales.Application.Services;
 using optiflow_platform.Sales.Domain.Model.Aggregates;
 using optiflow_platform.Sales.Domain.Model.Commands;
 using optiflow_platform.Sales.Domain.Model.Events;
+using optiflow_platform.Sales.Domain.Model.ValueObjects;
 using optiflow_platform.Sales.Domain.Repositories;
 using optiflow_platform.Shared.Application.Patterns;
 using optiflow_platform.Shared.Domain.Repositories;
@@ -32,8 +33,8 @@ public class PaymentCommandService(
     {
         try
         {
-            var payment = await paymentRepository.FindBySaleIdAsync(command.SaleId, cancellationToken);
-            var sale = await saleRepository.FindByIdAsync(command.SaleId, cancellationToken);
+            var payment = await paymentRepository.FindBySaleIdAsync(command.SaleId.Value, cancellationToken);
+            var sale = await saleRepository.FindByIdAsync(command.SaleId.Value, cancellationToken);
             if (sale is null)
             {
                 logger.LogWarning("Sale {SaleId} not found while processing payment", command.SaleId);
@@ -43,7 +44,7 @@ public class PaymentCommandService(
 
             if (payment is null)
             {
-                payment = new Payment(command.SaleId, sale.TotalAmount);
+                payment = new Payment(command.SaleId.Value, sale.TotalAmount);
                 payment.PayBalance(command.AmountPaid, command.Method);
                 await paymentRepository.AddAsync(payment, cancellationToken);
             }
@@ -58,7 +59,7 @@ public class PaymentCommandService(
 
             await unitOfWork.CompleteAsync(cancellationToken);
             await domainEventPublisher.PublishAsync(
-                new OutstandingBalancePayedEvent(payment.SaleId, payment.Id, payment.PaidAmount, payment.OutstandingBalance),
+                new OutstandingBalancePayedEvent(new SaleId(payment.SaleId), payment.Id, payment.PaidAmount, payment.OutstandingBalance),
                 cancellationToken);
             return new Result<Payment, PayOutstandingBalanceError>.Success(payment);
         }

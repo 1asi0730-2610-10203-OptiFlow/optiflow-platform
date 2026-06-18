@@ -1,7 +1,9 @@
+using optiflow_platform.Sales.Domain.Model.ValueObjects;
+
 namespace optiflow_platform.Sales.Domain.Model.Commands;
 
 public record CreateSaleCommand(
-    string InvoiceNumber,
+    InvoiceNumber InvoiceNumber,
     string? LabOrderNumber,
     int PatientId,
     string PatientName,

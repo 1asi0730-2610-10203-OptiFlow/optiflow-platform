@@ -4,6 +4,7 @@ using optiflow_platform.Sales.Application.Services;
 using optiflow_platform.Sales.Domain.Model.Aggregates;
 using optiflow_platform.Sales.Domain.Model.Commands;
 using optiflow_platform.Sales.Domain.Model.Queries;
+using optiflow_platform.Sales.Domain.Model.ValueObjects;
 using optiflow_platform.Sales.Interfaces.REST.Resources;
 using optiflow_platform.Sales.Interfaces.REST.Transform;
 using optiflow_platform.Shared.Application.Patterns;
@@ -35,6 +36,7 @@ public class SalesController(
         OperationId = "CreateSale")]
     [SwaggerResponse(201, "The sale was created", typeof(SaleResource))]
     [SwaggerResponse(400, "The request payload is invalid", typeof(string))]
+    [SwaggerResponse(409, "A sale with this invoice number already exists")]
     [SwaggerResponse(500, "Unexpected server error", typeof(ProblemDetails))]
     public async Task<ActionResult> CreateSale([FromBody] CreateSaleResource resource,
         CancellationToken cancellationToken)
@@ -49,6 +51,8 @@ public class SalesController(
                     CreatedAtAction(nameof(GetSaleById),
                         new { id = success.Value.Id },
                         SaleResourceFromEntityAssembler.ToResourceFromEntity(success.Value)),
+                Result<Sale, CreateSaleError>.Failure { Error: CreateSaleError.DuplicateInvoiceNumber } =>
+                    Conflict("A sale with this invoice number already exists."),
                 Result<Sale, CreateSaleError>.Failure =>
                     Problem(title: "Unexpected error", detail: "Could not create sale.", statusCode: 500),
                 _ => Problem(statusCode: 500)
@@ -91,7 +95,7 @@ public class SalesController(
     [SwaggerResponse(404, "The sale was not found")]
     public async Task<ActionResult> GetSaleById(int id, CancellationToken cancellationToken = default)
     {
-        var query = new GetSaleByIdQuery(id);
+        var query = new GetSaleByIdQuery(new SaleId(id));
         var result = await saleQueryService.Handle(query, cancellationToken);
         if (result is null) return NotFound();
         return Ok(SaleResourceFromEntityAssembler.ToResourceFromEntity(result));
@@ -114,7 +118,7 @@ public class SalesController(
     {
         try
         {
-            var command = GenerateSaleQuotaCommandFromResourceAssembler.ToCommandFromResource(id, resource);
+            var command = GenerateSaleQuotaCommandFromResourceAssembler.ToCommandFromResource(new SaleId(id), resource);
             var result = await saleCommandService.Handle(command, cancellationToken);
             return result switch
             {
@@ -150,7 +154,7 @@ public class SalesController(
     {
         try
         {
-            var command = new RequestSaleCancellationCommand(id);
+            var command = new RequestSaleCancellationCommand(new SaleId(id));
             var result = await saleCommandService.Handle(command, cancellationToken);
             return result switch
             {
@@ -188,7 +192,7 @@ public class SalesController(
     {
         try
         {
-            var command = CancelSaleCommandFromResourceAssembler.ToCommandFromResource(id, resource);
+            var command = CancelSaleCommandFromResourceAssembler.ToCommandFromResource(new SaleId(id), resource);
             var result = await saleCommandService.Handle(command, cancellationToken);
             return result switch
             {
@@ -225,7 +229,7 @@ public class SalesController(
     {
         try
         {
-            var command = ApplyPromotionalDiscountCommandFromResourceAssembler.ToCommandFromResource(id, resource);
+            var command = ApplyPromotionalDiscountCommandFromResourceAssembler.ToCommandFromResource(new SaleId(id), resource);
             var result = await saleCommandService.Handle(command, cancellationToken);
             return result switch
             {

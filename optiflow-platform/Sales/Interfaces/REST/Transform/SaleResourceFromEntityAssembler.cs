@@ -6,8 +6,8 @@ namespace optiflow_platform.Sales.Interfaces.REST.Transform;
 public static class SaleResourceFromEntityAssembler
 {
     public static SaleResource ToResourceFromEntity(Sale sale) =>
-        new(sale.Id,
-            sale.InvoiceNumber,
+        new(sale.Id.Value,
+            sale.InvoiceNumber.Value,
             sale.LabOrderNumber,
             sale.PatientId,
             sale.PatientName,

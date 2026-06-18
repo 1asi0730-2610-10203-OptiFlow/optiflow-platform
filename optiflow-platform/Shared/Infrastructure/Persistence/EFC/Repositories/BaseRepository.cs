@@ -28,7 +28,7 @@ public class BaseRepository<TEntity>(AppDbContext context) : IBaseRepository<TEn
     }
 
     /// <inheritdoc />
-    public async Task<TEntity?> FindByIdAsync(int id, CancellationToken cancellationToken = default)
+    public virtual async Task<TEntity?> FindByIdAsync(int id, CancellationToken cancellationToken = default)
     {
         return await Context.Set<TEntity>().FindAsync([id], cancellationToken);
     }

@@ -17,7 +17,7 @@ public class PaymentQueryService(IPaymentRepository paymentRepository) : IPaymen
 
     /// <inheritdoc />
     public async Task<Payment?> Handle(GetPaymentByIdQuery query, CancellationToken cancellationToken = default) =>
-        await paymentRepository.FindByIdAsync(query.Id, cancellationToken);
+        await paymentRepository.FindByIdAsync(query.Id.Value, cancellationToken);
 
     /// <inheritdoc />
     public async Task<Payment?> Handle(GetPaymentBySaleIdQuery query,

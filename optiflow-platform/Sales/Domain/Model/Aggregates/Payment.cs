@@ -13,6 +13,7 @@ public class Payment
 {
     protected Payment()
     {
+        Id = null!;
         Status = null!;
         Method = null!;
         PaidAt = null!;
@@ -29,7 +30,7 @@ public class Payment
         PaidAt = string.Empty;
     }
 
-    public int Id { get; private set; }
+    public PaymentId Id { get; private set; }
     public int SaleId { get; private set; }
     public decimal TotalAmount { get; private set; }
     public decimal PaidAmount { get; private set; }

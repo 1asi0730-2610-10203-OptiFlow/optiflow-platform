@@ -1,3 +1,5 @@
+using optiflow_platform.Sales.Domain.Model.ValueObjects;
+
 namespace optiflow_platform.Sales.Domain.Model.Queries;
 
-public record GetPaymentByIdQuery(int Id);
+public record GetPaymentByIdQuery(PaymentId Id);
