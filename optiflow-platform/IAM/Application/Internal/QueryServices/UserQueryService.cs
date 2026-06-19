@@ -1,11 +1,11 @@
 using System.Threading;
 using System.Threading.Tasks;
-using atelier_platform_aplicaciones_web.IAM.Application.QueryServices;
-using atelier_platform_aplicaciones_web.IAM.Domain.Model.Aggregates;
-using atelier_platform_aplicaciones_web.IAM.Domain.Model.Queries;
-using atelier_platform_aplicaciones_web.IAM.Domain.Repositories;
+using optiflow_platform.IAM.Application.QueryServices;
+using optiflow_platform.IAM.Domain.Model.Aggregates;
+using optiflow_platform.IAM.Domain.Model.Queries;
+using optiflow_platform.IAM.Domain.Repositories;
 
-namespace atelier_platform_aplicaciones_web.IAM.Application.Internal.QueryServices;
+namespace optiflow_platform.IAM.Application.Internal.QueryServices;
 
 public class UserQueryService(IUserRepository userRepository) : IUserQueryService
 {

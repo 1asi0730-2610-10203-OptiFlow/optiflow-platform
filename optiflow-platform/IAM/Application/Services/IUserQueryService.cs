@@ -1,9 +1,9 @@
 using System.Threading;
 using System.Threading.Tasks;
-using atelier_platform_aplicaciones_web.IAM.Domain.Model.Aggregates;
-using atelier_platform_aplicaciones_web.IAM.Domain.Model.Queries;
+using optiflow_platform.IAM.Domain.Model.Aggregates;
+using optiflow_platform.IAM.Domain.Model.Queries;
 
-namespace atelier_platform_aplicaciones_web.IAM.Application.QueryServices;
+namespace optiflow_platform.IAM.Application.QueryServices;
 
 public interface IUserQueryService
 {

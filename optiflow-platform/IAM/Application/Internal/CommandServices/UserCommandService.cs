@@ -1,21 +1,22 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using atelier_platform_aplicaciones_web.IAM.Application.CommandServices;
-using atelier_platform_aplicaciones_web.IAM.Application.Internal.OutboundServices.Hashing;
-using atelier_platform_aplicaciones_web.IAM.Application.Internal.OutboundServices.Tokens;
-using atelier_platform_aplicaciones_web.IAM.Domain.Model;
-using atelier_platform_aplicaciones_web.IAM.Domain.Model.Aggregates;
-using atelier_platform_aplicaciones_web.IAM.Domain.Model.Commands;
-using atelier_platform_aplicaciones_web.IAM.Domain.Model.Queries;
-using atelier_platform_aplicaciones_web.IAM.Domain.Model.ValueObjects;
-using atelier_platform_aplicaciones_web.IAM.Domain.Repositories;
-using atelier_platform_aplicaciones_web.Shared.Application.Model;
-using atelier_platform_aplicaciones_web.Shared.Domain.Repositories;
+using optiflow_platform.IAM.Application.CommandServices;
+using optiflow_platform.IAM.Application.Internal.OutboundServices.Hashing;
+using optiflow_platform.IAM.Application.Internal.OutboundServices.Tokens;
+using optiflow_platform.IAM.Domain.Model;
+using optiflow_platform.IAM.Domain.Model.Aggregates;
+using optiflow_platform.IAM.Domain.Model.Commands;
+using optiflow_platform.IAM.Domain.Model.Queries;
+using optiflow_platform.IAM.Domain.Model.ValueObjects;
+using optiflow_platform.IAM.Domain.Repositories;
+using optiflow_platform.Shared.Application.Patterns;
+using optiflow_platform.Shared.Application.Model;
+using optiflow_platform.Shared.Domain.Repositories;
 using Google.Apis.Auth;
 using Microsoft.Extensions.Configuration;
 
-namespace atelier_platform_aplicaciones_web.IAM.Application.Internal.CommandServices;
+namespace optiflow_platform.IAM.Application.Internal.CommandServices;
 
 public class UserCommandService(
     IUserRepository userRepository,
