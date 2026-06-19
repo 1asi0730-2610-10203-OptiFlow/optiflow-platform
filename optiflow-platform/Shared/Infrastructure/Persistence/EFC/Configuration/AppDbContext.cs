@@ -8,6 +8,7 @@ using optiflow_platform.Sales.Infrastructure.Persistence.EFC.Configuration.Exten
 using optiflow_platform.Shared.Infrastructure.Persistence.EFC.Configuration.Extensions;
 using optiflow_platform.Shared.Infrastructure.Persistence.EFC.Interceptors;
 using optiflow_platform.Subscription.Infrastructure.Persistence.EFC.Configuration.Extensions;
+using optiflow_platform.IAM.Infrastructure.Persistence.EntityFrameworkCore.Configuration.Extensions;
 
 namespace optiflow_platform.Shared.Infrastructure.Persistence.EFC.Configuration;
 
@@ -35,6 +36,7 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
         builder.ApplyAnalyticsConfiguration();
         builder.ApplyLabAndOrdersConfiguration();
         builder.ApplyPatientCenterConfiguration();
+        builder.ApplyIamConfiguration();
 
         builder.UseSnakeCaseNamingConvention();
     }

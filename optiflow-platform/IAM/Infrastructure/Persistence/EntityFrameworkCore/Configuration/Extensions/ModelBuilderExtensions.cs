@@ -1,9 +1,9 @@
-using atelier_platform_aplicaciones_web.IAM.Domain.Model.Aggregates;
-using atelier_platform_aplicaciones_web.IAM.Domain.Model.Entities;
-using atelier_platform_aplicaciones_web.IAM.Domain.Model.ValueObjects;
+using optiflow_platform.IAM.Domain.Model.Aggregates;
+using optiflow_platform.IAM.Domain.Model.Entities;
+using optiflow_platform.IAM.Domain.Model.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 
-namespace atelier_platform_aplicaciones_web.IAM.Infrastructure.Persistence.EntityFrameworkCore.Configuration.Extensions;
+namespace optiflow_platform.IAM.Infrastructure.Persistence.EntityFrameworkCore.Configuration.Extensions;
 
 public static class ModelBuilderExtensions
 {
