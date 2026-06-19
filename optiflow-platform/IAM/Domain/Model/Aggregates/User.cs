@@ -1,9 +1,9 @@
 using System.Text.Json.Serialization;
 
-using atelier_platform_aplicaciones_web.Shared.Domain.Model.Entities;
-using atelier_platform_aplicaciones_web.IAM.Domain.Model.ValueObjects;
+using optiflow_platform.Shared.Domain.Model.Entities;
+using optiflow_platform.IAM.Domain.Model.ValueObjects;
 
-namespace atelier_platform_aplicaciones_web.IAM.Domain.Model.Aggregates;
+namespace optiflow_platform.IAM.Domain.Model.Aggregates;
 
 public partial class User : IAuditableEntity
 {

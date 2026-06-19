@@ -1,5 +1,5 @@
-using atelier_platform_aplicaciones_web.IAM.Domain.Model.Aggregates;
+using optiflow_platform.IAM.Domain.Model.Aggregates;
 
-namespace atelier_platform_aplicaciones_web.IAM.Domain.Model.Queries;
+namespace optiflow_platform.IAM.Domain.Model.Queries;
 
 public record AuthenticatedUser(User User, string Token);

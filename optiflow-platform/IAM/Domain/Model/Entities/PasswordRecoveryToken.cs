@@ -1,6 +1,6 @@
 using System;
 
-namespace atelier_platform_aplicaciones_web.IAM.Domain.Model.Entities;
+namespace optiflow_platform.IAM.Domain.Model.Entities;
 
 public partial class PasswordRecoveryToken
 {
