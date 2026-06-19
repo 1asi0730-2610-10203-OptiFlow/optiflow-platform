@@ -1,10 +1,10 @@
 using System.Threading;
 using System.Threading.Tasks;
-using atelier_platform_aplicaciones_web.IAM.Domain.Model.Aggregates;
-using atelier_platform_aplicaciones_web.IAM.Domain.Model.ValueObjects;
-using atelier_platform_aplicaciones_web.Shared.Domain.Repositories;
+using optiflow_platform.IAM.Domain.Model.Aggregates;
+using optiflow_platform.IAM.Domain.Model.ValueObjects;
+using optiflow_platform.Shared.Domain.Repositories;
 
-namespace atelier_platform_aplicaciones_web.IAM.Domain.Repositories;
+namespace optiflow_platform.IAM.Domain.Repositories;
 
 public interface IUserRepository : IBaseRepository<User>
 {

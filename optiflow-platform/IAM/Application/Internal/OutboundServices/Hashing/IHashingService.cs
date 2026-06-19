@@ -1,4 +1,4 @@
-namespace atelier_platform_aplicaciones_web.IAM.Application.Internal.OutboundServices.Hashing;
+namespace optiflow_platform.IAM.Application.Internal.OutboundServices.Hashing;
 
 public interface IHashingService
 {

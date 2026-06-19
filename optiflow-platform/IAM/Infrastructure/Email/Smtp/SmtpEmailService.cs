@@ -1,13 +1,13 @@
 using System.Net;
 using System.Net.Mail;
 using System.Threading.Tasks;
-using atelier_platform_aplicaciones_web.IAM.Application.Internal.OutboundServices.Email;
-using atelier_platform_aplicaciones_web.IAM.Resources;
+using optiflow_platform.IAM.Application.Internal.OutboundServices.Email;
+using optiflow_platform.IAM.Resources;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 
-namespace atelier_platform_aplicaciones_web.IAM.Infrastructure.Email.Smtp;
+namespace optiflow_platform.IAM.Infrastructure.Email.Smtp;
 
 public class SmtpEmailService(ILogger<SmtpEmailService> logger, IConfiguration configuration, IStringLocalizer<IamMessages> localizer) : IEmailService
 {
@@ -36,7 +36,7 @@ public class SmtpEmailService(ILogger<SmtpEmailService> logger, IConfiguration c
 
         using var mailMessage = new MailMessage
         {
-            From = new MailAddress(username, "Atelier Platform"),
+            From = new MailAddress(username, "Optiflow Platform"),
             Subject = subject,
             Body = bodyText,
             IsBodyHtml = false,

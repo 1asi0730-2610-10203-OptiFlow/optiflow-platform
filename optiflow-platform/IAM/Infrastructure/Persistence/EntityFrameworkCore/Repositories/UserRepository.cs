@@ -1,14 +1,14 @@
 using System.Threading;
 using System.Threading.Tasks;
-using atelier_platform_aplicaciones_web.IAM.Domain.Model.Aggregates;
-using atelier_platform_aplicaciones_web.IAM.Domain.Repositories;
-using atelier_platform_aplicaciones_web.Shared.Infrastructure.Persistence.EntityFrameworkCore.Configuration;
-using atelier_platform_aplicaciones_web.Shared.Infrastructure.Persistence.EntityFrameworkCore.Repositories;
+using optiflow_platform.IAM.Domain.Model.Aggregates;
+using optiflow_platform.IAM.Domain.Repositories;
+using optiflow_platform.Shared.Infrastructure.Persistence.EFC.Configuration;
+using optiflow_platform.Shared.Infrastructure.Persistence.EFC.Repositories;
 using Microsoft.EntityFrameworkCore;
 
-using atelier_platform_aplicaciones_web.IAM.Domain.Model.ValueObjects;
+using optiflow_platform.IAM.Domain.Model.ValueObjects;
 
-namespace atelier_platform_aplicaciones_web.IAM.Infrastructure.Persistence.EntityFrameworkCore.Repositories;
+namespace optiflow_platform.IAM.Infrastructure.Persistence.EntityFrameworkCore.Repositories;
 
 public class UserRepository(AppDbContext context) : BaseRepository<User>(context), IUserRepository
 {

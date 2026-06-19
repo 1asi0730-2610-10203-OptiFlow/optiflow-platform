@@ -3,12 +3,12 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
-using atelier_platform_aplicaciones_web.IAM.Application.Internal.OutboundServices.Tokens;
-using atelier_platform_aplicaciones_web.IAM.Infrastructure.Tokens.Jwt.Configuration;
+using optiflow_platform.IAM.Application.Internal.OutboundServices.Tokens;
+using optiflow_platform.IAM.Infrastructure.Tokens.Jwt.Configuration;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
-namespace atelier_platform_aplicaciones_web.IAM.Infrastructure.Tokens.Jwt.Services;
+namespace optiflow_platform.IAM.Infrastructure.Tokens.Jwt.Services;
 
 public class TokenService(IOptions<TokenSettings> tokenSettings) : ITokenService
 {

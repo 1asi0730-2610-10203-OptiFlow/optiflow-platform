@@ -1,9 +1,9 @@
 using System.Threading;
 using System.Threading.Tasks;
-using atelier_platform_aplicaciones_web.IAM.Domain.Model.Entities;
-using atelier_platform_aplicaciones_web.Shared.Domain.Repositories;
+using optiflow_platform.IAM.Domain.Model.Entities;
+using optiflow_platform.Shared.Domain.Repositories;
 
-namespace atelier_platform_aplicaciones_web.IAM.Domain.Repositories;
+namespace optiflow_platform.IAM.Domain.Repositories;
 
 public interface IPasswordRecoveryTokenRepository : IBaseRepository<PasswordRecoveryToken>
 {
