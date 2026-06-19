@@ -1,8 +1,8 @@
-using atelier_platform_aplicaciones_web.IAM.Domain.Model.Commands;
-using atelier_platform_aplicaciones_web.IAM.Domain.Model.ValueObjects;
-using atelier_platform_aplicaciones_web.IAM.Interfaces.REST.Resources;
+using optiflow_platform.IAM.Domain.Model.Commands;
+using optiflow_platform.IAM.Domain.Model.ValueObjects;
+using optiflow_platform.IAM.Interfaces.REST.Resources;
 
-namespace atelier_platform_aplicaciones_web.IAM.Interfaces.REST.Transform;
+namespace optiflow_platform.IAM.Interfaces.REST.Transform;
 
 public static class ResetPasswordCommandFromResourceAssembler
 {

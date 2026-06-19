@@ -1,13 +1,13 @@
 using System.Net.Mime;
 using System.Threading;
 using System.Threading.Tasks;
-using atelier_platform_aplicaciones_web.IAM.Application.CommandServices;
-using atelier_platform_aplicaciones_web.IAM.Interfaces.REST.Resources;
-using atelier_platform_aplicaciones_web.IAM.Interfaces.REST.Transform;
-using atelier_platform_aplicaciones_web.IAM.Infrastructure.Pipeline.Middleware.Attributes;
+using optiflow_platform.IAM.Application.CommandServices;
+using optiflow_platform.IAM.Interfaces.REST.Resources;
+using optiflow_platform.IAM.Interfaces.REST.Transform;
+using optiflow_platform.IAM.Infrastructure.Pipeline.Middleware.Attributes;
 using Microsoft.AspNetCore.Mvc;
 
-namespace atelier_platform_aplicaciones_web.IAM.Interfaces.REST;
+namespace optiflow_platform.IAM.Interfaces.REST;
 
 [ApiController]
 [Route("api/v1/[controller]")]
@@ -17,8 +17,8 @@ namespace atelier_platform_aplicaciones_web.IAM.Interfaces.REST;
 public class AuthenticationController(
     IUserCommandService userCommandService,
     IPasswordRecoveryCommandService passwordRecoveryCommandService,
-    Microsoft.Extensions.Localization.IStringLocalizer<atelier_platform_aplicaciones_web.IAM.Resources.IamMessages> localizer,
-    atelier_platform_aplicaciones_web.Shared.Interfaces.Rest.ProblemDetails.ProblemDetailsFactory problemDetailsFactory) : ControllerBase
+    Microsoft.Extensions.Localization.IStringLocalizer<optiflow_platform.IAM.Resources.IamMessages> localizer,
+    optiflow_platform.Shared.Interfaces.Rest.ProblemDetails.ProblemDetailsFactory problemDetailsFactory) : ControllerBase
 {
     [HttpPost("sign-in")]
     public async Task<IActionResult> SignIn([FromBody] SignInResource resource, CancellationToken cancellationToken)

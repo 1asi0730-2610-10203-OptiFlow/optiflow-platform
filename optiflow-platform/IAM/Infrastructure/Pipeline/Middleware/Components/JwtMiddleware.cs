@@ -1,13 +1,13 @@
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using atelier_platform_aplicaciones_web.IAM.Application.Internal.OutboundServices.Tokens;
-using atelier_platform_aplicaciones_web.IAM.Application.QueryServices;
-using atelier_platform_aplicaciones_web.IAM.Domain.Model.Queries;
-using atelier_platform_aplicaciones_web.IAM.Domain.Model.ValueObjects;
+using optiflow_platform.IAM.Application.Internal.OutboundServices.Tokens;
+using optiflow_platform.IAM.Application.QueryServices;
+using optiflow_platform.IAM.Domain.Model.Queries;
+using optiflow_platform.IAM.Domain.Model.ValueObjects;
 using Microsoft.AspNetCore.Http;
 
-namespace atelier_platform_aplicaciones_web.IAM.Infrastructure.Pipeline.Middleware.Components;
+namespace optiflow_platform.IAM.Infrastructure.Pipeline.Middleware.Components;
 
 public class JwtMiddleware(RequestDelegate next)
 {

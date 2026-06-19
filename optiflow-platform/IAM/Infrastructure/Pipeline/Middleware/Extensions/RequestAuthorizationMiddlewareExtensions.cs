@@ -1,7 +1,7 @@
-using atelier_platform_aplicaciones_web.IAM.Infrastructure.Pipeline.Middleware.Components;
+using optiflow_platform.IAM.Infrastructure.Pipeline.Middleware.Components;
 using Microsoft.AspNetCore.Builder;
 
-namespace atelier_platform_aplicaciones_web.IAM.Infrastructure.Pipeline.Middleware.Extensions;
+namespace optiflow_platform.IAM.Infrastructure.Pipeline.Middleware.Extensions;
 
 public static class RequestAuthorizationMiddlewareExtensions
 {

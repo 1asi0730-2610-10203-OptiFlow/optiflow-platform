@@ -1,7 +1,7 @@
-using atelier_platform_aplicaciones_web.IAM.Application.Internal.OutboundServices.Hashing;
+using optiflow_platform.IAM.Application.Internal.OutboundServices.Hashing;
 using BCrypt.Net;
 
-namespace atelier_platform_aplicaciones_web.IAM.Infrastructure.Hashing.BCrypt;
+namespace optiflow_platform.IAM.Infrastructure.Hashing.BCrypt;
 
 public class BCryptHashingService : IHashingService
 {

@@ -39,6 +39,22 @@ using optiflow_platform.PatientCenter.Domain.Repositories;
 using optiflow_platform.PatientCenter.Infrastructure.Persistence.EFC.Repositories;
 using optiflow_platform.PatientCenter.Application.Internal.CommandServices;
 
+// IAM Bounded Context Imports
+using optiflow_platform.IAM.Application.CommandServices;
+using optiflow_platform.IAM.Application.QueryServices;
+using optiflow_platform.IAM.Application.Internal.CommandServices;
+using optiflow_platform.IAM.Application.Internal.QueryServices;
+using optiflow_platform.IAM.Application.Internal.OutboundServices.Email;
+using optiflow_platform.IAM.Application.Internal.OutboundServices.Hashing;
+using optiflow_platform.IAM.Application.Internal.OutboundServices.Tokens;
+using optiflow_platform.IAM.Domain.Repositories;
+using optiflow_platform.IAM.Infrastructure.Email.Smtp;
+using optiflow_platform.IAM.Infrastructure.Hashing.BCrypt;
+using optiflow_platform.IAM.Infrastructure.Tokens.Jwt.Services;
+using optiflow_platform.IAM.Infrastructure.Tokens.Jwt.Configuration;
+using optiflow_platform.IAM.Infrastructure.Persistence.EntityFrameworkCore.Repositories;
+using optiflow_platform.IAM.Infrastructure.Pipeline.Middleware.Extensions;
+
 // Subscription aliases — disambiguate from Sales types with the same short name
 using SubPaymentRepo      = optiflow_platform.Subscription.Domain.Repositories.IPaymentRepository;
 using SubPaymentCmdSvc    = optiflow_platform.Subscription.Application.Services.IPaymentCommandService;
@@ -184,6 +200,20 @@ builder.Services.AddScoped<ILensMaterialRepository, LensMaterialRepository>();
 builder.Services.AddScoped<IPatientNotificationQueryService, PatientNotificationQueryService>();
 builder.Services.AddScoped<ILensMaterialQueryService, LensMaterialQueryService>();
 builder.Services.AddScoped<IPatientNotificationCommandService, PatientNotificationCommandService>();
+
+// IAM Bounded Context Injection
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IPasswordRecoveryTokenRepository, PasswordRecoveryTokenRepository>();
+builder.Services.AddScoped<IUserCommandService, UserCommandService>();
+builder.Services.AddScoped<IPasswordRecoveryCommandService, PasswordRecoveryCommandService>();
+builder.Services.AddScoped<IUserQueryService, UserQueryService>();
+builder.Services.AddScoped<IHashingService, BCryptHashingService>();
+builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddScoped<IEmailService, SmtpEmailService>();
+
+// IAM Token Settings Configuration
+builder.Services.Configure<TokenSettings>(builder.Configuration.GetSection("AppSettings:JwtSettings"));
+
 var app = builder.Build();
 
 // Apply pending EF Core migrations on startup
@@ -219,6 +249,8 @@ app.UseRequestLocalization(localizationOptions);
 app.UseCors();
 
 app.UseHttpsRedirection();
+
+app.UseRequestAuthorization();
 
 app.UseAuthorization();
 
