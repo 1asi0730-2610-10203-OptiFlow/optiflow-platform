@@ -1,9 +1,9 @@
 using System.Threading;
 using System.Threading.Tasks;
-using atelier_platform_aplicaciones_web.IAM.Domain.Model.Commands;
-using atelier_platform_aplicaciones_web.Shared.Application.Model;
+using optiflow_platform.IAM.Domain.Model.Commands;
+using optiflow_platform.Shared.Application.Patterns;
 
-namespace atelier_platform_aplicaciones_web.IAM.Application.CommandServices;
+namespace optiflow_platform.IAM.Application.CommandServices;
 
 public interface IPasswordRecoveryCommandService
 {
