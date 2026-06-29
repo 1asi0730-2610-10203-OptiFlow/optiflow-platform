@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-using optiflow_platform.Shared.Domain.Model.Entities;
+using optiflow_platform.Shared.Domain.Model;
 using optiflow_platform.IAM.Domain.Model.ValueObjects;
 
 namespace optiflow_platform.IAM.Domain.Model.Aggregates;
