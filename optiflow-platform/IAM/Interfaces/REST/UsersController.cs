@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using System.Net.Mime;
 using System.Threading;
 using System.Threading.Tasks;
@@ -9,11 +11,12 @@ using optiflow_platform.IAM.Interfaces.REST.Resources;
 using optiflow_platform.IAM.Interfaces.REST.Transform;
 using optiflow_platform.IAM.Infrastructure.Pipeline.Middleware.Attributes;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace optiflow_platform.IAM.Interfaces.REST;
 
 [ApiController]
-[Route("api/v1/users")]
+[Route("api/v1/[controller]")]
 [Produces(MediaTypeNames.Application.Json)]
 [Tags("Users")]
 [Authorize]
@@ -23,6 +26,20 @@ public class UsersController(
     Microsoft.Extensions.Localization.IStringLocalizer<optiflow_platform.IAM.Resources.IamMessages> localizer,
     optiflow_platform.Shared.Interfaces.Rest.ProblemDetails.ProblemDetailsFactory problemDetailsFactory) : ControllerBase
 {
+    [HttpGet]
+    [SwaggerOperation(
+        Summary = "Get all users",
+        Description = "Gets all registered users",
+        OperationId = "GetAllUsers")]
+    [SwaggerResponse(200, "List of users", typeof(IEnumerable<UserResource>))]
+    public async Task<IActionResult> GetAllUsers(CancellationToken cancellationToken)
+    {
+        var query = new GetAllUsersQuery();
+        var users = await userQueryService.Handle(query, cancellationToken);
+        var resources = users.Select(UserResourceFromEntityAssembler.ToResourceFromEntity);
+        return Ok(resources);
+    }
+
     [HttpGet("{id}")]
     public async Task<IActionResult> GetUserById(Guid id, CancellationToken cancellationToken)
     {
