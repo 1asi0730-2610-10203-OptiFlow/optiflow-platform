@@ -1,7 +1,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using optiflow_platform.IAM.Domain.Model.Commands;
-using optiflow_platform.Shared.Application.Patterns;
+using optiflow_platform.Shared.Application.Model;
 
 namespace optiflow_platform.IAM.Application.CommandServices;
 
