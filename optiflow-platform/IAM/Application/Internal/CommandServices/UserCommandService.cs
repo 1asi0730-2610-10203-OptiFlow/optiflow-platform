@@ -116,7 +116,6 @@ public class UserCommandService(
             var user = await userRepository.FindByEmailAsync(new EmailAddress(email), cancellationToken);
             if (user == null)
             {
-                // Register new user with a secure random password
                 var randomPassword = Guid.NewGuid().ToString("N");
                 var passwordHash = hashingService.Encode(randomPassword);
                 user = new User(new EmailAddress(email), new Password(passwordHash), new GoogleId(googleId));
@@ -125,7 +124,6 @@ public class UserCommandService(
             }
             else
             {
-                // If user exists but doesn't have a googleId linked, link it
                 if (user.GoogleId == null || string.IsNullOrEmpty(user.GoogleId.Value))
                 {
                     user.LinkGoogleAccount(new GoogleId(googleId));
