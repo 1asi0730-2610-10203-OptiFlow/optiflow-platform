@@ -22,6 +22,11 @@ public class UserRepository(AppDbContext context) : BaseRepository<User>(context
         return await Context.Set<User>().AnyAsync(u => u.Email == email, cancellationToken);
     }
 
+    public async Task<User?> FindByIdAsync(Guid id, CancellationToken cancellationToken)
+    {
+        return await Context.Set<User>().FirstOrDefaultAsync(u => u.Id.Value == id, cancellationToken);
+    }
+
     public async Task<User?> FindUserByIdAsync(UserId id, CancellationToken cancellationToken)
     {
         return await Context.Set<User>().FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
