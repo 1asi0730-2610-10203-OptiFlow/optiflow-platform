@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using optiflow_platform.IAM.Application.QueryServices;
@@ -17,5 +18,10 @@ public class UserQueryService(IUserRepository userRepository) : IUserQueryServic
     public async Task<User?> Handle(GetUserByEmailQuery query, CancellationToken cancellationToken)
     {
         return await userRepository.FindByEmailAsync(query.Email, cancellationToken);
+    }
+
+    public async Task<IEnumerable<User>> Handle(GetAllUsersQuery query, CancellationToken cancellationToken)
+    {
+        return await userRepository.ListAsync(cancellationToken);
     }
 }
