@@ -8,6 +8,7 @@ using optiflow_platform.Inventory.Interfaces.REST.Transform;
 using optiflow_platform.Shared.Application.Patterns;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
+using optiflow_platform.IAM.Infrastructure.Pipeline.Middleware.Attributes;
 
 namespace optiflow_platform.Inventory.Interfaces.REST;
 
@@ -18,6 +19,7 @@ namespace optiflow_platform.Inventory.Interfaces.REST;
 [Route("/[controller]")]
 [Produces(MediaTypeNames.Application.Json)]
 [Tags("Suppliers")]
+[Authorize]
 public class SuppliersController(
     ISupplierCommandService supplierCommandService,
     ISupplierQueryService supplierQueryService,

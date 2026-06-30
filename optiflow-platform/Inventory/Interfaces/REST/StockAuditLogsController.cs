@@ -5,6 +5,7 @@ using optiflow_platform.Inventory.Interfaces.REST.Resources;
 using optiflow_platform.Inventory.Interfaces.REST.Transform;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
+using optiflow_platform.IAM.Infrastructure.Pipeline.Middleware.Attributes;
 
 namespace optiflow_platform.Inventory.Interfaces.REST;
 
@@ -15,6 +16,7 @@ namespace optiflow_platform.Inventory.Interfaces.REST;
 [Route("/[controller]")]
 [Produces(MediaTypeNames.Application.Json)]
 [Tags("Stock Audit Logs")]
+[Authorize]
 public class StockAuditLogsController(IStockAuditLogQueryService stockAuditLogQueryService) : ControllerBase
 {
     /// <summary>
