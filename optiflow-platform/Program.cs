@@ -38,6 +38,9 @@ using optiflow_platform.PatientCenter.Application.Services;
 using optiflow_platform.PatientCenter.Domain.Repositories;
 using optiflow_platform.PatientCenter.Infrastructure.Persistence.EFC.Repositories;
 using optiflow_platform.PatientCenter.Application.Internal.CommandServices;
+using Stripe;
+using optiflow_platform.Subscription.Application.Internal.OutboundServices.Stripe;
+using optiflow_platform.Subscription.Infrastructure.Stripe.Services;
 
 // IAM Bounded Context Imports
 using optiflow_platform.IAM.Application.CommandServices;
@@ -231,11 +234,19 @@ builder.Services.AddScoped<IUserCommandService, UserCommandService>();
 builder.Services.AddScoped<IPasswordRecoveryCommandService, PasswordRecoveryCommandService>();
 builder.Services.AddScoped<IUserQueryService, UserQueryService>();
 builder.Services.AddScoped<IHashingService, BCryptHashingService>();
-builder.Services.AddScoped<ITokenService, TokenService>();
-builder.Services.AddScoped<IEmailService, SmtpEmailService>();
-
+builder.Services.AddScoped<ITokenService, optiflow_platform.IAM.Infrastructure.Tokens.Jwt.Services.TokenService>();builder.Services.AddScoped<IEmailService, SmtpEmailService>();
 // IAM Token Settings Configuration
 builder.Services.Configure<TokenSettings>(builder.Configuration.GetSection("AppSettings:JwtSettings"));
+
+
+// Cargar config local (en .gitignore)
+builder.Configuration.AddJsonFile("appsettings.Local.json", optional: true, reloadOnChange: true);
+
+// Configurar Stripe API key
+StripeConfiguration.ApiKey = builder.Configuration["Stripe:SecretKey"];
+
+// Registrar servicio
+builder.Services.AddScoped<IStripeCheckoutService, StripeCheckoutService>();
 
 var app = builder.Build();
 
