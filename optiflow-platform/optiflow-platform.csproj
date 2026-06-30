@@ -24,6 +24,7 @@
         <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.12.1" />
         <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="8.12.1" />
         <PackageReference Include="Google.Apis.Auth" Version="1.69.0" />
+        <PackageReference Include="Stripe.net" Version="52.1.0" />
     </ItemGroup>
 
     <ItemGroup>
@@ -34,7 +35,6 @@
       <Folder Include="Subscription\Application\" />
       <Folder Include="Subscription\Domain\Model\Queries\" />
       <Folder Include="Subscription\Domain\Repositories\" />
-      <Folder Include="Subscription\Infrastructure\" />
       <Folder Include="Subscription\Interfaces\" />
     </ItemGroup>
 
