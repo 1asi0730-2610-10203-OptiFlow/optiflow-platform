@@ -9,6 +9,7 @@ using optiflow_platform.Subscription.Domain.Model.ValueObjects;
 using optiflow_platform.Subscription.Interfaces.REST.Resources;
 using optiflow_platform.Subscription.Interfaces.REST.Transform;
 using Swashbuckle.AspNetCore.Annotations;
+using optiflow_platform.IAM.Infrastructure.Pipeline.Middleware.Attributes;
 
 namespace optiflow_platform.Subscription.Interfaces.REST;
 
@@ -16,6 +17,7 @@ namespace optiflow_platform.Subscription.Interfaces.REST;
 [Route("api/v1/[controller]")]
 [Produces(MediaTypeNames.Application.Json)]
 [Tags("Plans")]
+[Authorize]
 public class PlansController(
     IPlanCommandService planCommandService,
     IPlanQueryService planQueryService,
