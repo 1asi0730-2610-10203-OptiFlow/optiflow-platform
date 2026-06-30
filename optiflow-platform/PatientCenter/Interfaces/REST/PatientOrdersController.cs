@@ -1,4 +1,4 @@
-﻿using System.Net.Mime;
+using System.Net.Mime;
 using Microsoft.AspNetCore.Mvc;
 using optiflow_platform.LabAndOrders.Application.Services;
 using optiflow_platform.LabAndOrders.Domain.Model.Queries;
@@ -6,6 +6,7 @@ using optiflow_platform.PatientCenter.Interfaces.REST.Resources;
 using optiflow_platform.Sales.Application.Services;
 using optiflow_platform.Sales.Domain.Model.Queries;
 using Swashbuckle.AspNetCore.Annotations;
+using optiflow_platform.IAM.Infrastructure.Pipeline.Middleware.Attributes;
 
 namespace optiflow_platform.PatientCenter.Interfaces.REST;
 
@@ -13,6 +14,7 @@ namespace optiflow_platform.PatientCenter.Interfaces.REST;
 [Route("api/v1/patients/{patientId}/orders")]
 [Produces(MediaTypeNames.Application.Json)]
 [Tags("Patient Orders")]
+[Authorize]
 public class PatientOrdersController(
     IWorkOrderQueryService workOrderQueryService,
     ISaleQueryService saleQueryService,

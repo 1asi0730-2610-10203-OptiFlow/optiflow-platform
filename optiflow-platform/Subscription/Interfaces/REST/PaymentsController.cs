@@ -9,6 +9,7 @@ using optiflow_platform.Subscription.Domain.Model.ValueObjects;
 using optiflow_platform.Subscription.Interfaces.REST.Resources;
 using optiflow_platform.Subscription.Interfaces.REST.Transform;
 using Swashbuckle.AspNetCore.Annotations;
+using optiflow_platform.IAM.Infrastructure.Pipeline.Middleware.Attributes;
 
 namespace optiflow_platform.Subscription.Interfaces.REST;
 
@@ -16,6 +17,7 @@ namespace optiflow_platform.Subscription.Interfaces.REST;
 [Route("api/v1/subscription-payments")]
 [Produces(MediaTypeNames.Application.Json)]
 [Tags("Subscription Payments")]
+[Authorize]
 public class SubscriptionPaymentsController(
     IPaymentCommandService paymentCommandService,
     IPaymentQueryService paymentQueryService,

@@ -10,6 +10,7 @@ using optiflow_platform.Sales.Interfaces.REST.Transform;
 using optiflow_platform.Shared.Application.Patterns;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
+using optiflow_platform.IAM.Infrastructure.Pipeline.Middleware.Attributes;
 
 namespace optiflow_platform.Sales.Interfaces.REST;
 
@@ -20,6 +21,7 @@ namespace optiflow_platform.Sales.Interfaces.REST;
 [Route("/[controller]")]
 [Produces(MediaTypeNames.Application.Json)]
 [Tags("Payments")]
+[Authorize]
 public class PaymentsController(
     IPaymentCommandService paymentCommandService,
     IPaymentQueryService paymentQueryService,

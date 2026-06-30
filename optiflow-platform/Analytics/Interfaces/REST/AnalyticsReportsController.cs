@@ -3,6 +3,7 @@ using optiflow_platform.Analytics.Application.Services;
 using optiflow_platform.Analytics.Domain.Model.Queries;
 using optiflow_platform.Analytics.Interfaces.REST.Resources;
 using optiflow_platform.Analytics.Interfaces.REST.Transform;
+using optiflow_platform.IAM.Infrastructure.Pipeline.Middleware.Attributes;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -15,6 +16,7 @@ namespace optiflow_platform.Analytics.Interfaces.REST;
 [Route("api/v1/[controller]")]
 [Produces(MediaTypeNames.Application.Json)]
 [Tags("Analytics Reports")]
+[Authorize]
 public class AnalyticsReportsController(
     IAnalyticsReportQueryService analyticsReportQueryService,
     ILogger<AnalyticsReportsController> logger)
