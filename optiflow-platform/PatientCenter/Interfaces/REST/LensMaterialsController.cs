@@ -1,10 +1,11 @@
-﻿using System.Net.Mime;
+using System.Net.Mime;
 using Microsoft.AspNetCore.Mvc;
 using optiflow_platform.PatientCenter.Application.Services;
 using optiflow_platform.PatientCenter.Domain.Model.Queries;
 using optiflow_platform.PatientCenter.Interfaces.REST.Resources;
 using optiflow_platform.PatientCenter.Interfaces.REST.Transform;
 using Swashbuckle.AspNetCore.Annotations;
+using optiflow_platform.IAM.Infrastructure.Pipeline.Middleware.Attributes;
 
 namespace optiflow_platform.PatientCenter.Interfaces.REST;
 
@@ -12,6 +13,7 @@ namespace optiflow_platform.PatientCenter.Interfaces.REST;
 [Route("api/v1/[controller]")]
 [Produces(MediaTypeNames.Application.Json)]
 [Tags("Lens Materials")]
+[Authorize]
 public class LensMaterialsController(ILensMaterialQueryService lensMaterialQueryService)
     : ControllerBase
 {
