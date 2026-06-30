@@ -42,11 +42,11 @@ public class UserCommandService(
         return Result<AuthenticatedUser>.Success(new AuthenticatedUser(user, token));
     }
 
-    public async Task<Result> Handle(SignUpCommand command, CancellationToken cancellationToken)
+    public async Task<Result<AuthenticatedUser>> Handle(SignUpCommand command, CancellationToken cancellationToken)
     {
         if (await userRepository.ExistsByEmailAsync(command.Email, cancellationToken))
         {
-            return Result.Failure(IamError.EmailAlreadyInUse, "iam.error.email.alreadyInUse");
+            return Result<AuthenticatedUser>.Failure(IamError.EmailAlreadyInUse, "iam.error.email.alreadyInUse");
         }
 
         var passwordHash = hashingService.Encode(command.Password.Value);
@@ -55,7 +55,8 @@ public class UserCommandService(
         await userRepository.AddAsync(user);
         await unitOfWork.CompleteAsync();
         
-        return Result.Success();
+        var token = tokenService.GenerateToken(user.Email.Value);
+        return Result<AuthenticatedUser>.Success(new AuthenticatedUser(user, token));
     }
 
     public async Task<Result<AuthenticatedUser>> Handle(UpdateUserEmailCommand command, CancellationToken cancellationToken)

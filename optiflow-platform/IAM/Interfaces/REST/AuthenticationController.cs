@@ -62,7 +62,8 @@ public class AuthenticationController(
         if (!result.IsSuccess)
             return IamErrorToActionAssembler.ToActionResult(result.Error, result.Message, this, problemDetailsFactory, localizer);
 
-        return Ok(new { Message = "User created successfully." });
+        var authenticatedUserResource = AuthenticatedUserResourceFromEntityAssembler.ToResourceFromEntity(result.Value!.User, result.Value.Token);
+        return Ok(authenticatedUserResource);
     }
 
     /// <summary>Solicita la recuperación de contraseña enviando un token.</summary>
