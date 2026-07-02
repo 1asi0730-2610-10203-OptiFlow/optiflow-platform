@@ -1,4 +1,5 @@
 using optiflow_platform.Inventory.Domain.Model.Commands;
+using optiflow_platform.Inventory.Domain.Model.ValueObjects;
 
 namespace optiflow_platform.Inventory.Domain.Model.Aggregates;
 
@@ -17,7 +18,6 @@ public class Product
     /// </summary>
     protected Product()
     {
-        Category = null!;
         SupplierName = null!;
         Sku = null!;
         Name = null!;
@@ -32,7 +32,6 @@ public class Product
     public Product(RegisterProductCommand command)
     {
         ArgumentNullException.ThrowIfNull(command);
-        CategoryId = command.CategoryId;
         Category = command.Category;
         SupplierId = command.SupplierId;
         SupplierName = command.SupplierName;
@@ -47,8 +46,7 @@ public class Product
     }
 
     public int Id { get; private set; }
-    public int CategoryId { get; private set; }
-    public string Category { get; private set; }
+    public EProductCategory Category { get; private set; }
     public int SupplierId { get; private set; }
     public string SupplierName { get; private set; }
     public string Sku { get; private set; }
@@ -105,6 +103,22 @@ public class Product
         if (string.IsNullOrWhiteSpace(command.Justification))
             throw new ArgumentException("A justification is required to confirm a stock adjustment.", nameof(command));
         Stock = command.NewStock;
+    }
+
+    /// <summary>
+    ///     Deducts stock consumed to fulfill an external order, e.g. lab order material.
+    /// </summary>
+    /// <exception cref="ArgumentException">Thrown when the quantity is zero or negative.</exception>
+    /// <exception cref="InvalidOperationException">Thrown when there is not enough stock to consume.</exception>
+    public void ConsumeStock(ConsumeStockCommand command)
+    {
+        ArgumentNullException.ThrowIfNull(command);
+        if (command.Quantity <= 0)
+            throw new ArgumentException("Consumption quantity must be greater than zero.", nameof(command));
+        if (Stock < command.Quantity)
+            throw new InvalidOperationException(
+                $"Insufficient stock for product {Id}: requested {command.Quantity}, available {Stock}.");
+        Stock -= command.Quantity;
     }
 
     /// <summary>

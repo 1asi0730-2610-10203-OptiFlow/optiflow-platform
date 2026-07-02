@@ -1,3 +1,5 @@
+using optiflow_platform.Inventory.Domain.Model.ValueObjects;
+
 namespace optiflow_platform.Inventory.Domain.Model.Commands;
 
 /// <summary>
@@ -7,6 +9,6 @@ public record UpdateProductCommand(
     int ProductId,
     string Name,
     string Sku,
-    string Category,
+    EProductCategory Category,
     decimal Price,
     int MinimumStockThreshold);

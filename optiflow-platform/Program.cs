@@ -8,6 +8,7 @@ using optiflow_platform.LabAndOrders.Application.Internal.QueryServices;
 using optiflow_platform.LabAndOrders.Application.Services;
 using optiflow_platform.LabAndOrders.Domain.Repositories;
 using optiflow_platform.LabAndOrders.Infrastructure.Persistence.EFC.Repositories;
+using optiflow_platform.LabAndOrders.Interfaces.Acl;
 using optiflow_platform.Sales.Application.Internal.CommandServices;
 using optiflow_platform.Sales.Application.Internal.QueryServices;
 using optiflow_platform.Resources;
@@ -89,7 +90,8 @@ builder.Services.AddLocalization();
 
 // Configure Kebab Case Route Naming Convention
 builder.Services.AddControllers(options => options.Conventions.Add(new KebabCaseRouteNamingConvention()))
-    .AddDataAnnotationsLocalization();
+    .AddDataAnnotationsLocalization()
+    .AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter()));
 
 // Register RFC 7807 ProblemDetails payloads for centralized exception handling.
 builder.Services.AddProblemDetails(options =>
@@ -161,6 +163,7 @@ builder.Services.AddCortexMediator([typeof(Program)]);
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 // Lab and Orders Bounded Context Injection
+builder.Services.AddScoped<IInventoryContextFacade, InventoryContextFacade>();
 builder.Services.AddScoped<IWorkOrderRepository, WorkOrderRepository>();
 builder.Services.AddScoped<ILaboratoryRepository, LaboratoryRepository>();
 builder.Services.AddScoped<IWorkOrderCommandService, WorkOrderCommandService>();
@@ -210,11 +213,9 @@ builder.Services.AddScoped<IPlanQueryService, PlanQueryService>();
 // Inventory Bounded Context Injection
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IStockAuditLogRepository, StockAuditLogRepository>();
-builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<ISupplierRepository, SupplierRepository>();
 builder.Services.AddScoped<IProductCommandService, ProductCommandService>();
 builder.Services.AddScoped<IProductQueryService, ProductQueryService>();
-builder.Services.AddScoped<ICategoryQueryService, CategoryQueryService>();
 builder.Services.AddScoped<ISupplierCommandService, SupplierCommandService>();
 builder.Services.AddScoped<ISupplierQueryService, SupplierQueryService>();
 builder.Services.AddScoped<IStockAuditLogQueryService, StockAuditLogQueryService>();

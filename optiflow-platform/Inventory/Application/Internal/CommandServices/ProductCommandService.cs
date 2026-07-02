@@ -205,4 +205,50 @@ public class ProductCommandService(
 
         return new Result<Product, VerifySupplyStockError>.Success(product);
     }
+
+    /// <inheritdoc />
+    public async Task<Result<Product, ConsumeStockError>> Handle(ConsumeStockCommand command,
+        CancellationToken cancellationToken = default)
+    {
+        var product = await productRepository.FindByIdAsync(command.ProductId, cancellationToken);
+        if (product is null)
+        {
+            logger.LogWarning("Product {ProductId} not found for stock consumption", command.ProductId);
+            return new Result<Product, ConsumeStockError>.Failure(ConsumeStockError.ProductNotFound);
+        }
+
+        try
+        {
+            var previousStock = product.Stock;
+            product.ConsumeStock(command);
+            productRepository.Update(product);
+
+            var auditLog = new StockAuditLog(product.Id, product.Name, product.Sku, StockOperation.Consumption,
+                previousStock, -command.Quantity, product.Stock, command.Author);
+            await stockAuditLogRepository.AddAsync(auditLog, cancellationToken);
+
+            await unitOfWork.CompleteAsync(cancellationToken);
+
+            if (product.IsLowStock())
+                logger.LogWarning("Low stock alert: product {ProductId} ({Sku}) is at {Stock} units, threshold is {Threshold}",
+                    product.Id, product.Sku, product.Stock, product.MinimumStockThreshold);
+
+            return new Result<Product, ConsumeStockError>.Success(product);
+        }
+        catch (ArgumentException ex)
+        {
+            logger.LogWarning(ex, "Invalid consumption quantity {Quantity} for product {ProductId}", command.Quantity, command.ProductId);
+            return new Result<Product, ConsumeStockError>.Failure(ConsumeStockError.InvalidQuantity);
+        }
+        catch (InvalidOperationException ex)
+        {
+            logger.LogWarning(ex, "Insufficient stock to consume {Quantity} units of product {ProductId}", command.Quantity, command.ProductId);
+            return new Result<Product, ConsumeStockError>.Failure(ConsumeStockError.InsufficientStock);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Unexpected error consuming stock for product {ProductId}", command.ProductId);
+            return new Result<Product, ConsumeStockError>.Failure(ConsumeStockError.UnexpectedError);
+        }
+    }
 }
