@@ -55,7 +55,9 @@ public class WorkOrder
         PatientName = command.PatientName;
         LaboratoryName = command.LaboratoryName;
         LensType = command.LensType;
+        LensProductId = command.LensProductId;
         Frame = command.Frame;
+        FrameProductId = command.FrameProductId;
         Prescription = command.Prescription;
         DeliveryDate = command.DeliveryDate;
         Deposit = command.Deposit;
@@ -72,7 +74,9 @@ public class WorkOrder
     public string PatientName { get; private set; }
     public string LaboratoryName { get; private set; }
     public string LensType { get; private set; }
+    public int? LensProductId { get; private set; }
     public string Frame { get; private set; }
+    public int? FrameProductId { get; private set; }
     public string Prescription { get; private set; }
     public string DeliveryDate { get; private set; }
     public decimal Deposit { get; private set; }

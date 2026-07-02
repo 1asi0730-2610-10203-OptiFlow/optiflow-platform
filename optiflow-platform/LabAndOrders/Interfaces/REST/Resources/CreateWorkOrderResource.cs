@@ -15,7 +15,9 @@ public record CreateWorkOrderResource(
     [SwaggerParameter(Description = "Full name of the patient")] string PatientName,
     [SwaggerParameter(Description = "Name of the laboratory")] string LaboratoryName,
     [SwaggerParameter(Description = "Type of lenses (e.g. Progresivas, Bifocales)")] string LensType,
+    [SwaggerParameter(Description = "Reference to the Inventory product consumed as lens material")] int? LensProductId,
     [SwaggerParameter(Description = "Frame description")] string Frame,
+    [SwaggerParameter(Description = "Reference to the Inventory product consumed as frame material")] int? FrameProductId,
     [SwaggerParameter(Description = "Optical prescription summary")] string Prescription,
     [SwaggerParameter(Description = "Order priority: normal, high, urgent")] string Priority,
     [Required]

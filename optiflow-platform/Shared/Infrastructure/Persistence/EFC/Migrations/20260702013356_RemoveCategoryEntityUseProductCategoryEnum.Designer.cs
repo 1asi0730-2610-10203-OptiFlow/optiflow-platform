@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using optiflow_platform.Shared.Infrastructure.Persistence.EFC.Configuration;
 
@@ -10,9 +11,11 @@ using optiflow_platform.Shared.Infrastructure.Persistence.EFC.Configuration;
 namespace optiflow_platform.Shared.Infrastructure.Persistence.EFC.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260702013356_RemoveCategoryEntityUseProductCategoryEnum")]
+    partial class RemoveCategoryEntityUseProductCategoryEnum
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -597,10 +600,6 @@ namespace optiflow_platform.Shared.Infrastructure.Persistence.EFC.Migrations
                         .HasColumnType("varchar(255)")
                         .HasColumnName("frame");
 
-                    b.Property<int?>("FrameProductId")
-                        .HasColumnType("int")
-                        .HasColumnName("frame_product_id");
-
                     b.Property<bool>("IsRework")
                         .HasColumnType("tinyint(1)")
                         .HasColumnName("is_rework");
@@ -614,10 +613,6 @@ namespace optiflow_platform.Shared.Infrastructure.Persistence.EFC.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("varchar(255)")
                         .HasColumnName("laboratory_name");
-
-                    b.Property<int?>("LensProductId")
-                        .HasColumnType("int")
-                        .HasColumnName("lens_product_id");
 
                     b.Property<string>("LensType")
                         .IsRequired()

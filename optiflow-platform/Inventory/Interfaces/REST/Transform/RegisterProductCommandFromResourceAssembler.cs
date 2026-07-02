@@ -16,7 +16,7 @@ public static class RegisterProductCommandFromResourceAssembler
     ///     product is considered stocked at the moment of its registration.
     /// </remarks>
     public static RegisterProductCommand ToCommandFromResource(RegisterProductResource resource) =>
-        new(resource.CategoryId, resource.Category, resource.SupplierId, resource.SupplierName,
+        new(resource.Category, resource.SupplierId, resource.SupplierName,
             resource.Sku, resource.Name, resource.Brand ?? string.Empty, resource.Model ?? string.Empty,
             resource.Price, resource.Stock, resource.MinimumStockThreshold,
             DateTimeOffset.UtcNow.ToString("yyyy-MM-dd"));
