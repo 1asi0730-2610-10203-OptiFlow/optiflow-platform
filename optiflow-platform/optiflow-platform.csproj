@@ -18,16 +18,23 @@
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Swashbuckle.AspNetCore" Version="10.2.1" />
+        <PackageReference Include="Swashbuckle.AspNetCore" Version="10.2.3" />
         <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="10.2.1" />
+        <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
+        <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.12.1" />
+        <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="8.12.1" />
+        <PackageReference Include="Google.Apis.Auth" Version="1.69.0" />
+        <PackageReference Include="Stripe.net" Version="52.1.0" />
     </ItemGroup>
 
     <ItemGroup>
+        <EmbeddedResource Update="IAM\Resources\IamMessages.es.resx">
+            <DependentUpon>IamMessages.cs</DependentUpon>
+        </EmbeddedResource>
       <Folder Include="Sales\" />
       <Folder Include="Subscription\Application\" />
       <Folder Include="Subscription\Domain\Model\Queries\" />
       <Folder Include="Subscription\Domain\Repositories\" />
-      <Folder Include="Subscription\Infrastructure\" />
       <Folder Include="Subscription\Interfaces\" />
     </ItemGroup>
 

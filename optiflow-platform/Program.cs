@@ -8,6 +8,7 @@ using optiflow_platform.LabAndOrders.Application.Internal.QueryServices;
 using optiflow_platform.LabAndOrders.Application.Services;
 using optiflow_platform.LabAndOrders.Domain.Repositories;
 using optiflow_platform.LabAndOrders.Infrastructure.Persistence.EFC.Repositories;
+using optiflow_platform.LabAndOrders.Interfaces.Acl;
 using optiflow_platform.Sales.Application.Internal.CommandServices;
 using optiflow_platform.Sales.Application.Internal.QueryServices;
 using optiflow_platform.Resources;
@@ -38,6 +39,27 @@ using optiflow_platform.PatientCenter.Application.Services;
 using optiflow_platform.PatientCenter.Domain.Repositories;
 using optiflow_platform.PatientCenter.Infrastructure.Persistence.EFC.Repositories;
 using optiflow_platform.PatientCenter.Application.Internal.CommandServices;
+using Stripe;
+using optiflow_platform.Subscription.Application.Internal.OutboundServices.Stripe;
+using optiflow_platform.Subscription.Infrastructure.Stripe.Services;
+
+// IAM Bounded Context Imports
+using optiflow_platform.IAM.Application.CommandServices;
+using optiflow_platform.IAM.Application.QueryServices;
+using optiflow_platform.IAM.Application.Internal.CommandServices;
+using optiflow_platform.IAM.Application.Internal.QueryServices;
+using optiflow_platform.IAM.Application.Internal.OutboundServices.Email;
+using optiflow_platform.IAM.Application.Internal.OutboundServices.Hashing;
+using optiflow_platform.IAM.Application.Internal.OutboundServices.Tokens;
+using optiflow_platform.IAM.Domain.Repositories;
+using optiflow_platform.IAM.Infrastructure.Email.Smtp;
+using optiflow_platform.IAM.Infrastructure.Hashing.BCrypt;
+using optiflow_platform.IAM.Infrastructure.Tokens.Jwt.Services;
+using optiflow_platform.IAM.Infrastructure.Tokens.Jwt.Configuration;
+using optiflow_platform.IAM.Infrastructure.Persistence.EntityFrameworkCore.Repositories;
+using optiflow_platform.IAM.Infrastructure.Pipeline.Middleware.Extensions;
+using optiflow_platform.Shared.Interfaces.Rest.ProblemDetails;
+using Microsoft.OpenApi;
 
 // Subscription aliases — disambiguate from Sales types with the same short name
 using SubPaymentRepo      = optiflow_platform.Subscription.Domain.Repositories.IPaymentRepository;
@@ -68,7 +90,8 @@ builder.Services.AddLocalization();
 
 // Configure Kebab Case Route Naming Convention
 builder.Services.AddControllers(options => options.Conventions.Add(new KebabCaseRouteNamingConvention()))
-    .AddDataAnnotationsLocalization();
+    .AddDataAnnotationsLocalization()
+    .AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter()));
 
 // Register RFC 7807 ProblemDetails payloads for centralized exception handling.
 builder.Services.AddProblemDetails(options =>
@@ -86,7 +109,26 @@ builder.Services.AddProblemDetails(options =>
 
 // Configure Swagger/OpenAPI
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(options => options.EnableAnnotations());
+builder.Services.AddSwaggerGen(options =>
+{
+    options.EnableAnnotations();
+    
+    // Add Bearer Security Definition
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        In = ParameterLocation.Header,
+        Description = "Please enter token in format 'Bearer {your_token}'",
+        Name = "Authorization",
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "Bearer"
+    });
+    
+    // Add Bearer Security Requirement
+    options.AddSecurityRequirement(document => new OpenApiSecurityRequirement
+    {
+        [new OpenApiSecuritySchemeReference("Bearer", document)] = []
+    });
+});
 
 // Configure CORS for frontend
 builder.Services.AddCors(options =>
@@ -121,6 +163,7 @@ builder.Services.AddCortexMediator([typeof(Program)]);
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 // Lab and Orders Bounded Context Injection
+builder.Services.AddScoped<IInventoryContextFacade, InventoryContextFacade>();
 builder.Services.AddScoped<IWorkOrderRepository, WorkOrderRepository>();
 builder.Services.AddScoped<ILaboratoryRepository, LaboratoryRepository>();
 builder.Services.AddScoped<IWorkOrderCommandService, WorkOrderCommandService>();
@@ -143,6 +186,7 @@ builder.Services.AddScoped<IPatientQueryService, PatientQueryService>();
 builder.Services.AddScoped<IClinicalRecordQueryService, ClinicalRecordQueryService>();
 builder.Services.AddScoped<IPrescriptionCommandService, PrescriptionCommandService>();
 builder.Services.AddScoped<IPrescriptionQueryService, PrescriptionQueryService>();
+
 // Sales Bounded Context Injection
 builder.Services.AddScoped<ILabAndOrdersContextFacade, LabAndOrdersContextFacade>();
 builder.Services.AddScoped<ISaleRepository, SaleRepository>();
@@ -170,11 +214,9 @@ builder.Services.AddScoped<IPlanQueryService, PlanQueryService>();
 // Inventory Bounded Context Injection
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IStockAuditLogRepository, StockAuditLogRepository>();
-builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<ISupplierRepository, SupplierRepository>();
 builder.Services.AddScoped<IProductCommandService, ProductCommandService>();
 builder.Services.AddScoped<IProductQueryService, ProductQueryService>();
-builder.Services.AddScoped<ICategoryQueryService, CategoryQueryService>();
 builder.Services.AddScoped<ISupplierCommandService, SupplierCommandService>();
 builder.Services.AddScoped<ISupplierQueryService, SupplierQueryService>();
 builder.Services.AddScoped<IStockAuditLogQueryService, StockAuditLogQueryService>();
@@ -185,6 +227,29 @@ builder.Services.AddScoped<ILensMaterialRepository, LensMaterialRepository>();
 builder.Services.AddScoped<IPatientNotificationQueryService, PatientNotificationQueryService>();
 builder.Services.AddScoped<ILensMaterialQueryService, LensMaterialQueryService>();
 builder.Services.AddScoped<IPatientNotificationCommandService, PatientNotificationCommandService>();
+
+// IAM Bounded Context Injection
+builder.Services.AddScoped<ProblemDetailsFactory>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IPasswordRecoveryTokenRepository, PasswordRecoveryTokenRepository>();
+builder.Services.AddScoped<IUserCommandService, UserCommandService>();
+builder.Services.AddScoped<IPasswordRecoveryCommandService, PasswordRecoveryCommandService>();
+builder.Services.AddScoped<IUserQueryService, UserQueryService>();
+builder.Services.AddScoped<IHashingService, BCryptHashingService>();
+builder.Services.AddScoped<ITokenService, optiflow_platform.IAM.Infrastructure.Tokens.Jwt.Services.TokenService>();builder.Services.AddScoped<IEmailService, SmtpEmailService>();
+// IAM Token Settings Configuration
+builder.Services.Configure<TokenSettings>(builder.Configuration.GetSection("AppSettings:JwtSettings"));
+
+
+// Cargar config local (en .gitignore)
+builder.Configuration.AddJsonFile("appsettings.Local.json", optional: true, reloadOnChange: true);
+
+// Configurar Stripe API key
+StripeConfiguration.ApiKey = builder.Configuration["Stripe:SecretKey"];
+
+// Registrar servicio
+builder.Services.AddScoped<IStripeCheckoutService, StripeCheckoutService>();
+
 var app = builder.Build();
 
 // Apply pending EF Core migrations on startup
@@ -220,6 +285,8 @@ app.UseRequestLocalization(localizationOptions);
 app.UseCors();
 
 app.UseHttpsRedirection();
+
+app.UseRequestAuthorization();
 
 app.UseAuthorization();
 

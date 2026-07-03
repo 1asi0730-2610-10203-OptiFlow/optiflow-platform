@@ -1,11 +1,12 @@
+using optiflow_platform.Inventory.Domain.Model.ValueObjects;
+
 namespace optiflow_platform.Inventory.Domain.Model.Commands;
 
 /// <summary>
 ///     Command to register a new product in the catalog.
 /// </summary>
 public record RegisterProductCommand(
-    int CategoryId,
-    string Category,
+    EProductCategory Category,
     int SupplierId,
     string SupplierName,
     string Sku,

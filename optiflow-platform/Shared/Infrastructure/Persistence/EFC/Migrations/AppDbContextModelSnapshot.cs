@@ -137,13 +137,14 @@ namespace optiflow_platform.Shared.Infrastructure.Persistence.EFC.Migrations
                         .HasColumnType("int")
                         .HasColumnName("id");
 
-                    b.Property<DateOnly>("BirthDate")
-                        .HasColumnType("date")
+                    b.Property<DateTime>("BirthDate")
+                        .HasColumnType("datetime(6)")
                         .HasColumnName("birth_date");
 
                     b.Property<string>("CustomerUuid")
                         .IsRequired()
-                        .HasColumnType("longtext")
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)")
                         .HasColumnName("customer_uuid");
 
                     b.Property<string>("Dni")
@@ -177,6 +178,10 @@ namespace optiflow_platform.Shared.Infrastructure.Persistence.EFC.Migrations
                     b.HasKey("Id")
                         .HasName("p_k_patients");
 
+                    b.HasIndex("CustomerUuid")
+                        .IsUnique()
+                        .HasDatabaseName("i_x_patients_customer_uuid");
+
                     b.HasIndex("Dni")
                         .IsUnique()
                         .HasDatabaseName("i_x_patients_dni");
@@ -193,7 +198,8 @@ namespace optiflow_platform.Shared.Infrastructure.Persistence.EFC.Migrations
 
                     b.Property<string>("ClinicalRecordUuid")
                         .IsRequired()
-                        .HasColumnType("longtext")
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)")
                         .HasColumnName("clinical_record_uuid");
 
                     b.Property<int>("PatientId")
@@ -202,6 +208,10 @@ namespace optiflow_platform.Shared.Infrastructure.Persistence.EFC.Migrations
 
                     b.HasKey("Id")
                         .HasName("p_k_clinical_records");
+
+                    b.HasIndex("ClinicalRecordUuid")
+                        .IsUnique()
+                        .HasDatabaseName("i_x_clinical_records_clinical_record_uuid");
 
                     b.HasIndex("PatientId")
                         .IsUnique()
@@ -267,7 +277,8 @@ namespace optiflow_platform.Shared.Infrastructure.Persistence.EFC.Migrations
 
                     b.Property<string>("PrescriptionUuid")
                         .IsRequired()
-                        .HasColumnType("longtext")
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)")
                         .HasColumnName("prescription_uuid");
 
                     b.HasKey("Id")
@@ -277,6 +288,100 @@ namespace optiflow_platform.Shared.Infrastructure.Persistence.EFC.Migrations
                         .HasDatabaseName("i_x_prescriptions_clinical_record_id");
 
                     b.ToTable("prescriptions", (string)null);
+                });
+
+            modelBuilder.Entity("optiflow_platform.IAM.Domain.Model.Aggregates.User", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)")
+                        .HasColumnName("id");
+
+                    b.Property<DateTimeOffset?>("CreatedAt")
+                        .HasColumnType("datetime")
+                        .HasColumnName("created_at");
+
+                    b.Property<DateTimeOffset?>("DeletedAt")
+                        .HasColumnType("datetime")
+                        .HasColumnName("deleted_at");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)")
+                        .HasColumnName("email");
+
+                    b.Property<string>("GoogleId")
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)")
+                        .HasColumnName("google_id");
+
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasColumnType("longtext")
+                        .HasColumnName("password_hash");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("longtext")
+                        .HasColumnName("status");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("datetime")
+                        .HasColumnName("updated_at");
+
+                    b.Property<long>("Version")
+                        .IsConcurrencyToken()
+                        .HasColumnType("bigint")
+                        .HasColumnName("version");
+
+                    b.HasKey("Id")
+                        .HasName("p_k_users");
+
+                    b.HasIndex("Email")
+                        .IsUnique()
+                        .HasDatabaseName("i_x_users_email");
+
+                    b.ToTable("users", (string)null);
+                });
+
+            modelBuilder.Entity("optiflow_platform.IAM.Domain.Model.Entities.PasswordRecoveryToken", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("created_at");
+
+                    b.Property<DateTime>("ExpiresAt")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("expires_at");
+
+                    b.Property<bool>("IsUsed")
+                        .HasColumnType("tinyint(1)")
+                        .HasColumnName("is_used");
+
+                    b.Property<string>("TokenHash")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)")
+                        .HasColumnName("token_hash");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("char(36)")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id")
+                        .HasName("p_k_password_recovery_tokens");
+
+                    b.HasIndex("TokenHash")
+                        .IsUnique()
+                        .HasDatabaseName("i_x_password_recovery_tokens_token_hash");
+
+                    b.ToTable("password_recovery_tokens", (string)null);
                 });
 
             modelBuilder.Entity("optiflow_platform.Inventory.Domain.Model.Aggregates.Product", b =>
@@ -297,10 +402,6 @@ namespace optiflow_platform.Shared.Infrastructure.Persistence.EFC.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("varchar(255)")
                         .HasColumnName("category");
-
-                    b.Property<int>("CategoryId")
-                        .HasColumnType("int")
-                        .HasColumnName("category_id");
 
                     b.Property<string>("LastRestockDate")
                         .IsRequired()
@@ -511,6 +612,10 @@ namespace optiflow_platform.Shared.Infrastructure.Persistence.EFC.Migrations
                         .HasColumnType("varchar(255)")
                         .HasColumnName("frame");
 
+                    b.Property<int?>("FrameProductId")
+                        .HasColumnType("int")
+                        .HasColumnName("frame_product_id");
+
                     b.Property<bool>("IsRework")
                         .HasColumnType("tinyint(1)")
                         .HasColumnName("is_rework");
@@ -524,6 +629,10 @@ namespace optiflow_platform.Shared.Infrastructure.Persistence.EFC.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("varchar(255)")
                         .HasColumnName("laboratory_name");
+
+                    b.Property<int?>("LensProductId")
+                        .HasColumnType("int")
+                        .HasColumnName("lens_product_id");
 
                     b.Property<string>("LensType")
                         .IsRequired()

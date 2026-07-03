@@ -9,6 +9,7 @@ using optiflow_platform.Inventory.Interfaces.REST.Transform;
 using optiflow_platform.Shared.Application.Patterns;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
+using optiflow_platform.IAM.Infrastructure.Pipeline.Middleware.Attributes;
 
 namespace optiflow_platform.Inventory.Interfaces.REST;
 
@@ -19,6 +20,7 @@ namespace optiflow_platform.Inventory.Interfaces.REST;
 [Route("/[controller]")]
 [Produces(MediaTypeNames.Application.Json)]
 [Tags("Products")]
+[Authorize]
 public class ProductsController(
     IProductCommandService productCommandService,
     IProductQueryService productQueryService,
@@ -276,6 +278,40 @@ public class ProductsController(
                 BadRequest("A justification is required to confirm a stock adjustment."),
             _ => Problem(title: "Unexpected server error",
                 detail: "Could not log manual stock adjustment.", statusCode: 500)
+        };
+    }
+
+    /// <summary>
+    ///     Consumes a product's stock and records the corresponding audit log entry.
+    /// </summary>
+    [HttpPost("{id:int}/consume")]
+    [SwaggerOperation(
+        Summary = "Consumes a product's stock",
+        Description = "Deducts stock consumed to fulfill an external order, e.g. lab order material, and logs the operation in the audit history",
+        OperationId = "ConsumeProductStock")]
+    [SwaggerResponse(200, "The stock was consumed", typeof(ProductResource))]
+    [SwaggerResponse(400, "The consumption quantity is invalid", typeof(string))]
+    [SwaggerResponse(404, "The product was not found")]
+    [SwaggerResponse(409, "The product does not have enough stock available", typeof(ProblemDetails))]
+    [SwaggerResponse(500, "Unexpected server error", typeof(ProblemDetails))]
+    public async Task<ActionResult> ConsumeStock(int id, [FromBody] ConsumeStockResource resource,
+        CancellationToken cancellationToken)
+    {
+        var command = ConsumeStockCommandFromResourceAssembler.ToCommandFromResource(id, resource);
+        var result = await productCommandService.Handle(command, cancellationToken);
+        return result switch
+        {
+            Result<Product, ConsumeStockError>.Success success =>
+                Ok(ProductResourceFromEntityAssembler.ToResourceFromEntity(success.Value)),
+            Result<Product, ConsumeStockError>.Failure { Error: ConsumeStockError.ProductNotFound } =>
+                NotFound(),
+            Result<Product, ConsumeStockError>.Failure { Error: ConsumeStockError.InvalidQuantity } =>
+                BadRequest("Consumption quantity must be greater than zero."),
+            Result<Product, ConsumeStockError>.Failure { Error: ConsumeStockError.InsufficientStock } =>
+                Problem(title: "Insufficient stock",
+                    detail: $"Product {id} does not have enough stock to fulfill this consumption.", statusCode: 409),
+            _ => Problem(title: "Unexpected server error",
+                detail: "Could not consume product stock.", statusCode: 500)
         };
     }
 }

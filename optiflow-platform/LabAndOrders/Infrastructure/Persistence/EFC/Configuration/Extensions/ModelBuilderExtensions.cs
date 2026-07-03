@@ -31,7 +31,9 @@ public static class ModelBuilderExtensions
         builder.Entity<WorkOrder>().Property(w => w.PatientName).IsRequired().HasMaxLength(255);
         builder.Entity<WorkOrder>().Property(w => w.LaboratoryName).IsRequired().HasMaxLength(255);
         builder.Entity<WorkOrder>().Property(w => w.LensType).HasMaxLength(100);
+        builder.Entity<WorkOrder>().Property(w => w.LensProductId);
         builder.Entity<WorkOrder>().Property(w => w.Frame).HasMaxLength(255);
+        builder.Entity<WorkOrder>().Property(w => w.FrameProductId);
         builder.Entity<WorkOrder>().Property(w => w.Prescription).HasMaxLength(500);
         builder.Entity<WorkOrder>().Property(w => w.DeliveryDate).HasMaxLength(50);
         builder.Entity<WorkOrder>().Property(w => w.Deposit).HasColumnType("decimal(10,2)");

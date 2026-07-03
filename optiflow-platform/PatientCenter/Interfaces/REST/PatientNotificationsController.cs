@@ -1,4 +1,4 @@
-﻿using System.Net.Mime;
+using System.Net.Mime;
 using Microsoft.AspNetCore.Mvc;
 using optiflow_platform.PatientCenter.Application.Errors;
 using optiflow_platform.PatientCenter.Application.Services;
@@ -8,6 +8,7 @@ using optiflow_platform.PatientCenter.Interfaces.REST.Resources;
 using optiflow_platform.PatientCenter.Interfaces.REST.Transform;
 using optiflow_platform.Shared.Application.Patterns;
 using Swashbuckle.AspNetCore.Annotations;
+using optiflow_platform.IAM.Infrastructure.Pipeline.Middleware.Attributes;
 
 namespace optiflow_platform.PatientCenter.Interfaces.REST;
 
@@ -15,6 +16,7 @@ namespace optiflow_platform.PatientCenter.Interfaces.REST;
 [Route("api/v1/patients/{patientId}/notifications")]
 [Produces(MediaTypeNames.Application.Json)]
 [Tags("Patient Notifications")]
+[Authorize]
 public class PatientNotificationsController(
     IPatientNotificationQueryService notificationQueryService,
     IPatientNotificationCommandService notificationCommandService,

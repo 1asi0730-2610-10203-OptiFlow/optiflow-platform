@@ -8,6 +8,7 @@ using optiflow_platform.Clinical.Interfaces.REST.Transform;
 using optiflow_platform.Shared.Application.Patterns;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
+using optiflow_platform.IAM.Infrastructure.Pipeline.Middleware.Attributes;
 
 namespace optiflow_platform.Clinical.Interfaces.REST;
 
@@ -16,6 +17,7 @@ namespace optiflow_platform.Clinical.Interfaces.REST;
 [Route("api/v1/[controller]")]
 [Produces(MediaTypeNames.Application.Json)]
 [Tags("Patients")]
+[Authorize]
 public class PatientsController(
     IPatientCommandService patientCommandService,
     IPatientQueryService patientQueryService,

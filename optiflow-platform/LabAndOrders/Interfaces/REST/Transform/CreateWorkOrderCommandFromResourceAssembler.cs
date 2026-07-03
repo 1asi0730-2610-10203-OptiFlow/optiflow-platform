@@ -14,8 +14,8 @@ public static class CreateWorkOrderCommandFromResourceAssembler
     public static CreateWorkOrderCommand ToCommandFromResource(CreateWorkOrderResource resource) =>
         new(resource.SaleId, resource.RecipeId, resource.LabId,
             resource.PatientName, resource.LaboratoryName ?? string.Empty,
-            resource.LensType ?? string.Empty, resource.Frame ?? string.Empty,
-            resource.Prescription ?? string.Empty,
+            resource.LensType ?? string.Empty, resource.LensProductId, resource.Frame ?? string.Empty,
+            resource.FrameProductId, resource.Prescription ?? string.Empty,
             resource.Priority ?? "normal",
             resource.DeliveryDate,
             resource.Deposit, resource.Total);
