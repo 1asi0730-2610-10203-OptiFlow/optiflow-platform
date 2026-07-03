@@ -89,7 +89,7 @@ namespace optiflow_platform.Shared.Infrastructure.Persistence.EFC.Migrations
                     b.HasKey("Id")
                         .HasName("p_k_analytics_reports");
 
-                    b.ToTable("analytics_reports");
+                    b.ToTable("analytics_reports", (string)null);
                 });
 
             modelBuilder.Entity("optiflow_platform.Analytics.Domain.Model.Entities.StaffMetric", b =>
@@ -127,7 +127,7 @@ namespace optiflow_platform.Shared.Infrastructure.Persistence.EFC.Migrations
                     b.HasIndex("ReportId")
                         .HasDatabaseName("i_x_staff_metrics_report_id");
 
-                    b.ToTable("staff_metrics");
+                    b.ToTable("staff_metrics", (string)null);
                 });
 
             modelBuilder.Entity("optiflow_platform.Clinical.Domain.Model.Aggregates.Patient", b =>
@@ -186,7 +186,7 @@ namespace optiflow_platform.Shared.Infrastructure.Persistence.EFC.Migrations
                         .IsUnique()
                         .HasDatabaseName("i_x_patients_dni");
 
-                    b.ToTable("patients");
+                    b.ToTable("patients", (string)null);
                 });
 
             modelBuilder.Entity("optiflow_platform.Clinical.Domain.Model.Entities.ClinicalRecord", b =>
@@ -217,7 +217,7 @@ namespace optiflow_platform.Shared.Infrastructure.Persistence.EFC.Migrations
                         .IsUnique()
                         .HasDatabaseName("i_x_clinical_records_patient_id");
 
-                    b.ToTable("clinical_records");
+                    b.ToTable("clinical_records", (string)null);
                 });
 
             modelBuilder.Entity("optiflow_platform.Clinical.Domain.Model.Entities.Prescription", b =>
@@ -407,10 +407,6 @@ namespace optiflow_platform.Shared.Infrastructure.Persistence.EFC.Migrations
                         .HasColumnType("varchar(255)")
                         .HasColumnName("category");
 
-                    b.Property<int>("CategoryId")
-                        .HasColumnType("int")
-                        .HasColumnName("category_id");
-
                     b.Property<string>("LastRestockDate")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -464,7 +460,7 @@ namespace optiflow_platform.Shared.Infrastructure.Persistence.EFC.Migrations
                         .IsUnique()
                         .HasDatabaseName("i_x_products_sku");
 
-                    b.ToTable("products");
+                    b.ToTable("products", (string)null);
                 });
 
             modelBuilder.Entity("optiflow_platform.Inventory.Domain.Model.Aggregates.StockAuditLog", b =>
@@ -529,7 +525,7 @@ namespace optiflow_platform.Shared.Infrastructure.Persistence.EFC.Migrations
                     b.HasKey("Id")
                         .HasName("p_k_stock_audit_logs");
 
-                    b.ToTable("stock_audit_logs");
+                    b.ToTable("stock_audit_logs", (string)null);
                 });
 
             modelBuilder.Entity("optiflow_platform.Inventory.Domain.Model.Aggregates.Supplier", b =>
@@ -552,7 +548,7 @@ namespace optiflow_platform.Shared.Infrastructure.Persistence.EFC.Migrations
                         .IsUnique()
                         .HasDatabaseName("i_x_suppliers_name");
 
-                    b.ToTable("suppliers");
+                    b.ToTable("suppliers", (string)null);
                 });
 
             modelBuilder.Entity("optiflow_platform.Inventory.Domain.Model.Entities.Category", b =>
@@ -571,7 +567,7 @@ namespace optiflow_platform.Shared.Infrastructure.Persistence.EFC.Migrations
                     b.HasKey("Id")
                         .HasName("p_k_categories");
 
-                    b.ToTable("categories");
+                    b.ToTable("categories", (string)null);
                 });
 
             modelBuilder.Entity("optiflow_platform.LabAndOrders.Domain.Model.Aggregates.Laboratory", b =>
@@ -594,7 +590,7 @@ namespace optiflow_platform.Shared.Infrastructure.Persistence.EFC.Migrations
                         .IsUnique()
                         .HasDatabaseName("i_x_laboratories_name");
 
-                    b.ToTable("laboratories");
+                    b.ToTable("laboratories", (string)null);
                 });
 
             modelBuilder.Entity("optiflow_platform.LabAndOrders.Domain.Model.Aggregates.WorkOrder", b =>
@@ -620,6 +616,10 @@ namespace optiflow_platform.Shared.Infrastructure.Persistence.EFC.Migrations
                         .HasColumnType("varchar(255)")
                         .HasColumnName("frame");
 
+                    b.Property<int?>("FrameProductId")
+                        .HasColumnType("int")
+                        .HasColumnName("frame_product_id");
+
                     b.Property<bool>("IsRework")
                         .HasColumnType("tinyint(1)")
                         .HasColumnName("is_rework");
@@ -633,6 +633,10 @@ namespace optiflow_platform.Shared.Infrastructure.Persistence.EFC.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("varchar(255)")
                         .HasColumnName("laboratory_name");
+
+                    b.Property<int?>("LensProductId")
+                        .HasColumnType("int")
+                        .HasColumnName("lens_product_id");
 
                     b.Property<string>("LensType")
                         .IsRequired()
@@ -679,7 +683,7 @@ namespace optiflow_platform.Shared.Infrastructure.Persistence.EFC.Migrations
                     b.HasKey("Id")
                         .HasName("p_k_work_orders");
 
-                    b.ToTable("work_orders");
+                    b.ToTable("work_orders", (string)null);
                 });
 
             modelBuilder.Entity("optiflow_platform.PatientCenter.Domain.Model.Entities.LensMaterial", b =>
@@ -714,7 +718,7 @@ namespace optiflow_platform.Shared.Infrastructure.Persistence.EFC.Migrations
                     b.HasKey("Id")
                         .HasName("p_k_lens_materials");
 
-                    b.ToTable("lens_materials");
+                    b.ToTable("lens_materials", (string)null);
                 });
 
             modelBuilder.Entity("optiflow_platform.PatientCenter.Domain.Model.Entities.PatientNotification", b =>
@@ -751,7 +755,7 @@ namespace optiflow_platform.Shared.Infrastructure.Persistence.EFC.Migrations
                     b.HasKey("Id")
                         .HasName("p_k_patient_notifications");
 
-                    b.ToTable("patient_notifications");
+                    b.ToTable("patient_notifications", (string)null);
                 });
 
             modelBuilder.Entity("optiflow_platform.Sales.Domain.Model.Aggregates.Payment", b =>
@@ -798,7 +802,7 @@ namespace optiflow_platform.Shared.Infrastructure.Persistence.EFC.Migrations
                     b.HasKey("Id")
                         .HasName("p_k_payments");
 
-                    b.ToTable("payments");
+                    b.ToTable("payments", (string)null);
                 });
 
             modelBuilder.Entity("optiflow_platform.Sales.Domain.Model.Aggregates.Sale", b =>
@@ -895,7 +899,32 @@ namespace optiflow_platform.Shared.Infrastructure.Persistence.EFC.Migrations
                     b.HasKey("Id")
                         .HasName("p_k_sales");
 
-                    b.ToTable("sales");
+                    b.ToTable("sales", (string)null);
+                });
+
+            modelBuilder.Entity("optiflow_platform.Sales.Domain.Model.Entities.SaleItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("id");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int")
+                        .HasColumnName("product_id");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int")
+                        .HasColumnName("quantity");
+
+                    b.Property<int>("SaleId")
+                        .HasColumnType("int")
+                        .HasColumnName("sale_id");
+
+                    b.HasKey("Id")
+                        .HasName("p_k_sale_items");
+
+                    b.ToTable("sale_items", (string)null);
                 });
 
             modelBuilder.Entity("optiflow_platform.Subscription.Domain.Model.Aggregates.Billing", b =>
@@ -1111,7 +1140,7 @@ namespace optiflow_platform.Shared.Infrastructure.Persistence.EFC.Migrations
                             b1.HasKey("Id")
                                 .HasName("p_k_suppliers");
 
-                            b1.ToTable("suppliers");
+                            b1.ToTable("suppliers", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("Id")
@@ -1145,7 +1174,7 @@ namespace optiflow_platform.Shared.Infrastructure.Persistence.EFC.Migrations
                             b1.HasKey("Id")
                                 .HasName("p_k_laboratories");
 
-                            b1.ToTable("laboratories");
+                            b1.ToTable("laboratories", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("Id")

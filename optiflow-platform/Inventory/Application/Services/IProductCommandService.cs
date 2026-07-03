@@ -26,11 +26,19 @@ public interface IProductCommandService
     Task<Result<Product, RestockProductError>> Handle(RestockProductCommand command,
         CancellationToken cancellationToken = default);
 
+    /// <summary>Handles reducing a product's stock after a sale and recording the corresponding audit log.</summary>
+    Task<Result<Product, ReduceStockError>> Handle(ReduceStockCommand command,
+        CancellationToken cancellationToken = default);
+
     /// <summary>Handles confirming a manual stock adjustment and recording the corresponding audit log.</summary>
     Task<Result<Product, LogManualAdjustmentError>> Handle(LogManualAdjustmentCommand command,
         CancellationToken cancellationToken = default);
 
     /// <summary>Handles verifying that a product has stock available to satisfy a supply request.</summary>
     Task<Result<Product, VerifySupplyStockError>> Handle(VerifySupplyStockCommand command,
+        CancellationToken cancellationToken = default);
+
+    /// <summary>Handles consuming stock to fulfill an external order and recording the corresponding audit log.</summary>
+    Task<Result<Product, ConsumeStockError>> Handle(ConsumeStockCommand command,
         CancellationToken cancellationToken = default);
 }

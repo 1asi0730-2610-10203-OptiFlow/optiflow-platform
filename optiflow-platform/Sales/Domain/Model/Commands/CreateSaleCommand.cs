@@ -16,4 +16,10 @@ public record CreateSaleCommand(
     string PaymentMethod,
     string CreatedAt,
     string? DeliveredAt,
-    string? Notes);
+    string? Notes,
+    IReadOnlyList<CreateSaleItemCommand> Items);
+
+/// <summary>
+///     A single product and quantity to record as part of a new sale.
+/// </summary>
+public record CreateSaleItemCommand(int ProductId, int Quantity);

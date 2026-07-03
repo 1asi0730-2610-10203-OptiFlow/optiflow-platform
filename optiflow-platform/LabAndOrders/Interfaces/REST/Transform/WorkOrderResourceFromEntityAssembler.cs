@@ -14,7 +14,7 @@ public static class WorkOrderResourceFromEntityAssembler
     public static WorkOrderResource ToResourceFromEntity(WorkOrder workOrder) =>
         new(workOrder.Id, workOrder.SaleId, workOrder.RecipeId, workOrder.LaboratoryId.Value,
             workOrder.Status, workOrder.Priority, workOrder.PatientName,
-            workOrder.LaboratoryName, workOrder.LensType, workOrder.Frame,
-            workOrder.Prescription, workOrder.DeliveryDate,
+            workOrder.LaboratoryName, workOrder.LensType, workOrder.LensProductId, workOrder.Frame,
+            workOrder.FrameProductId, workOrder.Prescription, workOrder.DeliveryDate,
             workOrder.Deposit, workOrder.Total, workOrder.IsRework);
 }
