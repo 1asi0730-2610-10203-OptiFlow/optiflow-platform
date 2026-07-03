@@ -1,6 +1,7 @@
+using System;
 using Microsoft.EntityFrameworkCore;
 using optiflow_platform.Inventory.Domain.Model.Aggregates;
-using optiflow_platform.Inventory.Domain.Model.Entities;
+using optiflow_platform.Inventory.Domain.Model.ValueObjects;
 
 namespace optiflow_platform.Inventory.Infrastructure.Persistence.EFC.Configuration.Extensions;
 
@@ -8,10 +9,6 @@ public static class ModelBuilderExtensions
 {
     public static void ApplyInventoryConfiguration(this ModelBuilder builder)
     {
-        builder.Entity<Category>().HasKey(c => c.Id);
-        builder.Entity<Category>().Property(c => c.Id).IsRequired().ValueGeneratedOnAdd();
-        builder.Entity<Category>().Property(c => c.Name).IsRequired().HasMaxLength(255);
-
         builder.Entity<Supplier>().HasKey(s => s.Id);
         builder.Entity<Supplier>().Property(s => s.Id).IsRequired().ValueGeneratedOnAdd();
         builder.Entity<Supplier>().Property(s => s.Name).IsRequired().HasMaxLength(255);
@@ -26,8 +23,10 @@ public static class ModelBuilderExtensions
 
         builder.Entity<Product>().HasKey(p => p.Id);
         builder.Entity<Product>().Property(p => p.Id).IsRequired().ValueGeneratedOnAdd();
-        builder.Entity<Product>().Property(p => p.CategoryId).IsRequired();
-        builder.Entity<Product>().Property(p => p.Category).IsRequired().HasMaxLength(255);
+        builder.Entity<Product>().Property(p => p.Category).IsRequired().HasMaxLength(255)
+            .HasConversion(
+                v => v.ToString().ToUpper(),
+                v => (EProductCategory)Enum.Parse(typeof(EProductCategory), v, true));
         builder.Entity<Product>().Property(p => p.SupplierId).IsRequired();
         builder.Entity<Product>().Property(p => p.SupplierName).IsRequired().HasMaxLength(255);
         builder.Entity<Product>().Property(p => p.Sku).IsRequired().HasMaxLength(100);

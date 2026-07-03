@@ -12,7 +12,7 @@ public static class ProductResourceFromEntityAssembler
     ///     Converts a Product entity to a ProductResource.
     /// </summary>
     public static ProductResource ToResourceFromEntity(Product product) =>
-        new(product.Id, product.CategoryId, product.Category, product.SupplierId, product.SupplierName,
+        new(product.Id, product.Category, product.SupplierId, product.SupplierName,
             product.Sku, product.Name, product.Brand, product.Model,
             product.Price, product.Stock, product.MinimumStockThreshold, product.LastRestockDate);
 }

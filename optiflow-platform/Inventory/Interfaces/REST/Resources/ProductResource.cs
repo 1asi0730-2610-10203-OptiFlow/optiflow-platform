@@ -1,3 +1,4 @@
+using optiflow_platform.Inventory.Domain.Model.ValueObjects;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace optiflow_platform.Inventory.Interfaces.REST.Resources;
@@ -8,8 +9,7 @@ namespace optiflow_platform.Inventory.Interfaces.REST.Resources;
 [SwaggerSchema(Description = "A product resource")]
 public record ProductResource(
     [SwaggerParameter(Description = "The server-generated ID of the product")] int Id,
-    [SwaggerParameter(Description = "Reference to the product category")] int CategoryId,
-    [SwaggerParameter(Description = "Name of the product category")] string Category,
+    [SwaggerParameter(Description = "The product category")] EProductCategory Category,
     [SwaggerParameter(Description = "Reference to the supplier")] int SupplierId,
     [SwaggerParameter(Description = "Name of the supplier")] string SupplierName,
     [SwaggerParameter(Description = "Stock keeping unit code")] string Sku,

@@ -20,5 +20,6 @@ public static class CreateSaleCommandFromResourceAssembler
             resource.PaymentMethod,
             resource.CreatedAt,
             resource.DeliveredAt,
-            resource.Notes);
+            resource.Notes,
+            resource.Items.Select(i => new CreateSaleItemCommand(i.ProductId, i.Quantity)).ToList());
 }

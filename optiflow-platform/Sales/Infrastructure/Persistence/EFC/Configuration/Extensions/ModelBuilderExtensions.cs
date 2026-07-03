@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using optiflow_platform.Sales.Domain.Model.Aggregates;
+using optiflow_platform.Sales.Domain.Model.Entities;
 using optiflow_platform.Sales.Domain.Model.ValueObjects;
 
 namespace optiflow_platform.Sales.Infrastructure.Persistence.EFC.Configuration.Extensions;
@@ -45,5 +46,11 @@ public static class ModelBuilderExtensions
         builder.Entity<Payment>().Property(p => p.Status).IsRequired().HasMaxLength(20);
         builder.Entity<Payment>().Property(p => p.Method).IsRequired().HasMaxLength(50);
         builder.Entity<Payment>().Property(p => p.PaidAt).IsRequired().HasMaxLength(50);
+
+        builder.Entity<SaleItem>().HasKey(i => i.Id);
+        builder.Entity<SaleItem>().Property(i => i.Id).IsRequired().ValueGeneratedOnAdd();
+        builder.Entity<SaleItem>().Property(i => i.SaleId).IsRequired();
+        builder.Entity<SaleItem>().Property(i => i.ProductId).IsRequired();
+        builder.Entity<SaleItem>().Property(i => i.Quantity).IsRequired();
     }
 }

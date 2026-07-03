@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using optiflow_platform.Inventory.Domain.Model.ValueObjects;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace optiflow_platform.Inventory.Interfaces.REST.Resources;
@@ -8,9 +9,8 @@ namespace optiflow_platform.Inventory.Interfaces.REST.Resources;
 /// </summary>
 [SwaggerSchema(Description = "Request payload to register a product")]
 public record RegisterProductResource(
-    [SwaggerParameter(Description = "Reference to the product category")] int CategoryId,
     [Required]
-    [SwaggerParameter(Description = "Name of the product category")] string Category,
+    [SwaggerParameter(Description = "The product category")] EProductCategory Category,
     [SwaggerParameter(Description = "Reference to the supplier")] int SupplierId,
     [Required]
     [SwaggerParameter(Description = "Name of the supplier")] string SupplierName,

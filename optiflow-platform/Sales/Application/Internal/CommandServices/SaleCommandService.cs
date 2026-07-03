@@ -3,6 +3,7 @@ using optiflow_platform.Sales.Application.Errors;
 using optiflow_platform.Sales.Application.Services;
 using optiflow_platform.Sales.Domain.Model.Aggregates;
 using optiflow_platform.Sales.Domain.Model.Commands;
+using optiflow_platform.Sales.Domain.Model.Entities;
 using optiflow_platform.Sales.Domain.Model.Events;
 using optiflow_platform.Sales.Domain.Repositories;
 using optiflow_platform.Shared.Application.Patterns;
@@ -16,6 +17,7 @@ namespace optiflow_platform.Sales.Application.Internal.CommandServices;
 /// </summary>
 public class SaleCommandService(
     ISaleRepository saleRepository,
+    ISaleItemRepository saleItemRepository,
     IUnitOfWork unitOfWork,
     IMediator domainEventPublisher,
     ILogger<SaleCommandService> logger)
@@ -33,6 +35,11 @@ public class SaleCommandService(
             var sale = new Sale(command);
             await saleRepository.AddAsync(sale, cancellationToken);
             await unitOfWork.CompleteAsync(cancellationToken);
+
+            foreach (var item in command.Items)
+                await saleItemRepository.AddAsync(new SaleItem(sale.Id.Value, item.ProductId, item.Quantity), cancellationToken);
+            await unitOfWork.CompleteAsync(cancellationToken);
+
             await domainEventPublisher.PublishAsync(new SaleCreatedEvent(sale.Id, sale.PatientName, sale.TotalAmount), cancellationToken);
             return new Result<Sale, CreateSaleError>.Success(sale);
         }
@@ -178,7 +185,10 @@ public class SaleCommandService(
             sale.Complete();
             saleRepository.Update(sale);
             await unitOfWork.CompleteAsync(cancellationToken);
-            await domainEventPublisher.PublishAsync(new SaleCompletedEvent(sale.Id), cancellationToken);
+
+            var items = await saleItemRepository.ListBySaleIdAsync(sale.Id.Value, cancellationToken);
+            var eventItems = items.Select(i => new SaleCompletedItem(i.ProductId, i.Quantity)).ToList();
+            await domainEventPublisher.PublishAsync(new SaleCompletedEvent(sale.Id, sale.UserName, eventItems), cancellationToken);
             return new Result<Sale, CompleteSaleError>.Success(sale);
         }
         catch (Exception ex)

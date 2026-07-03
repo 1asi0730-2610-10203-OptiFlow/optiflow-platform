@@ -1,7 +1,9 @@
+using Cortex.Mediator;
 using optiflow_platform.LabAndOrders.Application.Errors;
 using optiflow_platform.LabAndOrders.Application.Services;
 using optiflow_platform.LabAndOrders.Domain.Model.Aggregates;
 using optiflow_platform.LabAndOrders.Domain.Model.Commands;
+using optiflow_platform.LabAndOrders.Domain.Model.Events;
 using optiflow_platform.LabAndOrders.Domain.Repositories;
 using optiflow_platform.Shared.Application.Patterns;
 using optiflow_platform.Shared.Domain.Repositories;
@@ -18,10 +20,12 @@ namespace optiflow_platform.LabAndOrders.Application.Internal.CommandServices;
 /// </remarks>
 /// <param name="workOrderRepository">Repository for work order persistence.</param>
 /// <param name="unitOfWork">Unit of work for transaction scope.</param>
+/// <param name="domainEventPublisher">Publisher for work order domain events.</param>
 /// <param name="logger">Logger for diagnostic and error reporting.</param>
 public class WorkOrderCommandService(
     IWorkOrderRepository workOrderRepository,
     IUnitOfWork unitOfWork,
+    IMediator domainEventPublisher,
     ILogger<WorkOrderCommandService> logger)
     : IWorkOrderCommandService
 {
@@ -34,6 +38,9 @@ public class WorkOrderCommandService(
             var workOrder = new WorkOrder(command);
             await workOrderRepository.AddAsync(workOrder, cancellationToken);
             await unitOfWork.CompleteAsync(cancellationToken);
+            await domainEventPublisher.PublishAsync(
+                new WorkOrderCreatedEvent(workOrder.Id, workOrder.LensProductId, workOrder.FrameProductId, workOrder.PatientName),
+                cancellationToken);
             return new Result<WorkOrder, CreateWorkOrderError>.Success(workOrder);
         }
         catch (DbUpdateException ex)
