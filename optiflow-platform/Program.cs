@@ -190,6 +190,7 @@ builder.Services.AddScoped<IPrescriptionQueryService, PrescriptionQueryService>(
 // Sales Bounded Context Injection
 builder.Services.AddScoped<ILabAndOrdersContextFacade, LabAndOrdersContextFacade>();
 builder.Services.AddScoped<ISaleRepository, SaleRepository>();
+builder.Services.AddScoped<ISaleItemRepository, SaleItemRepository>();
 builder.Services.AddScoped<SalesPaymentRepo, SalesPaymentRepoImpl>();
 builder.Services.AddScoped<ISaleCommandService, SaleCommandService>();
 builder.Services.AddScoped<ISaleQueryService, SaleQueryService>();

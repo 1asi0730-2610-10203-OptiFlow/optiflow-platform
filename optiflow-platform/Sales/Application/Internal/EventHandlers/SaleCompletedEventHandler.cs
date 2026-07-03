@@ -12,7 +12,6 @@ public class SaleCompletedEventHandler : IEventHandler<SaleCompletedEvent>
 
     private static Task On(SaleCompletedEvent domainEvent)
     {
-        Console.WriteLine("Sale completed - Id: " + domainEvent.SaleId);
         return Task.CompletedTask;
     }
 }

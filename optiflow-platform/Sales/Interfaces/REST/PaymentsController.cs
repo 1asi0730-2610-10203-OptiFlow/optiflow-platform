@@ -25,7 +25,6 @@ namespace optiflow_platform.Sales.Interfaces.REST;
 public class PaymentsController(
     IPaymentCommandService paymentCommandService,
     IPaymentQueryService paymentQueryService,
-    ISaleCommandService saleCommandService,
     ILogger<PaymentsController> logger)
     : ControllerBase
 {
@@ -116,14 +115,9 @@ public class PaymentsController(
 
             var payment = success.Value;
 
-            // Policy: Payment finished successfully → Complete Sale
-            if (payment.Status == PaymentStatus.Completed)
-            {
-                var completeResult = await saleCommandService.Handle(new CompleteSaleCommand(new SaleId(saleId)), cancellationToken);
-                if (completeResult is Result<Sale, CompleteSaleError>.Failure)
-                    logger.LogWarning("Payment completed for sale {SaleId} but could not mark sale as completed", saleId);
-            }
-
+            // Sale completion (and its side effects, e.g. inventory depletion) is triggered once,
+            // by OutstandingBalancePayedEventHandler reacting to the event paymentCommandService
+            // just published above — not duplicated here.
             return Ok(PaymentResourceFromEntityAssembler.ToResourceFromEntity(payment));
         }
         catch (Exception ex)

@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using optiflow_platform.Shared.Infrastructure.Persistence.EFC.Configuration;
 
@@ -10,9 +11,11 @@ using optiflow_platform.Shared.Infrastructure.Persistence.EFC.Configuration;
 namespace optiflow_platform.Shared.Infrastructure.Persistence.EFC.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260703000956_AddSaleItems")]
+    partial class AddSaleItems
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -89,7 +92,7 @@ namespace optiflow_platform.Shared.Infrastructure.Persistence.EFC.Migrations
                     b.HasKey("Id")
                         .HasName("p_k_analytics_reports");
 
-                    b.ToTable("analytics_reports", (string)null);
+                    b.ToTable("analytics_reports");
                 });
 
             modelBuilder.Entity("optiflow_platform.Analytics.Domain.Model.Entities.StaffMetric", b =>
@@ -127,7 +130,7 @@ namespace optiflow_platform.Shared.Infrastructure.Persistence.EFC.Migrations
                     b.HasIndex("ReportId")
                         .HasDatabaseName("i_x_staff_metrics_report_id");
 
-                    b.ToTable("staff_metrics", (string)null);
+                    b.ToTable("staff_metrics");
                 });
 
             modelBuilder.Entity("optiflow_platform.Clinical.Domain.Model.Aggregates.Patient", b =>
@@ -137,14 +140,13 @@ namespace optiflow_platform.Shared.Infrastructure.Persistence.EFC.Migrations
                         .HasColumnType("int")
                         .HasColumnName("id");
 
-                    b.Property<DateTime>("BirthDate")
-                        .HasColumnType("datetime(6)")
+                    b.Property<DateOnly>("BirthDate")
+                        .HasColumnType("date")
                         .HasColumnName("birth_date");
 
                     b.Property<string>("CustomerUuid")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("varchar(100)")
+                        .HasColumnType("longtext")
                         .HasColumnName("customer_uuid");
 
                     b.Property<string>("Dni")
@@ -178,15 +180,11 @@ namespace optiflow_platform.Shared.Infrastructure.Persistence.EFC.Migrations
                     b.HasKey("Id")
                         .HasName("p_k_patients");
 
-                    b.HasIndex("CustomerUuid")
-                        .IsUnique()
-                        .HasDatabaseName("i_x_patients_customer_uuid");
-
                     b.HasIndex("Dni")
                         .IsUnique()
                         .HasDatabaseName("i_x_patients_dni");
 
-                    b.ToTable("patients", (string)null);
+                    b.ToTable("patients");
                 });
 
             modelBuilder.Entity("optiflow_platform.Clinical.Domain.Model.Entities.ClinicalRecord", b =>
@@ -198,8 +196,7 @@ namespace optiflow_platform.Shared.Infrastructure.Persistence.EFC.Migrations
 
                     b.Property<string>("ClinicalRecordUuid")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("varchar(100)")
+                        .HasColumnType("longtext")
                         .HasColumnName("clinical_record_uuid");
 
                     b.Property<int>("PatientId")
@@ -209,15 +206,11 @@ namespace optiflow_platform.Shared.Infrastructure.Persistence.EFC.Migrations
                     b.HasKey("Id")
                         .HasName("p_k_clinical_records");
 
-                    b.HasIndex("ClinicalRecordUuid")
-                        .IsUnique()
-                        .HasDatabaseName("i_x_clinical_records_clinical_record_uuid");
-
                     b.HasIndex("PatientId")
                         .IsUnique()
                         .HasDatabaseName("i_x_clinical_records_patient_id");
 
-                    b.ToTable("clinical_records", (string)null);
+                    b.ToTable("clinical_records");
                 });
 
             modelBuilder.Entity("optiflow_platform.Clinical.Domain.Model.Entities.Prescription", b =>
@@ -277,8 +270,7 @@ namespace optiflow_platform.Shared.Infrastructure.Persistence.EFC.Migrations
 
                     b.Property<string>("PrescriptionUuid")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("varchar(100)")
+                        .HasColumnType("longtext")
                         .HasColumnName("prescription_uuid");
 
                     b.HasKey("Id")
@@ -287,101 +279,7 @@ namespace optiflow_platform.Shared.Infrastructure.Persistence.EFC.Migrations
                     b.HasIndex("ClinicalRecordId")
                         .HasDatabaseName("i_x_prescriptions_clinical_record_id");
 
-                    b.ToTable("prescriptions", (string)null);
-                });
-
-            modelBuilder.Entity("optiflow_platform.IAM.Domain.Model.Aggregates.User", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)")
-                        .HasColumnName("id");
-
-                    b.Property<DateTimeOffset?>("CreatedAt")
-                        .HasColumnType("datetime")
-                        .HasColumnName("created_at");
-
-                    b.Property<DateTimeOffset?>("DeletedAt")
-                        .HasColumnType("datetime")
-                        .HasColumnName("deleted_at");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("varchar(255)")
-                        .HasColumnName("email");
-
-                    b.Property<string>("GoogleId")
-                        .HasMaxLength(255)
-                        .HasColumnType("varchar(255)")
-                        .HasColumnName("google_id");
-
-                    b.Property<string>("Password")
-                        .IsRequired()
-                        .HasColumnType("longtext")
-                        .HasColumnName("password_hash");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("longtext")
-                        .HasColumnName("status");
-
-                    b.Property<DateTimeOffset?>("UpdatedAt")
-                        .HasColumnType("datetime")
-                        .HasColumnName("updated_at");
-
-                    b.Property<long>("Version")
-                        .IsConcurrencyToken()
-                        .HasColumnType("bigint")
-                        .HasColumnName("version");
-
-                    b.HasKey("Id")
-                        .HasName("p_k_users");
-
-                    b.HasIndex("Email")
-                        .IsUnique()
-                        .HasDatabaseName("i_x_users_email");
-
-                    b.ToTable("users", (string)null);
-                });
-
-            modelBuilder.Entity("optiflow_platform.IAM.Domain.Model.Entities.PasswordRecoveryToken", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)")
-                        .HasColumnName("id");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("created_at");
-
-                    b.Property<DateTime>("ExpiresAt")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("expires_at");
-
-                    b.Property<bool>("IsUsed")
-                        .HasColumnType("tinyint(1)")
-                        .HasColumnName("is_used");
-
-                    b.Property<string>("TokenHash")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("varchar(255)")
-                        .HasColumnName("token_hash");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("char(36)")
-                        .HasColumnName("user_id");
-
-                    b.HasKey("Id")
-                        .HasName("p_k_password_recovery_tokens");
-
-                    b.HasIndex("TokenHash")
-                        .IsUnique()
-                        .HasDatabaseName("i_x_password_recovery_tokens_token_hash");
-
-                    b.ToTable("password_recovery_tokens", (string)null);
+                    b.ToTable("prescriptions");
                 });
 
             modelBuilder.Entity("optiflow_platform.Inventory.Domain.Model.Aggregates.Product", b =>
@@ -402,6 +300,10 @@ namespace optiflow_platform.Shared.Infrastructure.Persistence.EFC.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("varchar(255)")
                         .HasColumnName("category");
+
+                    b.Property<int>("CategoryId")
+                        .HasColumnType("int")
+                        .HasColumnName("category_id");
 
                     b.Property<string>("LastRestockDate")
                         .IsRequired()
@@ -456,7 +358,7 @@ namespace optiflow_platform.Shared.Infrastructure.Persistence.EFC.Migrations
                         .IsUnique()
                         .HasDatabaseName("i_x_products_sku");
 
-                    b.ToTable("products", (string)null);
+                    b.ToTable("products");
                 });
 
             modelBuilder.Entity("optiflow_platform.Inventory.Domain.Model.Aggregates.StockAuditLog", b =>
@@ -521,7 +423,7 @@ namespace optiflow_platform.Shared.Infrastructure.Persistence.EFC.Migrations
                     b.HasKey("Id")
                         .HasName("p_k_stock_audit_logs");
 
-                    b.ToTable("stock_audit_logs", (string)null);
+                    b.ToTable("stock_audit_logs");
                 });
 
             modelBuilder.Entity("optiflow_platform.Inventory.Domain.Model.Aggregates.Supplier", b =>
@@ -544,7 +446,7 @@ namespace optiflow_platform.Shared.Infrastructure.Persistence.EFC.Migrations
                         .IsUnique()
                         .HasDatabaseName("i_x_suppliers_name");
 
-                    b.ToTable("suppliers", (string)null);
+                    b.ToTable("suppliers");
                 });
 
             modelBuilder.Entity("optiflow_platform.Inventory.Domain.Model.Entities.Category", b =>
@@ -563,7 +465,7 @@ namespace optiflow_platform.Shared.Infrastructure.Persistence.EFC.Migrations
                     b.HasKey("Id")
                         .HasName("p_k_categories");
 
-                    b.ToTable("categories", (string)null);
+                    b.ToTable("categories");
                 });
 
             modelBuilder.Entity("optiflow_platform.LabAndOrders.Domain.Model.Aggregates.Laboratory", b =>
@@ -586,7 +488,7 @@ namespace optiflow_platform.Shared.Infrastructure.Persistence.EFC.Migrations
                         .IsUnique()
                         .HasDatabaseName("i_x_laboratories_name");
 
-                    b.ToTable("laboratories", (string)null);
+                    b.ToTable("laboratories");
                 });
 
             modelBuilder.Entity("optiflow_platform.LabAndOrders.Domain.Model.Aggregates.WorkOrder", b =>
@@ -612,10 +514,6 @@ namespace optiflow_platform.Shared.Infrastructure.Persistence.EFC.Migrations
                         .HasColumnType("varchar(255)")
                         .HasColumnName("frame");
 
-                    b.Property<int?>("FrameProductId")
-                        .HasColumnType("int")
-                        .HasColumnName("frame_product_id");
-
                     b.Property<bool>("IsRework")
                         .HasColumnType("tinyint(1)")
                         .HasColumnName("is_rework");
@@ -629,10 +527,6 @@ namespace optiflow_platform.Shared.Infrastructure.Persistence.EFC.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("varchar(255)")
                         .HasColumnName("laboratory_name");
-
-                    b.Property<int?>("LensProductId")
-                        .HasColumnType("int")
-                        .HasColumnName("lens_product_id");
 
                     b.Property<string>("LensType")
                         .IsRequired()
@@ -679,7 +573,7 @@ namespace optiflow_platform.Shared.Infrastructure.Persistence.EFC.Migrations
                     b.HasKey("Id")
                         .HasName("p_k_work_orders");
 
-                    b.ToTable("work_orders", (string)null);
+                    b.ToTable("work_orders");
                 });
 
             modelBuilder.Entity("optiflow_platform.PatientCenter.Domain.Model.Entities.LensMaterial", b =>
@@ -714,7 +608,7 @@ namespace optiflow_platform.Shared.Infrastructure.Persistence.EFC.Migrations
                     b.HasKey("Id")
                         .HasName("p_k_lens_materials");
 
-                    b.ToTable("lens_materials", (string)null);
+                    b.ToTable("lens_materials");
                 });
 
             modelBuilder.Entity("optiflow_platform.PatientCenter.Domain.Model.Entities.PatientNotification", b =>
@@ -751,7 +645,7 @@ namespace optiflow_platform.Shared.Infrastructure.Persistence.EFC.Migrations
                     b.HasKey("Id")
                         .HasName("p_k_patient_notifications");
 
-                    b.ToTable("patient_notifications", (string)null);
+                    b.ToTable("patient_notifications");
                 });
 
             modelBuilder.Entity("optiflow_platform.Sales.Domain.Model.Aggregates.Payment", b =>
@@ -798,7 +692,7 @@ namespace optiflow_platform.Shared.Infrastructure.Persistence.EFC.Migrations
                     b.HasKey("Id")
                         .HasName("p_k_payments");
 
-                    b.ToTable("payments", (string)null);
+                    b.ToTable("payments");
                 });
 
             modelBuilder.Entity("optiflow_platform.Sales.Domain.Model.Aggregates.Sale", b =>
@@ -895,7 +789,7 @@ namespace optiflow_platform.Shared.Infrastructure.Persistence.EFC.Migrations
                     b.HasKey("Id")
                         .HasName("p_k_sales");
 
-                    b.ToTable("sales", (string)null);
+                    b.ToTable("sales");
                 });
 
             modelBuilder.Entity("optiflow_platform.Sales.Domain.Model.Entities.SaleItem", b =>
@@ -920,7 +814,7 @@ namespace optiflow_platform.Shared.Infrastructure.Persistence.EFC.Migrations
                     b.HasKey("Id")
                         .HasName("p_k_sale_items");
 
-                    b.ToTable("sale_items", (string)null);
+                    b.ToTable("sale_items");
                 });
 
             modelBuilder.Entity("optiflow_platform.Subscription.Domain.Model.Aggregates.Billing", b =>
@@ -1136,7 +1030,7 @@ namespace optiflow_platform.Shared.Infrastructure.Persistence.EFC.Migrations
                             b1.HasKey("Id")
                                 .HasName("p_k_suppliers");
 
-                            b1.ToTable("suppliers", (string)null);
+                            b1.ToTable("suppliers");
 
                             b1.WithOwner()
                                 .HasForeignKey("Id")
@@ -1170,7 +1064,7 @@ namespace optiflow_platform.Shared.Infrastructure.Persistence.EFC.Migrations
                             b1.HasKey("Id")
                                 .HasName("p_k_laboratories");
 
-                            b1.ToTable("laboratories", (string)null);
+                            b1.ToTable("laboratories");
 
                             b1.WithOwner()
                                 .HasForeignKey("Id")

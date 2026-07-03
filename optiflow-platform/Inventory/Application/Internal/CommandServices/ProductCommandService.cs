@@ -150,6 +150,47 @@ public class ProductCommandService(
     }
 
     /// <inheritdoc />
+    public async Task<Result<Product, ReduceStockError>> Handle(ReduceStockCommand command,
+        CancellationToken cancellationToken = default)
+    {
+        var product = await productRepository.FindByIdAsync(command.ProductId, cancellationToken);
+        if (product is null)
+        {
+            logger.LogWarning("Product {ProductId} not found for stock reduction", command.ProductId);
+            return new Result<Product, ReduceStockError>.Failure(ReduceStockError.ProductNotFound);
+        }
+
+        try
+        {
+            var previousStock = product.Stock;
+            product.ReduceStock(command.Quantity);
+            productRepository.Update(product);
+
+            var auditLog = new StockAuditLog(product.Id, product.Name, product.Sku, StockOperation.Sale,
+                previousStock, -command.Quantity, product.Stock, command.Reason);
+            await stockAuditLogRepository.AddAsync(auditLog, cancellationToken);
+
+            await unitOfWork.CompleteAsync(cancellationToken);
+            return new Result<Product, ReduceStockError>.Success(product);
+        }
+        catch (ArgumentException ex)
+        {
+            logger.LogWarning(ex, "Invalid reduction quantity {Quantity} for product {ProductId}", command.Quantity, command.ProductId);
+            return new Result<Product, ReduceStockError>.Failure(ReduceStockError.InvalidQuantity);
+        }
+        catch (InvalidOperationException ex)
+        {
+            logger.LogWarning(ex, "Insufficient stock reducing product {ProductId} by {Quantity}", command.ProductId, command.Quantity);
+            return new Result<Product, ReduceStockError>.Failure(ReduceStockError.InsufficientStock);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Unexpected error reducing stock for product {ProductId}", command.ProductId);
+            return new Result<Product, ReduceStockError>.Failure(ReduceStockError.UnexpectedError);
+        }
+    }
+
+    /// <inheritdoc />
     public async Task<Result<Product, LogManualAdjustmentError>> Handle(LogManualAdjustmentCommand command,
         CancellationToken cancellationToken = default)
     {

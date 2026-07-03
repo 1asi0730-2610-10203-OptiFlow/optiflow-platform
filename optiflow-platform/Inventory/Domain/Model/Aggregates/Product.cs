@@ -94,6 +94,21 @@ public class Product
     }
 
     /// <summary>
+    ///     Removes stock sold in a completed sale.
+    /// </summary>
+    /// <exception cref="ArgumentException">Thrown when the quantity is zero or negative.</exception>
+    /// <exception cref="InvalidOperationException">Thrown when the quantity exceeds the available stock.</exception>
+    public void ReduceStock(int quantity)
+    {
+        if (quantity <= 0)
+            throw new ArgumentException("Reduction quantity must be greater than zero.", nameof(quantity));
+        if (quantity > Stock)
+            throw new InvalidOperationException(
+                $"Insufficient stock for product {Sku}: requested {quantity}, available {Stock}.");
+        Stock -= quantity;
+    }
+
+    /// <summary>
     ///     Confirms a manual stock correction backed by a justification.
     /// </summary>
     /// <exception cref="ArgumentException">Thrown when no justification is provided.</exception>
