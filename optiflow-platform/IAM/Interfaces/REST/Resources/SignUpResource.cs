@@ -1,3 +1,7 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace optiflow_platform.IAM.Interfaces.REST.Resources;
 
-public record SignUpResource(string Email, string Password);
+public record SignUpResource(
+    [Required(ErrorMessage = "iam.error.email.required")] string Email,
+    [Required(ErrorMessage = "iam.error.password.required")] string Password);
