@@ -18,4 +18,10 @@ public record CreateSaleResource(
     [Required] [SwaggerParameter(Description = "Payment method (e.g. CREDIT_CARD, CASH, DEBIT_CARD, TRANSFER)")] string PaymentMethod,
     [Required] [SwaggerParameter(Description = "Sale creation date (ISO 8601)")] string CreatedAt,
     [SwaggerParameter(Description = "Expected delivery date (ISO 8601)")] string? DeliveredAt,
-    [SwaggerParameter(Description = "Additional notes")] string? Notes);
+    [SwaggerParameter(Description = "Additional notes")] string? Notes,
+    [Required] [MinLength(1)] [SwaggerParameter(Description = "Products sold as part of this sale (e.g. frame, lens, contact lenses, accessories)")] IReadOnlyList<CreateSaleItemResource> Items);
+
+[SwaggerSchema(Description = "A product and quantity sold as part of a sale")]
+public record CreateSaleItemResource(
+    [Required] [SwaggerParameter(Description = "Inventory product ID")] int ProductId,
+    [Required] [Range(1, int.MaxValue)] [SwaggerParameter(Description = "Quantity sold")] int Quantity);
