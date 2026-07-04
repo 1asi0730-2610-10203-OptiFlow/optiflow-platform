@@ -23,10 +23,21 @@ public static class ModelBuilderExtensions
                     v => (UserStatus)System.Enum.Parse(typeof(UserStatus), v, true)
                 );
 
+            entity.Property(e => e.AccountId);
+
             entity.Property(e => e.Version).IsConcurrencyToken();
             entity.HasQueryFilter(e => e.DeletedAt == null);
 
             entity.HasIndex(e => e.Email).IsUnique();
+        });
+
+        builder.Entity<Account>(entity =>
+        {
+            entity.ToTable("Accounts");
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Id).IsRequired().ValueGeneratedOnAdd();
+            entity.Property(e => e.Name).IsRequired().HasMaxLength(255);
+            entity.Property(e => e.OwnerUserId);
         });
 
         builder.Entity<PasswordRecoveryToken>(entity =>

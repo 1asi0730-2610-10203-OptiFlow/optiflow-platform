@@ -17,6 +17,15 @@ namespace optiflow_platform.Shared.Infrastructure.Persistence.EFC.Configuration;
 /// </summary>
 public class AppDbContext(DbContextOptions options) : DbContext(options)
 {
+    /// <summary>
+    ///     The account the current request belongs to, set once per request by <c>JwtMiddleware</c>
+    ///     right after resolving the caller. Bounded-context <c>Apply*Configuration</c> extensions
+    ///     use this via global query filters to keep every tenant-owned entity scoped to it. Kept as a
+    ///     plain mutable property (not a constructor dependency) so `dotnet ef migrations add` can still
+    ///     construct this context at design time without needing an HTTP request in scope.
+    /// </summary>
+    public Guid? CurrentAccountId { get; set; }
+
     /// <inheritdoc />
     protected override void OnConfiguring(DbContextOptionsBuilder builder)
     {
