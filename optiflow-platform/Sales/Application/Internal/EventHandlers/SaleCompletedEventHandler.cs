@@ -7,12 +7,19 @@ using optiflow_platform.Shared.Application.Services;
 using optiflow_platform.Shared.Domain.Model.Commands;
 using optiflow_platform.Shared.Domain.Model.Entities;
 using optiflow_platform.Shared.Domain.Model.ValueObjects;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace optiflow_platform.Sales.Application.Internal.EventHandlers;
 
+/// <summary>
+///     Cortex.Mediator invokes every <see cref="IEventHandler{TEvent}"/> for a given event
+///     concurrently, and the Inventory stock-depletion handler for the same
+///     <see cref="SaleCompletedEvent"/> runs in parallel with this one. EF Core's DbContext is
+///     scoped per request and not safe for concurrent use, so this handler resolves its own
+///     dependencies from a fresh DI scope instead of taking them via constructor injection.
+/// </summary>
 public class SaleCompletedEventHandler(
-    ISaleRepository saleRepository,
-    ISystemNotificationCommandService notificationCommandService,
+    IServiceScopeFactory scopeFactory,
     ILogger<SaleCompletedEventHandler> logger)
     : IEventHandler<SaleCompletedEvent>
 {
@@ -23,6 +30,10 @@ public class SaleCompletedEventHandler(
 
     private async Task On(SaleCompletedEvent domainEvent, CancellationToken cancellationToken)
     {
+        using var scope = scopeFactory.CreateScope();
+        var saleRepository = scope.ServiceProvider.GetRequiredService<ISaleRepository>();
+        var notificationCommandService = scope.ServiceProvider.GetRequiredService<ISystemNotificationCommandService>();
+
         var sale = await saleRepository.FindByIdAsync(domainEvent.SaleId.Value, cancellationToken);
         if (sale is null)
         {

@@ -5,6 +5,7 @@ using optiflow_platform.Inventory.Domain.Model.Commands;
 using optiflow_platform.Sales.Domain.Model.Events;
 using optiflow_platform.Shared.Application.Internal.EventHandlers;
 using optiflow_platform.Shared.Application.Patterns;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace optiflow_platform.Inventory.Application.Internal.EventHandlers;
 
@@ -18,13 +19,23 @@ namespace optiflow_platform.Inventory.Application.Internal.EventHandlers;
 ///     item can't be reduced (e.g. insufficient stock), it's logged and the rest
 ///     of the sale's items are still processed; the sale itself is not rolled back.
 /// </remarks>
+/// <remarks>
+///     Cortex.Mediator invokes every <see cref="IEventHandler{TEvent}"/> for a given event
+///     concurrently, and other handlers for <see cref="SaleCompletedEvent"/> (e.g. the
+///     notification handler in Sales) run in parallel with this one. EF Core's DbContext is
+///     scoped per request and not safe for concurrent use, so this handler resolves its own
+///     dependencies from a fresh DI scope instead of taking them via constructor injection.
+/// </remarks>
 public class SaleCompletedEventHandler(
-    IProductCommandService productCommandService,
+    IServiceScopeFactory scopeFactory,
     ILogger<SaleCompletedEventHandler> logger)
     : IEventHandler<SaleCompletedEvent>
 {
     public async Task Handle(SaleCompletedEvent domainEvent, CancellationToken cancellationToken)
     {
+        using var scope = scopeFactory.CreateScope();
+        var productCommandService = scope.ServiceProvider.GetRequiredService<IProductCommandService>();
+
         foreach (var item in domainEvent.Items)
         {
             var reason = $"Sale #{domainEvent.SaleId} ({domainEvent.UserName})";
