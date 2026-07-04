@@ -6,6 +6,7 @@ using optiflow_platform.Sales.Domain.Model.Commands;
 using optiflow_platform.Sales.Domain.Model.Entities;
 using optiflow_platform.Sales.Domain.Model.Events;
 using optiflow_platform.Sales.Domain.Repositories;
+using optiflow_platform.Sales.Interfaces.Acl;
 using optiflow_platform.Shared.Application.Patterns;
 using optiflow_platform.Shared.Domain.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -18,6 +19,7 @@ namespace optiflow_platform.Sales.Application.Internal.CommandServices;
 public class SaleCommandService(
     ISaleRepository saleRepository,
     ISaleItemRepository saleItemRepository,
+    ILabAndOrdersContextFacade labAndOrdersContextFacade,
     IUnitOfWork unitOfWork,
     IMediator domainEventPublisher,
     ILogger<SaleCommandService> logger)
@@ -187,7 +189,12 @@ public class SaleCommandService(
             await unitOfWork.CompleteAsync(cancellationToken);
 
             var items = await saleItemRepository.ListBySaleIdAsync(sale.Id.Value, cancellationToken);
-            var eventItems = items.Select(i => new SaleCompletedItem(i.ProductId, i.Quantity)).ToList();
+            var workOrderMaterialProductIds = await labAndOrdersContextFacade
+                .FetchWorkOrderMaterialProductIdsBySaleId(sale.Id.Value, cancellationToken);
+            var eventItems = items
+                .Where(i => !workOrderMaterialProductIds.Contains(i.ProductId))
+                .Select(i => new SaleCompletedItem(i.ProductId, i.Quantity))
+                .ToList();
             await domainEventPublisher.PublishAsync(new SaleCompletedEvent(sale.Id, sale.UserName, eventItems), cancellationToken);
             return new Result<Sale, CompleteSaleError>.Success(sale);
         }

@@ -22,4 +22,19 @@ public class LabAndOrdersContextFacade(IWorkOrderQueryService workOrderQueryServ
 
         return workOrder?.Status;
     }
+
+    /// <inheritdoc />
+    public async Task<IReadOnlySet<int>> FetchWorkOrderMaterialProductIdsBySaleId(int saleId,
+        CancellationToken cancellationToken = default)
+    {
+        var workOrder = await workOrderQueryService.Handle(
+            new GetWorkOrderBySaleIdQuery(saleId), cancellationToken);
+
+        if (workOrder is null) return new HashSet<int>();
+
+        var productIds = new HashSet<int>();
+        if (workOrder.LensProductId is { } lensProductId) productIds.Add(lensProductId);
+        if (workOrder.FrameProductId is { } frameProductId) productIds.Add(frameProductId);
+        return productIds;
+    }
 }
