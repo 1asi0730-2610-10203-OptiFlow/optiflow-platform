@@ -20,4 +20,5 @@ public record SaleResource(
     [SwaggerParameter(Description = "Payment method")] string PaymentMethod,
     [SwaggerParameter(Description = "Sale creation date")] string CreatedAt,
     [SwaggerParameter(Description = "Delivery date")] string DeliveredAt,
-    [SwaggerParameter(Description = "Additional notes")] string Notes);
+    [SwaggerParameter(Description = "Additional notes")] string Notes,
+    [SwaggerParameter(Description = "Products sold as part of this sale")] IEnumerable<SaleItemResource> Items);

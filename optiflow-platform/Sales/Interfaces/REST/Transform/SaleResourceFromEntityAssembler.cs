@@ -1,11 +1,12 @@
 using optiflow_platform.Sales.Domain.Model.Aggregates;
+using optiflow_platform.Sales.Domain.Model.Entities;
 using optiflow_platform.Sales.Interfaces.REST.Resources;
 
 namespace optiflow_platform.Sales.Interfaces.REST.Transform;
 
 public static class SaleResourceFromEntityAssembler
 {
-    public static SaleResource ToResourceFromEntity(Sale sale) =>
+    public static SaleResource ToResourceFromEntity(Sale sale, IEnumerable<SaleItem> items) =>
         new(sale.Id.Value,
             sale.InvoiceNumber.Value,
             sale.LabOrderNumber,
@@ -22,5 +23,6 @@ public static class SaleResourceFromEntityAssembler
             sale.PaymentMethod,
             sale.CreatedAt,
             sale.DeliveredAt,
-            sale.Notes);
+            sale.Notes,
+            items.Select(i => new SaleItemResource(i.ProductId, i.Quantity)));
 }
