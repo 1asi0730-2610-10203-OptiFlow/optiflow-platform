@@ -89,7 +89,9 @@ public class SalesController(
     {
         var query = new GetAllSalesQuery();
         var result = await saleQueryService.Handle(query, cancellationToken);
-        var resources = await Task.WhenAll(result.Select(sale => BuildResourceAsync(sale, cancellationToken)));
+        var resources = new List<SaleResource>();
+        foreach (var sale in result)
+            resources.Add(await BuildResourceAsync(sale, cancellationToken));
         return Ok(resources);
     }
 
