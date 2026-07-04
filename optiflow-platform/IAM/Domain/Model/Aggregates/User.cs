@@ -29,12 +29,13 @@ public partial class User : IAuditableEntity
 
     public UserId Id { get; private set; }
     public EmailAddress Email { get; private set; }
-    
-    [JsonIgnore] 
+
+    [JsonIgnore]
     public Password Password { get; private set; }
-    
+
     public GoogleId? GoogleId { get; private set; }
     public UserStatus Status { get; private set; }
+    public Guid? AccountId { get; private set; }
 
     public User ChangePassword(Password password)
     {
@@ -57,6 +58,12 @@ public partial class User : IAuditableEntity
     public User LinkGoogleAccount(GoogleId googleId)
     {
         GoogleId = googleId;
+        return this;
+    }
+
+    public User AssignAccount(Guid accountId)
+    {
+        AccountId = accountId;
         return this;
     }
 
