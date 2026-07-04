@@ -19,9 +19,10 @@ public class Payment
         PaidAt = null!;
     }
 
-    public Payment(int saleId, decimal totalAmount)
+    public Payment(int saleId, decimal totalAmount, Guid accountId)
     {
         SaleId = saleId;
+        AccountId = accountId;
         TotalAmount = totalAmount;
         PaidAmount = 0;
         OutstandingBalance = totalAmount;
@@ -31,6 +32,7 @@ public class Payment
     }
 
     public PaymentId Id { get; private set; }
+    public Guid AccountId { get; private set; }
     public int SaleId { get; private set; }
     public decimal TotalAmount { get; private set; }
     public decimal PaidAmount { get; private set; }

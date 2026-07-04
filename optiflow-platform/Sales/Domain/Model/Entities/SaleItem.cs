@@ -20,16 +20,18 @@ public class SaleItem
     /// <summary>
     ///     Records a product and quantity sold as part of a sale.
     /// </summary>
-    public SaleItem(int saleId, int productId, int quantity)
+    public SaleItem(int saleId, int productId, int quantity, Guid accountId)
     {
         if (quantity <= 0)
             throw new ArgumentException("Quantity must be greater than zero.", nameof(quantity));
         SaleId = saleId;
         ProductId = productId;
         Quantity = quantity;
+        AccountId = accountId;
     }
 
     public int Id { get; private set; }
+    public Guid AccountId { get; private set; }
     public int SaleId { get; private set; }
     public int ProductId { get; private set; }
     public int Quantity { get; private set; }

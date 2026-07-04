@@ -66,7 +66,7 @@ public class PaymentCommandService(
 
             if (payment is null)
             {
-                payment = new Payment(command.SaleId.Value, sale.PendingBalance);
+                payment = new Payment(command.SaleId.Value, sale.PendingBalance, sale.AccountId);
                 payment.PayBalance(command.AmountPaid, command.Method);
                 await paymentRepository.AddAsync(payment, cancellationToken);
             }

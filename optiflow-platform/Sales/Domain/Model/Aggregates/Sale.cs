@@ -22,9 +22,10 @@ public class Sale
         Notes = string.Empty;
     }
 
-    public Sale(CreateSaleCommand command)
+    public Sale(CreateSaleCommand command, Guid accountId)
     {
         ArgumentNullException.ThrowIfNull(command);
+        AccountId = accountId;
         InvoiceNumber = command.InvoiceNumber;
         LabOrderNumber = command.LabOrderNumber ?? string.Empty;
         PatientId = command.PatientId;
@@ -44,6 +45,7 @@ public class Sale
     }
 
     public SaleId Id { get; private set; }
+    public Guid AccountId { get; private set; }
     public InvoiceNumber InvoiceNumber { get; private set; }
     public string LabOrderNumber { get; private set; }
     public int PatientId { get; private set; }
