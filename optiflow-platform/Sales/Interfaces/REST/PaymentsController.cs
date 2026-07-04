@@ -95,6 +95,7 @@ public class PaymentsController(
     [SwaggerResponse(200, "Payment was processed", typeof(PaymentResource))]
     [SwaggerResponse(400, "The request payload is invalid", typeof(string))]
     [SwaggerResponse(404, "The sale was not found")]
+    [SwaggerResponse(409, "Cannot complete: the lab order isn't ready for delivery yet")]
     [SwaggerResponse(500, "Unexpected server error", typeof(ProblemDetails))]
     public async Task<ActionResult> PayOutstandingBalance(int saleId,
         [FromBody] PayOutstandingBalanceResource resource, CancellationToken cancellationToken)
@@ -106,6 +107,9 @@ public class PaymentsController(
 
             if (result is Result<Payment, PayOutstandingBalanceError>.Failure { Error: PayOutstandingBalanceError.SaleNotFound })
                 return NotFound();
+
+            if (result is Result<Payment, PayOutstandingBalanceError>.Failure { Error: PayOutstandingBalanceError.LabOrderNotReady })
+                return Conflict("Cannot complete this sale: the lab order isn't ready for delivery yet.");
 
             if (result is Result<Payment, PayOutstandingBalanceError>.Failure)
                 return Problem(title: "Unexpected server error", detail: "Could not process payment.", statusCode: 500);

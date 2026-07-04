@@ -6,6 +6,7 @@ using optiflow_platform.Sales.Domain.Model.Commands;
 using optiflow_platform.Sales.Domain.Model.Events;
 using optiflow_platform.Sales.Domain.Model.ValueObjects;
 using optiflow_platform.Sales.Domain.Repositories;
+using optiflow_platform.Sales.Interfaces.Acl;
 using optiflow_platform.Shared.Application.Patterns;
 using optiflow_platform.Shared.Domain.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -18,16 +19,21 @@ namespace optiflow_platform.Sales.Application.Internal.CommandServices;
 /// <remarks>
 ///     When paying the outstanding balance for the first time, a new payment record is created
 ///     using the sale's current pending balance (which already accounts for any advance paid
-///     at sale creation). Subsequent payments update the existing record.
+///     at sale creation). Subsequent payments update the existing record. A payment that would
+///     fully clear the balance is rejected unless the sale's lab order is READY or DELIVERED —
+///     a sale can't close out before its glasses are ready for the patient.
 /// </remarks>
 public class PaymentCommandService(
     IPaymentRepository paymentRepository,
     ISaleRepository saleRepository,
+    ILabAndOrdersContextFacade labAndOrdersContextFacade,
     IUnitOfWork unitOfWork,
     IMediator domainEventPublisher,
     ILogger<PaymentCommandService> logger)
     : IPaymentCommandService
 {
+    private static readonly string[] CompletableLabOrderStatuses = ["READY", "DELIVERED"];
+
     /// <inheritdoc />
     public async Task<Result<Payment, PayOutstandingBalanceError>> Handle(PayOutstandingBalanceCommand command,
         CancellationToken cancellationToken = default)
@@ -41,6 +47,21 @@ public class PaymentCommandService(
                 logger.LogWarning("Sale {SaleId} not found while processing payment", command.SaleId);
                 return new Result<Payment, PayOutstandingBalanceError>.Failure(
                     PayOutstandingBalanceError.SaleNotFound);
+            }
+
+            var wouldFullyClearBalance = sale.PendingBalance - command.AmountPaid <= 0;
+            if (wouldFullyClearBalance)
+            {
+                var labOrderStatus = await labAndOrdersContextFacade
+                    .FetchWorkOrderStatusBySaleId(sale.Id.Value, cancellationToken);
+                if (labOrderStatus is null || !CompletableLabOrderStatuses.Contains(labOrderStatus))
+                {
+                    logger.LogWarning(
+                        "Rejected payment that would complete sale {SaleId}: lab order status is {Status}",
+                        command.SaleId, labOrderStatus ?? "NOT_FOUND");
+                    return new Result<Payment, PayOutstandingBalanceError>.Failure(
+                        PayOutstandingBalanceError.LabOrderNotReady);
+                }
             }
 
             if (payment is null)

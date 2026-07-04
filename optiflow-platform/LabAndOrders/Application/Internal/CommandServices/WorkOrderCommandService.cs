@@ -89,4 +89,30 @@ public class WorkOrderCommandService(
             return new Result<WorkOrder, UpdateOrderStatusError>.Failure(UpdateOrderStatusError.UnexpectedError);
         }
     }
+
+    /// <inheritdoc />
+    public async Task<Result<WorkOrder, LinkSaleError>> Handle(LinkSaleCommand command,
+        CancellationToken cancellationToken = default)
+    {
+        var workOrder = await workOrderRepository.FindByIdAsync(command.WorkOrderId, cancellationToken);
+        if (workOrder is null)
+        {
+            logger.LogWarning("Work order {WorkOrderId} not found for sale linking", command.WorkOrderId);
+            return new Result<WorkOrder, LinkSaleError>.Failure(LinkSaleError.WorkOrderNotFound);
+        }
+
+        try
+        {
+            workOrder.LinkSale(command.SaleId);
+            workOrderRepository.Update(workOrder);
+            await unitOfWork.CompleteAsync(cancellationToken);
+            return new Result<WorkOrder, LinkSaleError>.Success(workOrder);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Unexpected error linking work order {WorkOrderId} to sale {SaleId}",
+                command.WorkOrderId, command.SaleId);
+            return new Result<WorkOrder, LinkSaleError>.Failure(LinkSaleError.UnexpectedError);
+        }
+    }
 }
