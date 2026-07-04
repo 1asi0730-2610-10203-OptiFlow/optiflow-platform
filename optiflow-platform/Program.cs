@@ -16,6 +16,7 @@ using optiflow_platform.Sales.Domain.Repositories;
 using optiflow_platform.Sales.Infrastructure.Persistence.EFC.Repositories;
 using optiflow_platform.Sales.Interfaces.Acl;
 using optiflow_platform.Shared.Domain.Repositories;
+using optiflow_platform.Shared.Infrastructure.Security;
 using optiflow_platform.Shared.Interfaces.ASP.Configuration;
 using optiflow_platform.Shared.Infrastructure.Persistence.EFC.Configuration;
 using optiflow_platform.Shared.Infrastructure.Persistence.EFC.Repositories;
@@ -163,6 +164,8 @@ builder.Services.AddDbContext<AppDbContext>((serviceProvider, options) =>
 builder.Services.AddCortexMediator([typeof(Program)]);
 
 // Shared Bounded Context Injection
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<ICurrentUserContext, CurrentUserContext>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<ISystemNotificationRepository, SystemNotificationRepository>();
 builder.Services.AddScoped<ISystemNotificationCommandService, SystemNotificationCommandService>();
@@ -238,9 +241,12 @@ builder.Services.AddScoped<IPatientNotificationCommandService, PatientNotificati
 builder.Services.AddScoped<ProblemDetailsFactory>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IPasswordRecoveryTokenRepository, PasswordRecoveryTokenRepository>();
+builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 builder.Services.AddScoped<IUserCommandService, UserCommandService>();
+builder.Services.AddScoped<IAccountCommandService, AccountCommandService>();
 builder.Services.AddScoped<IPasswordRecoveryCommandService, PasswordRecoveryCommandService>();
 builder.Services.AddScoped<IUserQueryService, UserQueryService>();
+builder.Services.AddScoped<IAccountQueryService, AccountQueryService>();
 builder.Services.AddScoped<IHashingService, BCryptHashingService>();
 builder.Services.AddScoped<ITokenService, optiflow_platform.IAM.Infrastructure.Tokens.Jwt.Services.TokenService>();builder.Services.AddScoped<IEmailService, SmtpEmailService>();
 // IAM Token Settings Configuration
