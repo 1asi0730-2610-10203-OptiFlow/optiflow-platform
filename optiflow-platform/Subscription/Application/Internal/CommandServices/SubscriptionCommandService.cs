@@ -1,6 +1,7 @@
 using Cortex.Mediator;
 using Microsoft.EntityFrameworkCore;
 using optiflow_platform.Shared.Application.Patterns;
+using optiflow_platform.Shared.Application.Services;
 using optiflow_platform.Shared.Domain.Repositories;
 using optiflow_platform.Subscription.Application.Errors;
 using optiflow_platform.Subscription.Application.Services;
@@ -16,6 +17,7 @@ public class SubscriptionCommandService(
     ISubscriptionRepository subscriptionRepository,
     IUnitOfWork unitOfWork,
     IMediator domainEventPublisher,
+    ICurrentUserContext currentUserContext,
     ILogger<SubscriptionCommandService> logger)
     : ISubscriptionCommandService
 {
@@ -25,7 +27,7 @@ public class SubscriptionCommandService(
     {
         try
         {
-            var subscription = new SubscriptionAggregate(command);
+            var subscription = new SubscriptionAggregate(command, currentUserContext.AccountId!.Value);
             await subscriptionRepository.AddAsync(subscription, cancellationToken);
             await unitOfWork.CompleteAsync(cancellationToken);
             await domainEventPublisher.PublishAsync(

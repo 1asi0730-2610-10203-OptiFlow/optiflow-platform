@@ -14,6 +14,7 @@ namespace optiflow_platform.Subscription.Application.Internal.CommandServices;
 /// <summary>Application service for handling payment commands.</summary>
 public class PaymentCommandService(
     IPaymentRepository paymentRepository,
+    ISubscriptionRepository subscriptionRepository,
     IUnitOfWork unitOfWork,
     IMediator domainEventPublisher,
     ILogger<PaymentCommandService> logger)
@@ -23,9 +24,16 @@ public class PaymentCommandService(
     public async Task<Result<Payment, ProcessSubscriptionPaymentError>> Handle(
         ProcessSubscriptionPaymentCommand command, CancellationToken cancellationToken = default)
     {
+        var subscription = await subscriptionRepository.FindByIdAsync(command.SubscriptionId.Value, cancellationToken);
+        if (subscription is null)
+        {
+            logger.LogWarning("Subscription {Id} not found for payment processing", command.SubscriptionId.Value);
+            return new Result<Payment, ProcessSubscriptionPaymentError>.Failure(ProcessSubscriptionPaymentError.SubscriptionNotFound);
+        }
+
         try
         {
-            var payment = new Payment(command);
+            var payment = new Payment(command, subscription.AccountId);
             payment.MarkProcessed();
             await paymentRepository.AddAsync(payment, cancellationToken);
             await unitOfWork.CompleteAsync(cancellationToken);

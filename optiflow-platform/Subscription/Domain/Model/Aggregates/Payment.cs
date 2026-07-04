@@ -20,9 +20,10 @@ public class Payment
     /// <summary>
     ///     Creates a new payment in PENDING status.
     /// </summary>
-    public Payment(ProcessSubscriptionPaymentCommand command)
+    public Payment(ProcessSubscriptionPaymentCommand command, Guid accountId)
     {
         ArgumentNullException.ThrowIfNull(command);
+        AccountId      = accountId;
         SubscriptionId = command.SubscriptionId;
         Amount         = command.Amount;
         PaymentMethod  = command.PaymentMethod;
@@ -31,6 +32,7 @@ public class Payment
     }
 
     public int              Id             { get; private set; }
+    public Guid             AccountId      { get; private set; }
     public SubscriptionId   SubscriptionId { get; private set; }
     public decimal        Amount         { get; private set; }
     public string         PaymentMethod  { get; private set; }
