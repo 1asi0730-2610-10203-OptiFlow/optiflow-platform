@@ -5,6 +5,7 @@ using optiflow_platform.Sales.Domain.Model.Aggregates;
 using optiflow_platform.Sales.Domain.Model.Commands;
 using optiflow_platform.Sales.Domain.Model.Queries;
 using optiflow_platform.Sales.Domain.Model.ValueObjects;
+using optiflow_platform.Sales.Domain.Repositories;
 using optiflow_platform.Sales.Interfaces.REST.Resources;
 using optiflow_platform.Sales.Interfaces.REST.Transform;
 using optiflow_platform.Shared.Application.Patterns;
@@ -25,9 +26,16 @@ namespace optiflow_platform.Sales.Interfaces.REST;
 public class SalesController(
     ISaleCommandService saleCommandService,
     ISaleQueryService saleQueryService,
+    ISaleItemRepository saleItemRepository,
     ILogger<SalesController> logger)
     : ControllerBase
 {
+    private async Task<SaleResource> BuildResourceAsync(Sale sale, CancellationToken cancellationToken)
+    {
+        var items = await saleItemRepository.ListBySaleIdAsync(sale.Id.Value, cancellationToken);
+        return SaleResourceFromEntityAssembler.ToResourceFromEntity(sale, items);
+    }
+
     /// <summary>
     ///     Creates a new sale.
     /// </summary>
@@ -52,7 +60,7 @@ public class SalesController(
                 Result<Sale, CreateSaleError>.Success success =>
                     CreatedAtAction(nameof(GetSaleById),
                         new { id = success.Value.Id },
-                        SaleResourceFromEntityAssembler.ToResourceFromEntity(success.Value)),
+                        await BuildResourceAsync(success.Value, cancellationToken)),
                 Result<Sale, CreateSaleError>.Failure { Error: CreateSaleError.DuplicateInvoiceNumber } =>
                     Conflict("A sale with this invoice number already exists."),
                 Result<Sale, CreateSaleError>.Failure =>
@@ -81,7 +89,7 @@ public class SalesController(
     {
         var query = new GetAllSalesQuery();
         var result = await saleQueryService.Handle(query, cancellationToken);
-        var resources = result.Select(SaleResourceFromEntityAssembler.ToResourceFromEntity);
+        var resources = await Task.WhenAll(result.Select(sale => BuildResourceAsync(sale, cancellationToken)));
         return Ok(resources);
     }
 
@@ -100,7 +108,7 @@ public class SalesController(
         var query = new GetSaleByIdQuery(new SaleId(id));
         var result = await saleQueryService.Handle(query, cancellationToken);
         if (result is null) return NotFound();
-        return Ok(SaleResourceFromEntityAssembler.ToResourceFromEntity(result));
+        return Ok(await BuildResourceAsync(result, cancellationToken));
     }
 
     /// <summary>
@@ -125,7 +133,7 @@ public class SalesController(
             return result switch
             {
                 Result<Sale, GenerateSaleQuotaError>.Success success =>
-                    Ok(SaleResourceFromEntityAssembler.ToResourceFromEntity(success.Value)),
+                    Ok(await BuildResourceAsync(success.Value, cancellationToken)),
                 Result<Sale, GenerateSaleQuotaError>.Failure { Error: GenerateSaleQuotaError.SaleNotFound } =>
                     NotFound(),
                 Result<Sale, GenerateSaleQuotaError>.Failure { Error: GenerateSaleQuotaError.QuotaBelowMinimum } =>
@@ -161,7 +169,7 @@ public class SalesController(
             return result switch
             {
                 Result<Sale, RequestSaleCancellationError>.Success success =>
-                    Ok(SaleResourceFromEntityAssembler.ToResourceFromEntity(success.Value)),
+                    Ok(await BuildResourceAsync(success.Value, cancellationToken)),
                 Result<Sale, RequestSaleCancellationError>.Failure
                     { Error: RequestSaleCancellationError.SaleNotFound } =>
                     NotFound(),
@@ -199,7 +207,7 @@ public class SalesController(
             return result switch
             {
                 Result<Sale, CancelSaleError>.Success success =>
-                    Ok(SaleResourceFromEntityAssembler.ToResourceFromEntity(success.Value)),
+                    Ok(await BuildResourceAsync(success.Value, cancellationToken)),
                 Result<Sale, CancelSaleError>.Failure { Error: CancelSaleError.SaleNotFound } =>
                     NotFound(),
                 Result<Sale, CancelSaleError>.Failure { Error: CancelSaleError.SaleInProductionStatus } =>
@@ -236,7 +244,7 @@ public class SalesController(
             return result switch
             {
                 Result<Sale, ApplyPromotionalDiscountError>.Success success =>
-                    Ok(SaleResourceFromEntityAssembler.ToResourceFromEntity(success.Value)),
+                    Ok(await BuildResourceAsync(success.Value, cancellationToken)),
                 Result<Sale, ApplyPromotionalDiscountError>.Failure
                     { Error: ApplyPromotionalDiscountError.SaleNotFound } =>
                     NotFound(),
