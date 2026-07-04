@@ -17,7 +17,8 @@ namespace optiflow_platform.Sales.Application.Internal.CommandServices;
 /// </summary>
 /// <remarks>
 ///     When paying the outstanding balance for the first time, a new payment record is created
-///     using the sale's current total. Subsequent payments update the existing record.
+///     using the sale's current pending balance (which already accounts for any advance paid
+///     at sale creation). Subsequent payments update the existing record.
 /// </remarks>
 public class PaymentCommandService(
     IPaymentRepository paymentRepository,
@@ -44,7 +45,7 @@ public class PaymentCommandService(
 
             if (payment is null)
             {
-                payment = new Payment(command.SaleId.Value, sale.TotalAmount);
+                payment = new Payment(command.SaleId.Value, sale.PendingBalance);
                 payment.PayBalance(command.AmountPaid, command.Method);
                 await paymentRepository.AddAsync(payment, cancellationToken);
             }
