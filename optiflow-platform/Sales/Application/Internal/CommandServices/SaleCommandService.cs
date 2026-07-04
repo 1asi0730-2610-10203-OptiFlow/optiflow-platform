@@ -190,7 +190,7 @@ public class SaleCommandService(
 
             var items = await saleItemRepository.ListBySaleIdAsync(sale.Id.Value, cancellationToken);
             var eventItems = items.Select(i => new SaleCompletedItem(i.ProductId, i.Quantity)).ToList();
-            await domainEventPublisher.PublishAsync(new SaleCompletedEvent(sale.Id, sale.UserName, eventItems), cancellationToken);
+            await domainEventPublisher.PublishAsync(new SaleCompletedEvent(sale.Id, sale.UserName, eventItems, sale.AccountId), cancellationToken);
             return new Result<Sale, CompleteSaleError>.Success(sale);
         }
         catch (Exception ex)

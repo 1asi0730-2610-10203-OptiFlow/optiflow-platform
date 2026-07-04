@@ -7,6 +7,7 @@ using optiflow_platform.Shared.Application.Services;
 using optiflow_platform.Shared.Domain.Model.Commands;
 using optiflow_platform.Shared.Domain.Model.Entities;
 using optiflow_platform.Shared.Domain.Model.ValueObjects;
+using optiflow_platform.Shared.Infrastructure.Persistence.EFC.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace optiflow_platform.Sales.Application.Internal.EventHandlers;
@@ -31,6 +32,10 @@ public class SaleCompletedEventHandler(
     private async Task On(SaleCompletedEvent domainEvent, CancellationToken cancellationToken)
     {
         using var scope = scopeFactory.CreateScope();
+        // This fresh scope's AppDbContext starts with no account set — the request that
+        // published this event already ended. Stamp it from the event before any query
+        // runs, or the account query filters below would see everything as out of scope.
+        scope.ServiceProvider.GetRequiredService<AppDbContext>().CurrentAccountId = domainEvent.AccountId;
         var saleRepository = scope.ServiceProvider.GetRequiredService<ISaleRepository>();
         var notificationCommandService = scope.ServiceProvider.GetRequiredService<ISystemNotificationCommandService>();
 
