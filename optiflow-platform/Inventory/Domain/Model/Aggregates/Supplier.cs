@@ -26,14 +26,16 @@ public class Supplier
     /// </summary>
     /// <param name="command">The CreateSupplierCommand command.</param>
     /// <exception cref="ArgumentNullException">Thrown when command is null.</exception>
-    public Supplier(CreateSupplierCommand command)
+    public Supplier(CreateSupplierCommand command, Guid accountId)
     {
         ArgumentNullException.ThrowIfNull(command);
+        AccountId = accountId;
         Name = command.Name;
         Contact = new SupplierContact(command.ContactPerson, command.Phone, command.Email);
     }
 
     public int Id { get; private set; }
+    public Guid AccountId { get; private set; }
     public string Name { get; private set; }
     public SupplierContact Contact { get; private set; }
 }

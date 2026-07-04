@@ -5,6 +5,7 @@ using optiflow_platform.Inventory.Domain.Model.Aggregates;
 using optiflow_platform.Inventory.Domain.Model.Commands;
 using optiflow_platform.Inventory.Domain.Repositories;
 using optiflow_platform.Shared.Application.Patterns;
+using optiflow_platform.Shared.Application.Services;
 using optiflow_platform.Shared.Domain.Repositories;
 
 namespace optiflow_platform.Inventory.Application.Internal.CommandServices;
@@ -22,6 +23,7 @@ namespace optiflow_platform.Inventory.Application.Internal.CommandServices;
 public class SupplierCommandService(
     ISupplierRepository supplierRepository,
     IUnitOfWork unitOfWork,
+    ICurrentUserContext currentUserContext,
     ILogger<SupplierCommandService> logger)
     : ISupplierCommandService
 {
@@ -38,7 +40,7 @@ public class SupplierCommandService(
 
         try
         {
-            var supplier = new Supplier(command);
+            var supplier = new Supplier(command, currentUserContext.AccountId!.Value);
             await supplierRepository.AddAsync(supplier, cancellationToken);
             await unitOfWork.CompleteAsync(cancellationToken);
             return new Result<Supplier, CreateSupplierError>.Success(supplier);

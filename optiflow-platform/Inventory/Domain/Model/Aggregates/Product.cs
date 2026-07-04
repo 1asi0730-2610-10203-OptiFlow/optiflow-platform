@@ -29,9 +29,10 @@ public class Product
     /// <summary>
     ///     Registers a new product from a registration command.
     /// </summary>
-    public Product(RegisterProductCommand command)
+    public Product(RegisterProductCommand command, Guid accountId)
     {
         ArgumentNullException.ThrowIfNull(command);
+        AccountId = accountId;
         Category = command.Category;
         SupplierId = command.SupplierId;
         SupplierName = command.SupplierName;
@@ -46,6 +47,7 @@ public class Product
     }
 
     public int Id { get; private set; }
+    public Guid AccountId { get; private set; }
     public EProductCategory Category { get; private set; }
     public int SupplierId { get; private set; }
     public string SupplierName { get; private set; }

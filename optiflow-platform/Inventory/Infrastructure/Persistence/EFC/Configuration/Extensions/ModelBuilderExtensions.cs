@@ -2,17 +2,20 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using optiflow_platform.Inventory.Domain.Model.Aggregates;
 using optiflow_platform.Inventory.Domain.Model.ValueObjects;
+using optiflow_platform.Shared.Infrastructure.Persistence.EFC.Configuration;
 
 namespace optiflow_platform.Inventory.Infrastructure.Persistence.EFC.Configuration.Extensions;
 
 public static class ModelBuilderExtensions
 {
-    public static void ApplyInventoryConfiguration(this ModelBuilder builder)
+    public static void ApplyInventoryConfiguration(this ModelBuilder builder, AppDbContext dbContext)
     {
         builder.Entity<Supplier>().HasKey(s => s.Id);
         builder.Entity<Supplier>().Property(s => s.Id).IsRequired().ValueGeneratedOnAdd();
+        builder.Entity<Supplier>().Property(s => s.AccountId).IsRequired();
         builder.Entity<Supplier>().Property(s => s.Name).IsRequired().HasMaxLength(255);
-        builder.Entity<Supplier>().HasIndex(s => s.Name).IsUnique();
+        builder.Entity<Supplier>().HasIndex(s => new { s.AccountId, s.Name }).IsUnique();
+        builder.Entity<Supplier>().HasQueryFilter(s => s.AccountId == dbContext.CurrentAccountId);
         builder.Entity<Supplier>().OwnsOne(s => s.Contact, c =>
         {
             c.WithOwner().HasForeignKey("Id");
@@ -23,6 +26,8 @@ public static class ModelBuilderExtensions
 
         builder.Entity<Product>().HasKey(p => p.Id);
         builder.Entity<Product>().Property(p => p.Id).IsRequired().ValueGeneratedOnAdd();
+        builder.Entity<Product>().Property(p => p.AccountId).IsRequired();
+        builder.Entity<Product>().HasQueryFilter(p => p.AccountId == dbContext.CurrentAccountId);
         builder.Entity<Product>().Property(p => p.Category).IsRequired().HasMaxLength(255)
             .HasConversion(
                 v => v.ToString().ToUpper(),
@@ -37,10 +42,13 @@ public static class ModelBuilderExtensions
         builder.Entity<Product>().Property(p => p.Stock).IsRequired();
         builder.Entity<Product>().Property(p => p.MinimumStockThreshold).IsRequired();
         builder.Entity<Product>().Property(p => p.LastRestockDate).IsRequired().HasMaxLength(50);
-        builder.Entity<Product>().HasIndex(p => p.Sku).IsUnique();
+        builder.Entity<Product>().HasIndex(p => new { p.AccountId, p.Sku }).IsUnique();
 
         builder.Entity<StockAuditLog>().HasKey(a => a.Id);
         builder.Entity<StockAuditLog>().Property(a => a.Id).IsRequired().ValueGeneratedOnAdd();
+        builder.Entity<StockAuditLog>().Property(a => a.AccountId).IsRequired();
+        builder.Entity<StockAuditLog>().HasIndex(a => a.AccountId);
+        builder.Entity<StockAuditLog>().HasQueryFilter(a => a.AccountId == dbContext.CurrentAccountId);
         builder.Entity<StockAuditLog>().Property(a => a.ProductId).IsRequired();
         builder.Entity<StockAuditLog>().Property(a => a.ProductName).IsRequired().HasMaxLength(255);
         builder.Entity<StockAuditLog>().Property(a => a.Sku).IsRequired().HasMaxLength(100);
