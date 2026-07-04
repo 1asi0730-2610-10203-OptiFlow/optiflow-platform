@@ -17,9 +17,10 @@ public class Billing {
         BillingStatus = null!;
     }
 
-    public Billing(CheckSubscriptionRenewalCommand command)
+    public Billing(CheckSubscriptionRenewalCommand command, Guid accountId)
     {
         ArgumentNullException.ThrowIfNull(command);
+        AccountId      = accountId;
         SubscriptionId = command.SubscriptionId;
         BillingStatus  = StatusPending;
         AutoRenew      = true;
@@ -27,6 +28,7 @@ public class Billing {
     }
 
     public int              Id             { get; private set; }
+    public Guid             AccountId      { get; private set; }
     public SubscriptionId   SubscriptionId { get; private set; }
     public DateTimeOffset  RenewalDate    { get; private set; }
     public bool            AutoRenew      { get; private set; }

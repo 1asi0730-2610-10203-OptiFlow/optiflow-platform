@@ -40,7 +40,7 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
 
         builder.ApplySharedConfiguration(this);
         builder.ApplySalesConfiguration(this);
-        builder.ApplySubscriptionConfiguration();
+        builder.ApplySubscriptionConfiguration(this);
         builder.ApplyInventoryConfiguration(this);
         builder.ApplyClinicalConfiguration(this);
         builder.ApplyAnalyticsConfiguration();

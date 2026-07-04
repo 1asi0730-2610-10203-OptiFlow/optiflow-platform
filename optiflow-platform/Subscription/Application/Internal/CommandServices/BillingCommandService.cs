@@ -13,6 +13,7 @@ namespace optiflow_platform.Subscription.Application.Internal.CommandServices;
 /// <summary>Application service for handling billing commands.</summary>
 public class BillingCommandService(
     IBillingRepository billingRepository,
+    ISubscriptionRepository subscriptionRepository,
     IUnitOfWork unitOfWork,
     IMediator domainEventPublisher,
     ILogger<BillingCommandService> logger)
@@ -22,9 +23,16 @@ public class BillingCommandService(
     public async Task<Result<Billing, RenewSubscriptionError>> Handle(
         CheckSubscriptionRenewalCommand command, CancellationToken cancellationToken = default)
     {
+        var subscription = await subscriptionRepository.FindByIdAsync(command.SubscriptionId.Value, cancellationToken);
+        if (subscription is null)
+        {
+            logger.LogWarning("Subscription {Id} not found for renewal check", command.SubscriptionId.Value);
+            return new Result<Billing, RenewSubscriptionError>.Failure(RenewSubscriptionError.SubscriptionNotFound);
+        }
+
         try
         {
-            var billing = new Billing(command);
+            var billing = new Billing(command, subscription.AccountId);
             billing.MarkDue();
             await billingRepository.AddAsync(billing, cancellationToken);
             await unitOfWork.CompleteAsync(cancellationToken);

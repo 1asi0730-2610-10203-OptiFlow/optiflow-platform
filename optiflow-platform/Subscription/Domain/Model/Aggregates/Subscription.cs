@@ -23,9 +23,10 @@ public class Subscription
     /// <summary>
     ///     Creates a new subscription in PENDING_PAYMENT status.
     /// </summary>
-    public Subscription(SelectSubscriptionPlanCommand command)
+    public Subscription(SelectSubscriptionPlanCommand command, Guid accountId)
     {
         ArgumentNullException.ThrowIfNull(command);
+        AccountId     = accountId;
         AdminId       = command.AdminId;
         PlanId        = command.PlanId;
         Tier          = command.Tier;
@@ -37,6 +38,7 @@ public class Subscription
     }
 
     public int               Id            { get; private set; }
+    public Guid              AccountId     { get; private set; }
     public int               AdminId       { get; private set; }
     public PlanId            PlanId        { get; private set; }
     public SubscriptionTier  Tier          { get; private set; }
