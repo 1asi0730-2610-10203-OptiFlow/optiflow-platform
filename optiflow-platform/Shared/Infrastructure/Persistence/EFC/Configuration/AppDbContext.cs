@@ -42,7 +42,7 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
         builder.ApplySalesConfiguration(this);
         builder.ApplySubscriptionConfiguration();
         builder.ApplyInventoryConfiguration(this);
-        builder.ApplyClinicalConfiguration();
+        builder.ApplyClinicalConfiguration(this);
         builder.ApplyAnalyticsConfiguration();
         builder.ApplyLabAndOrdersConfiguration();
         builder.ApplyPatientCenterConfiguration();

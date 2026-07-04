@@ -15,9 +15,10 @@ public class Patient
         CustomerUuid = null!;
     }
 
-    public Patient(CreatePatientCommand command)
+    public Patient(CreatePatientCommand command, Guid accountId)
     {
         ArgumentNullException.ThrowIfNull(command);
+        AccountId    = accountId;
         FirstName    = command.FirstName;
         LastName     = command.LastName;
         Dni          = command.Dni;
@@ -28,6 +29,7 @@ public class Patient
     }
 
     public int      Id           { get; private set; }
+    public Guid     AccountId    { get; private set; }
 
     /// <summary>Alias of Id — kept for mockapi compatibility.</summary>
     public int      PatientId    => Id;

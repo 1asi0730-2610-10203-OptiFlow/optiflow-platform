@@ -11,13 +11,15 @@ public class ClinicalRecord
         ClinicalRecordUuid = null!;
     }
 
-    public ClinicalRecord(int patientId)
+    public ClinicalRecord(int patientId, Guid accountId)
     {
         PatientId          = patientId;
+        AccountId          = accountId;
         ClinicalRecordUuid = $"record-{Guid.NewGuid():N}";
     }
 
     public int    Id        { get; private set; }
+    public Guid   AccountId { get; private set; }
 
     /// <summary>Alias of Id — kept for mockapi compatibility.</summary>
     public int    RecordId  => Id;

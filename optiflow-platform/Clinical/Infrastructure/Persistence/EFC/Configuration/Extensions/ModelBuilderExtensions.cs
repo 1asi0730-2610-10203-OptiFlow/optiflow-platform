@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using optiflow_platform.Clinical.Domain.Model.Aggregates;
 using optiflow_platform.Clinical.Domain.Model.Entities;
+using optiflow_platform.Shared.Infrastructure.Persistence.EFC.Configuration;
 
 namespace optiflow_platform.Clinical.Infrastructure.Persistence.EFC.Configuration.Extensions;
 
@@ -13,18 +14,20 @@ public static class ModelBuilderExtensions
         dateTime  => DateOnly.FromDateTime(dateTime)            // DateTime → DateOnly (leer)
     );
 
-    public static void ApplyClinicalConfiguration(this ModelBuilder builder)
+    public static void ApplyClinicalConfiguration(this ModelBuilder builder, AppDbContext dbContext)
     {
         // ── Patient ───────────────────────────────────────────────────────
         builder.Entity<Patient>().HasKey(p => p.Id);
         builder.Entity<Patient>().Property(p => p.Id).IsRequired().ValueGeneratedOnAdd();
+        builder.Entity<Patient>().Property(p => p.AccountId).IsRequired();
+        builder.Entity<Patient>().HasQueryFilter(p => p.AccountId == dbContext.CurrentAccountId);
         builder.Entity<Patient>().Ignore(p => p.PatientId);          // computed alias, no column
         builder.Entity<Patient>().Property(p => p.CustomerUuid).IsRequired().HasMaxLength(100);
         builder.Entity<Patient>().HasIndex(p => p.CustomerUuid).IsUnique();
         builder.Entity<Patient>().Property(p => p.FirstName).IsRequired().HasMaxLength(100);
         builder.Entity<Patient>().Property(p => p.LastName).IsRequired().HasMaxLength(100);
         builder.Entity<Patient>().Property(p => p.Dni).IsRequired().HasMaxLength(20);
-        builder.Entity<Patient>().HasIndex(p => p.Dni).IsUnique();
+        builder.Entity<Patient>().HasIndex(p => new { p.AccountId, p.Dni }).IsUnique();
         builder.Entity<Patient>().Property(p => p.Phone).HasMaxLength(20);
         builder.Entity<Patient>().Property(p => p.Email).HasMaxLength(255);
         builder.Entity<Patient>().Property(p => p.BirthDate).IsRequired()
@@ -34,6 +37,8 @@ public static class ModelBuilderExtensions
             );
         builder.Entity<ClinicalRecord>().HasKey(r => r.Id);
         builder.Entity<ClinicalRecord>().Property(r => r.Id).IsRequired().ValueGeneratedOnAdd();
+        builder.Entity<ClinicalRecord>().Property(r => r.AccountId).IsRequired();
+        builder.Entity<ClinicalRecord>().HasQueryFilter(r => r.AccountId == dbContext.CurrentAccountId);
         builder.Entity<ClinicalRecord>().Ignore(r => r.RecordId);    // computed alias, no column
         builder.Entity<ClinicalRecord>().Property(r => r.ClinicalRecordUuid).IsRequired().HasMaxLength(100);
         builder.Entity<ClinicalRecord>().HasIndex(r => r.ClinicalRecordUuid).IsUnique();
@@ -49,6 +54,8 @@ public static class ModelBuilderExtensions
         // ── Prescription ──────────────────────────────────────────────────
         builder.Entity<Prescription>().HasKey(p => p.Id);
         builder.Entity<Prescription>().Property(p => p.Id).IsRequired().ValueGeneratedOnAdd();
+        builder.Entity<Prescription>().Property(p => p.AccountId).IsRequired();
+        builder.Entity<Prescription>().HasQueryFilter(p => p.AccountId == dbContext.CurrentAccountId);
         builder.Entity<Prescription>().Ignore(p => p.PrescriptionId); // computed alias, no column
         builder.Entity<Prescription>().Property(p => p.PrescriptionUuid).IsRequired().HasMaxLength(100);
         builder.Entity<Prescription>().HasIndex(p => p.PrescriptionUuid).IsUnique();
