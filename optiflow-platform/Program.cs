@@ -19,6 +19,9 @@ using optiflow_platform.Shared.Domain.Repositories;
 using optiflow_platform.Shared.Interfaces.ASP.Configuration;
 using optiflow_platform.Shared.Infrastructure.Persistence.EFC.Configuration;
 using optiflow_platform.Shared.Infrastructure.Persistence.EFC.Repositories;
+using optiflow_platform.Shared.Application.Services;
+using optiflow_platform.Shared.Application.Internal.CommandServices;
+using optiflow_platform.Shared.Application.Internal.QueryServices;
 using optiflow_platform.Analytics.Application.Internal.QueryServices;
 using optiflow_platform.Analytics.Application.Services;
 using optiflow_platform.Analytics.Domain.Repositories;
@@ -160,6 +163,9 @@ builder.Services.AddCortexMediator([typeof(Program)]);
 
 // Shared Bounded Context Injection
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<ISystemNotificationRepository, SystemNotificationRepository>();
+builder.Services.AddScoped<ISystemNotificationCommandService, SystemNotificationCommandService>();
+builder.Services.AddScoped<ISystemNotificationQueryService, SystemNotificationQueryService>();
 
 // Lab and Orders Bounded Context Injection
 builder.Services.AddScoped<IWorkOrderRepository, WorkOrderRepository>();

@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using optiflow_platform.Shared.Infrastructure.Persistence.EFC.Configuration;
 
@@ -10,9 +11,11 @@ using optiflow_platform.Shared.Infrastructure.Persistence.EFC.Configuration;
 namespace optiflow_platform.Shared.Infrastructure.Persistence.EFC.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260704004706_DropStaleCategoriesTable")]
+    partial class DropStaleCategoriesTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -906,43 +909,6 @@ namespace optiflow_platform.Shared.Infrastructure.Persistence.EFC.Migrations
                         .HasName("p_k_sale_items");
 
                     b.ToTable("sale_items");
-                });
-
-            modelBuilder.Entity("optiflow_platform.Shared.Domain.Model.Entities.SystemNotification", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("id");
-
-                    b.Property<string>("Category")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("varchar(50)")
-                        .HasColumnName("category");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("created_at");
-
-                    b.Property<bool>("IsRead")
-                        .HasColumnType("tinyint(1)")
-                        .HasColumnName("is_read");
-
-                    b.Property<string>("Message")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("varchar(500)")
-                        .HasColumnName("message");
-
-                    b.Property<int>("RecipientUserId")
-                        .HasColumnType("int")
-                        .HasColumnName("recipient_user_id");
-
-                    b.HasKey("Id")
-                        .HasName("p_k_system_notifications");
-
-                    b.ToTable("system_notifications");
                 });
 
             modelBuilder.Entity("optiflow_platform.Subscription.Domain.Model.Aggregates.Billing", b =>

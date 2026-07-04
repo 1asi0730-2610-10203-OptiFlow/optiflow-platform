@@ -29,6 +29,7 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
     {
         base.OnModelCreating(builder);
 
+        builder.ApplySharedConfiguration();
         builder.ApplySalesConfiguration();
         builder.ApplySubscriptionConfiguration();
         builder.ApplyInventoryConfiguration();
