@@ -97,6 +97,14 @@ public class WorkOrder
             IsRework = true;
     }
 
+    /// <summary>
+    ///     Links this work order to the sale created for it.
+    /// </summary>
+    public void LinkSale(int saleId)
+    {
+        SaleId = saleId;
+    }
+
     private static bool IsBackwardTransition(string from, string to)
     {
         var fromIndex = Array.IndexOf(StatusFlow, from);

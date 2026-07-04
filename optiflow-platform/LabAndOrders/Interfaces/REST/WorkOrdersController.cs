@@ -149,4 +149,30 @@ public class WorkOrdersController(
                 detail: "An unexpected error occurred while updating the work order status.", statusCode: 500);
         }
     }
+
+    /// <summary>
+    ///     Links a work order to the sale created for it.
+    /// </summary>
+    [HttpPatch("{id}/sale")]
+    [SwaggerOperation(
+        Summary = "Links a work order to a sale",
+        Description = "Sets the work order's sale reference to the sale created for it",
+        OperationId = "LinkWorkOrderSale")]
+    [SwaggerResponse(200, "The work order was linked", typeof(WorkOrderResource))]
+    [SwaggerResponse(404, "The work order was not found")]
+    [SwaggerResponse(500, "Unexpected server error", typeof(ProblemDetails))]
+    public async Task<ActionResult> LinkSale(int id, [FromBody] LinkSaleResource resource,
+        CancellationToken cancellationToken)
+    {
+        var command = LinkSaleCommandFromResourceAssembler.ToCommandFromResource(id, resource);
+        var result = await workOrderCommandService.Handle(command, cancellationToken);
+        return result switch
+        {
+            Result<WorkOrder, LinkSaleError>.Success success =>
+                Ok(WorkOrderResourceFromEntityAssembler.ToResourceFromEntity(success.Value)),
+            Result<WorkOrder, LinkSaleError>.Failure { Error: LinkSaleError.WorkOrderNotFound } =>
+                NotFound(),
+            _ => Problem(title: "Unexpected server error", detail: "Could not link work order to sale.", statusCode: 500)
+        };
+    }
 }

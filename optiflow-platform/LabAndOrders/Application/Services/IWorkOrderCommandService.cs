@@ -21,4 +21,10 @@ public interface IWorkOrderCommandService
     /// </summary>
     Task<Result<WorkOrder, UpdateOrderStatusError>> Handle(UpdateOrderStatusCommand command,
         CancellationToken cancellationToken = default);
+
+    /// <summary>
+    ///     Handles linking a work order to the sale created for it.
+    /// </summary>
+    Task<Result<WorkOrder, LinkSaleError>> Handle(LinkSaleCommand command,
+        CancellationToken cancellationToken = default);
 }
