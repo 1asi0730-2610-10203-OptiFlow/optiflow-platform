@@ -26,6 +26,7 @@ using optiflow_platform.Analytics.Application.Internal.QueryServices;
 using optiflow_platform.Analytics.Application.Services;
 using optiflow_platform.Analytics.Domain.Repositories;
 using optiflow_platform.Analytics.Infrastructure.Persistence.EFC.Repositories;
+using optiflow_platform.Analytics.Interfaces.Acl;
 using optiflow_platform.Clinical.Application.Internal.CommandServices;
 using optiflow_platform.Clinical.Application.Internal.QueryServices;
 using optiflow_platform.Clinical.Application.Services;
@@ -176,8 +177,9 @@ builder.Services.AddScoped<ILaboratoryQueryService, LaboratoryQueryService>();
 builder.Services.AddScoped<ILaboratoryCommandService, LaboratoryCommandService>();
 
 // Analytics Bounded Context Injection
-builder.Services.AddScoped<IAnalyticsReportRepository, AnalyticsReportRepository>();
 builder.Services.AddScoped<IStaffMetricRepository, StaffMetricRepository>();
+builder.Services.AddScoped<ISalesContextFacade, SalesContextFacade>();
+builder.Services.AddScoped<ILabOrdersContextFacade, LabOrdersContextFacade>();
 builder.Services.AddScoped<IAnalyticsReportQueryService, AnalyticsReportQueryService>();
 builder.Services.AddScoped<IStaffMetricQueryService, StaffMetricQueryService>();
 
