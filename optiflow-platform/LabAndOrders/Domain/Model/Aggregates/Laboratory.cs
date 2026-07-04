@@ -26,14 +26,16 @@ public class Laboratory
     /// </summary>
     /// <param name="command">The CreateLaboratoryCommand command.</param>
     /// <exception cref="ArgumentNullException">Thrown when command is null.</exception>
-    public Laboratory(CreateLaboratoryCommand command)
+    public Laboratory(CreateLaboratoryCommand command, Guid accountId)
     {
         ArgumentNullException.ThrowIfNull(command);
+        AccountId = accountId;
         Name = command.Name;
         ContactInfo = new ContactInfo(command.Phone, command.Email);
     }
 
     public int Id { get; private set; }
+    public Guid AccountId { get; private set; }
     public string Name { get; private set; }
     public ContactInfo ContactInfo { get; private set; }
 }

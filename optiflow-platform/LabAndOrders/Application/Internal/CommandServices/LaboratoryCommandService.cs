@@ -5,6 +5,7 @@ using optiflow_platform.LabAndOrders.Domain.Model.Aggregates;
 using optiflow_platform.LabAndOrders.Domain.Model.Commands;
 using optiflow_platform.LabAndOrders.Domain.Repositories;
 using optiflow_platform.Shared.Application.Patterns;
+using optiflow_platform.Shared.Application.Services;
 using optiflow_platform.Shared.Domain.Repositories;
 
 namespace optiflow_platform.LabAndOrders.Application.Internal.CommandServices;
@@ -22,6 +23,7 @@ namespace optiflow_platform.LabAndOrders.Application.Internal.CommandServices;
 public class LaboratoryCommandService(
     ILaboratoryRepository laboratoryRepository,
     IUnitOfWork unitOfWork,
+    ICurrentUserContext currentUserContext,
     ILogger<LaboratoryCommandService> logger)
     : ILaboratoryCommandService
 {
@@ -38,7 +40,7 @@ public class LaboratoryCommandService(
 
         try
         {
-            var laboratory = new Laboratory(command);
+            var laboratory = new Laboratory(command, currentUserContext.AccountId!.Value);
             await laboratoryRepository.AddAsync(laboratory, cancellationToken);
             await unitOfWork.CompleteAsync(cancellationToken);
             return new Result<Laboratory, CreateLaboratoryError>.Success(laboratory);

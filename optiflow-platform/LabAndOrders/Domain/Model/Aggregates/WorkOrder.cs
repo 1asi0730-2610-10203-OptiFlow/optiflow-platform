@@ -44,9 +44,10 @@ public class WorkOrder
     /// </summary>
     /// <param name="command">The CreateWorkOrderCommand command.</param>
     /// <exception cref="ArgumentNullException">Thrown when command is null.</exception>
-    public WorkOrder(CreateWorkOrderCommand command)
+    public WorkOrder(CreateWorkOrderCommand command, Guid accountId)
     {
         ArgumentNullException.ThrowIfNull(command);
+        AccountId = accountId;
         SaleId = command.SaleId;
         RecipeId = command.RecipeId;
         LaboratoryId = new LaboratoryId(command.LabId);
@@ -66,6 +67,7 @@ public class WorkOrder
     }
 
     public int Id { get; private set; }
+    public Guid AccountId { get; private set; }
     public int SaleId { get; private set; }
     public int RecipeId { get; private set; }
     public LaboratoryId LaboratoryId { get; private set; }
