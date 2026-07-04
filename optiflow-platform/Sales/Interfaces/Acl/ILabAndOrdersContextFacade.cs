@@ -10,11 +10,4 @@ public interface ILabAndOrdersContextFacade
     ///     or null if no work order exists for that sale.
     /// </summary>
     Task<string?> FetchWorkOrderStatusBySaleId(int saleId, CancellationToken cancellationToken = default);
-
-    /// <summary>
-    ///     Returns the Inventory product ids (frame/lens) already consumed by the work order
-    ///     linked to the given sale, or an empty set if no work order exists for that sale.
-    /// </summary>
-    Task<IReadOnlySet<int>> FetchWorkOrderMaterialProductIdsBySaleId(int saleId,
-        CancellationToken cancellationToken = default);
 }
