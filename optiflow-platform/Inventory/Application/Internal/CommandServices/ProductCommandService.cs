@@ -5,6 +5,7 @@ using optiflow_platform.Inventory.Domain.Model.Commands;
 using optiflow_platform.Inventory.Domain.Model.ValueObjects;
 using optiflow_platform.Inventory.Domain.Repositories;
 using optiflow_platform.Shared.Application.Patterns;
+using optiflow_platform.Shared.Application.Services;
 using optiflow_platform.Shared.Domain.Repositories;
 using Microsoft.EntityFrameworkCore;
 
@@ -26,6 +27,7 @@ public class ProductCommandService(
     IProductRepository productRepository,
     IStockAuditLogRepository stockAuditLogRepository,
     IUnitOfWork unitOfWork,
+    ICurrentUserContext currentUserContext,
     ILogger<ProductCommandService> logger)
     : IProductCommandService
 {
@@ -41,7 +43,7 @@ public class ProductCommandService(
 
         try
         {
-            var product = new Product(command);
+            var product = new Product(command, currentUserContext.AccountId!.Value);
             await productRepository.AddAsync(product, cancellationToken);
             await unitOfWork.CompleteAsync(cancellationToken);
             return new Result<Product, RegisterProductError>.Success(product);
@@ -131,7 +133,7 @@ public class ProductCommandService(
             productRepository.Update(product);
 
             var auditLog = new StockAuditLog(product.Id, product.Name, product.Sku, StockOperation.Restock,
-                previousStock, command.Quantity, product.Stock, command.Author);
+                previousStock, command.Quantity, product.Stock, command.Author, product.AccountId);
             await stockAuditLogRepository.AddAsync(auditLog, cancellationToken);
 
             await unitOfWork.CompleteAsync(cancellationToken);
@@ -167,7 +169,7 @@ public class ProductCommandService(
             productRepository.Update(product);
 
             var auditLog = new StockAuditLog(product.Id, product.Name, product.Sku, StockOperation.Sale,
-                previousStock, -command.Quantity, product.Stock, command.Reason);
+                previousStock, -command.Quantity, product.Stock, command.Reason, product.AccountId);
             await stockAuditLogRepository.AddAsync(auditLog, cancellationToken);
 
             await unitOfWork.CompleteAsync(cancellationToken);
@@ -208,7 +210,7 @@ public class ProductCommandService(
             productRepository.Update(product);
 
             var auditLog = new StockAuditLog(product.Id, product.Name, product.Sku, StockOperation.ManualAdjustment,
-                previousStock, command.NewStock - previousStock, product.Stock, command.Author);
+                previousStock, command.NewStock - previousStock, product.Stock, command.Author, product.AccountId);
             await stockAuditLogRepository.AddAsync(auditLog, cancellationToken);
 
             await unitOfWork.CompleteAsync(cancellationToken);
@@ -265,7 +267,7 @@ public class ProductCommandService(
             productRepository.Update(product);
 
             var auditLog = new StockAuditLog(product.Id, product.Name, product.Sku, StockOperation.Consumption,
-                previousStock, -command.Quantity, product.Stock, command.Author);
+                previousStock, -command.Quantity, product.Stock, command.Author, product.AccountId);
             await stockAuditLogRepository.AddAsync(auditLog, cancellationToken);
 
             await unitOfWork.CompleteAsync(cancellationToken);

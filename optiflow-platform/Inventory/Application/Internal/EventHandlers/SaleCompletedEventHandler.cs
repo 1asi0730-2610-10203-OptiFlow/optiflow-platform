@@ -5,6 +5,7 @@ using optiflow_platform.Inventory.Domain.Model.Commands;
 using optiflow_platform.Sales.Domain.Model.Events;
 using optiflow_platform.Shared.Application.Internal.EventHandlers;
 using optiflow_platform.Shared.Application.Patterns;
+using optiflow_platform.Shared.Infrastructure.Persistence.EFC.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace optiflow_platform.Inventory.Application.Internal.EventHandlers;
@@ -34,6 +35,9 @@ public class SaleCompletedEventHandler(
     public async Task Handle(SaleCompletedEvent domainEvent, CancellationToken cancellationToken)
     {
         using var scope = scopeFactory.CreateScope();
+        // Same fresh-DbContext caveat as Sales' handler for this event — set the account
+        // before any account-filtered query runs through it.
+        scope.ServiceProvider.GetRequiredService<AppDbContext>().CurrentAccountId = domainEvent.AccountId;
         var productCommandService = scope.ServiceProvider.GetRequiredService<IProductCommandService>();
 
         foreach (var item in domainEvent.Items)

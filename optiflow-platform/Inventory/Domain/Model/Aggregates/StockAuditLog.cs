@@ -27,9 +27,10 @@ public class StockAuditLog
     ///     Records a stock-changing operation performed on a product.
     /// </summary>
     public StockAuditLog(int productId, string productName, string sku, string operation,
-        int previousStock, int quantity, int newStock, string author)
+        int previousStock, int quantity, int newStock, string author, Guid accountId)
     {
         ProductId = productId;
+        AccountId = accountId;
         ProductName = productName;
         Sku = sku;
         Operation = operation;
@@ -44,6 +45,7 @@ public class StockAuditLog
     }
 
     public int Id { get; private set; }
+    public Guid AccountId { get; private set; }
     public int ProductId { get; private set; }
     public string ProductName { get; private set; }
     public string Sku { get; private set; }
