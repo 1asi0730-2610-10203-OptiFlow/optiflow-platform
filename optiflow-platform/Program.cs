@@ -8,7 +8,6 @@ using optiflow_platform.LabAndOrders.Application.Internal.QueryServices;
 using optiflow_platform.LabAndOrders.Application.Services;
 using optiflow_platform.LabAndOrders.Domain.Repositories;
 using optiflow_platform.LabAndOrders.Infrastructure.Persistence.EFC.Repositories;
-using optiflow_platform.LabAndOrders.Interfaces.Acl;
 using optiflow_platform.Sales.Application.Internal.CommandServices;
 using optiflow_platform.Sales.Application.Internal.QueryServices;
 using optiflow_platform.Resources;
@@ -169,7 +168,6 @@ builder.Services.AddScoped<ISystemNotificationCommandService, SystemNotification
 builder.Services.AddScoped<ISystemNotificationQueryService, SystemNotificationQueryService>();
 
 // Lab and Orders Bounded Context Injection
-builder.Services.AddScoped<IInventoryContextFacade, InventoryContextFacade>();
 builder.Services.AddScoped<IWorkOrderRepository, WorkOrderRepository>();
 builder.Services.AddScoped<ILaboratoryRepository, LaboratoryRepository>();
 builder.Services.AddScoped<IWorkOrderCommandService, WorkOrderCommandService>();
