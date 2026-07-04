@@ -28,6 +28,7 @@ public static class IamErrorToActionAssembler
                 IamError.ExpiredOrUsedToken => new UnauthorizedObjectResult(new { error = translatedMessage }),
                 IamError.DatabaseError => problemDetailsFactory.CreateProblemDetails(controller, StatusCodes.Status500InternalServerError, iamError, translatedMessage, "Internal Server Error"),
                 IamError.InternalServerError => problemDetailsFactory.CreateProblemDetails(controller, StatusCodes.Status500InternalServerError, iamError, translatedMessage, "Internal Server Error"),
+                IamError.AccountAlreadyOnboarded => new ConflictObjectResult(new { error = translatedMessage }),
                 _ => problemDetailsFactory.CreateProblemDetails(controller, StatusCodes.Status500InternalServerError, null, "Unexpected Error", "Internal Server Error")
             };
         }
