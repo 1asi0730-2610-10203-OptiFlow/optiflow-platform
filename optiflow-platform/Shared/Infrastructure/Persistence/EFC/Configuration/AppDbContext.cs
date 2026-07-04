@@ -45,7 +45,7 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
         builder.ApplyClinicalConfiguration(this);
         builder.ApplyAnalyticsConfiguration();
         builder.ApplyLabAndOrdersConfiguration(this);
-        builder.ApplyPatientCenterConfiguration();
+        builder.ApplyPatientCenterConfiguration(this);
         builder.ApplyIamConfiguration();
 
         builder.UseSnakeCaseNamingConvention();

@@ -11,9 +11,10 @@ public class PatientNotification
         Status  = null!;
     }
 
-    public PatientNotification(CreateNotificationCommand command)
+    public PatientNotification(CreateNotificationCommand command, Guid accountId)
     {
         ArgumentNullException.ThrowIfNull(command);
+        AccountId   = accountId;
         PatientId   = command.PatientId;
         WorkOrderId = command.WorkOrderId;
         Message     = command.Message;
@@ -22,6 +23,7 @@ public class PatientNotification
     }
 
     public int       Id          { get; private set; }
+    public Guid      AccountId   { get; private set; }
     public int       PatientId   { get; private set; }
     public int       WorkOrderId { get; private set; }
     public string    Message     { get; private set; }
