@@ -42,7 +42,7 @@ public class SaleCompletedEventHandler(
         }
 
         var message = $"Sale #{sale.Id} for {sale.PatientName} has been completed and paid in full.";
-        var command = new CreateSystemNotificationCommand(sale.UserId, NotificationCategory.SaleCompleted, message);
+        var command = new CreateSystemNotificationCommand(sale.UserId, NotificationCategory.SaleCompleted, message, sale.AccountId);
         var result  = await notificationCommandService.Handle(command, cancellationToken);
 
         if (result is Result<SystemNotification, CreateSystemNotificationError>.Failure failure)

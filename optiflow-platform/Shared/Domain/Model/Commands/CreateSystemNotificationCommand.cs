@@ -3,4 +3,5 @@ namespace optiflow_platform.Shared.Domain.Model.Commands;
 public record CreateSystemNotificationCommand(
     int    RecipientUserId,
     string Category,
-    string Message);
+    string Message,
+    Guid   AccountId);

@@ -7,6 +7,7 @@ using optiflow_platform.Sales.Domain.Model.Entities;
 using optiflow_platform.Sales.Domain.Model.Events;
 using optiflow_platform.Sales.Domain.Repositories;
 using optiflow_platform.Shared.Application.Patterns;
+using optiflow_platform.Shared.Application.Services;
 using optiflow_platform.Shared.Domain.Repositories;
 using Microsoft.EntityFrameworkCore;
 
@@ -20,6 +21,7 @@ public class SaleCommandService(
     ISaleItemRepository saleItemRepository,
     IUnitOfWork unitOfWork,
     IMediator domainEventPublisher,
+    ICurrentUserContext currentUserContext,
     ILogger<SaleCommandService> logger)
     : ISaleCommandService
 {
@@ -32,12 +34,12 @@ public class SaleCommandService(
 
         try
         {
-            var sale = new Sale(command);
+            var sale = new Sale(command, currentUserContext.AccountId!.Value);
             await saleRepository.AddAsync(sale, cancellationToken);
             await unitOfWork.CompleteAsync(cancellationToken);
 
             foreach (var item in command.Items)
-                await saleItemRepository.AddAsync(new SaleItem(sale.Id.Value, item.ProductId, item.Quantity), cancellationToken);
+                await saleItemRepository.AddAsync(new SaleItem(sale.Id.Value, item.ProductId, item.Quantity, sale.AccountId), cancellationToken);
             await unitOfWork.CompleteAsync(cancellationToken);
 
             await domainEventPublisher.PublishAsync(new SaleCreatedEvent(sale.Id, sale.PatientName, sale.TotalAmount), cancellationToken);
