@@ -6,6 +6,7 @@ using optiflow_platform.LabAndOrders.Domain.Model.Commands;
 using optiflow_platform.LabAndOrders.Domain.Model.Events;
 using optiflow_platform.LabAndOrders.Domain.Repositories;
 using optiflow_platform.Shared.Application.Patterns;
+using optiflow_platform.Shared.Application.Services;
 using optiflow_platform.Shared.Domain.Repositories;
 using Microsoft.EntityFrameworkCore;
 
@@ -26,6 +27,7 @@ public class WorkOrderCommandService(
     IWorkOrderRepository workOrderRepository,
     IUnitOfWork unitOfWork,
     IMediator domainEventPublisher,
+    ICurrentUserContext currentUserContext,
     ILogger<WorkOrderCommandService> logger)
     : IWorkOrderCommandService
 {
@@ -35,7 +37,7 @@ public class WorkOrderCommandService(
     {
         try
         {
-            var workOrder = new WorkOrder(command);
+            var workOrder = new WorkOrder(command, currentUserContext.AccountId!.Value);
             await workOrderRepository.AddAsync(workOrder, cancellationToken);
             await unitOfWork.CompleteAsync(cancellationToken);
             await domainEventPublisher.PublishAsync(

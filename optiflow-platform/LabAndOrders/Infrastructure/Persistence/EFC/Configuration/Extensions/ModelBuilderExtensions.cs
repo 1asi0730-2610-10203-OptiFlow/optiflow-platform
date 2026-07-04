@@ -1,17 +1,20 @@
 using Microsoft.EntityFrameworkCore;
 using optiflow_platform.LabAndOrders.Domain.Model.Aggregates;
 using optiflow_platform.LabAndOrders.Domain.Model.ValueObjects;
+using optiflow_platform.Shared.Infrastructure.Persistence.EFC.Configuration;
 
 namespace optiflow_platform.LabAndOrders.Infrastructure.Persistence.EFC.Configuration.Extensions;
 
 public static class ModelBuilderExtensions
 {
-    public static void ApplyLabAndOrdersConfiguration(this ModelBuilder builder)
+    public static void ApplyLabAndOrdersConfiguration(this ModelBuilder builder, AppDbContext dbContext)
     {
         builder.Entity<Laboratory>().HasKey(l => l.Id);
         builder.Entity<Laboratory>().Property(l => l.Id).IsRequired().ValueGeneratedOnAdd();
+        builder.Entity<Laboratory>().Property(l => l.AccountId).IsRequired();
         builder.Entity<Laboratory>().Property(l => l.Name).IsRequired().HasMaxLength(255);
-        builder.Entity<Laboratory>().HasIndex(l => l.Name).IsUnique();
+        builder.Entity<Laboratory>().HasIndex(l => new { l.AccountId, l.Name }).IsUnique();
+        builder.Entity<Laboratory>().HasQueryFilter(l => l.AccountId == dbContext.CurrentAccountId);
         builder.Entity<Laboratory>().OwnsOne(l => l.ContactInfo, ci =>
         {
             ci.WithOwner().HasForeignKey("Id");
@@ -21,6 +24,9 @@ public static class ModelBuilderExtensions
 
         builder.Entity<WorkOrder>().HasKey(w => w.Id);
         builder.Entity<WorkOrder>().Property(w => w.Id).IsRequired().ValueGeneratedOnAdd();
+        builder.Entity<WorkOrder>().Property(w => w.AccountId).IsRequired();
+        builder.Entity<WorkOrder>().HasIndex(w => w.AccountId);
+        builder.Entity<WorkOrder>().HasQueryFilter(w => w.AccountId == dbContext.CurrentAccountId);
         builder.Entity<WorkOrder>().Property(w => w.SaleId).IsRequired();
         builder.Entity<WorkOrder>().Property(w => w.RecipeId).IsRequired();
         builder.Entity<WorkOrder>().Property(w => w.LaboratoryId)
