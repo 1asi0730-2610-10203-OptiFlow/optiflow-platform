@@ -161,6 +161,7 @@ builder.Services.AddCortexMediator([typeof(Program)]);
 
 // Shared Bounded Context Injection
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<ISystemNotificationRepository, SystemNotificationRepository>();
 
 // Lab and Orders Bounded Context Injection
 builder.Services.AddScoped<IInventoryContextFacade, InventoryContextFacade>();

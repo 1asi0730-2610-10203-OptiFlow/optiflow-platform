@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using optiflow_platform.Shared.Domain.Model.Entities;
 
 namespace optiflow_platform.Shared.Infrastructure.Persistence.EFC.Configuration.Extensions;
 
@@ -12,6 +13,20 @@ namespace optiflow_platform.Shared.Infrastructure.Persistence.EFC.Configuration.
 /// </remarks>
 public static class ModelBuilderExtensions
 {
+    /// <summary>
+    ///     Applies entity configuration for domain models owned directly by the Shared context.
+    /// </summary>
+    public static void ApplySharedConfiguration(this ModelBuilder builder)
+    {
+        builder.Entity<SystemNotification>().HasKey(n => n.Id);
+        builder.Entity<SystemNotification>().Property(n => n.Id).IsRequired().ValueGeneratedOnAdd();
+        builder.Entity<SystemNotification>().Property(n => n.RecipientUserId).IsRequired();
+        builder.Entity<SystemNotification>().Property(n => n.Category).IsRequired().HasMaxLength(50);
+        builder.Entity<SystemNotification>().Property(n => n.Message).IsRequired().HasMaxLength(500);
+        builder.Entity<SystemNotification>().Property(n => n.IsRead).IsRequired();
+        builder.Entity<SystemNotification>().Property(n => n.CreatedAt).IsRequired();
+    }
+
     /// <summary>
     ///     Use snake case naming convention
     /// </summary>
