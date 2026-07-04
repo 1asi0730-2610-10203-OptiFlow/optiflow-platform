@@ -5,6 +5,7 @@ using optiflow_platform.PatientCenter.Domain.Model.Commands;
 using optiflow_platform.PatientCenter.Domain.Model.Entities;
 using optiflow_platform.PatientCenter.Domain.Repositories;
 using optiflow_platform.Shared.Application.Patterns;
+using optiflow_platform.Shared.Application.Services;
 using optiflow_platform.Shared.Domain.Repositories;
 
 namespace optiflow_platform.PatientCenter.Application.Internal.CommandServices;
@@ -12,6 +13,7 @@ namespace optiflow_platform.PatientCenter.Application.Internal.CommandServices;
 public class PatientNotificationCommandService(
     IPatientNotificationRepository notificationRepository,
     IUnitOfWork unitOfWork,
+    ICurrentUserContext currentUserContext,
     ILogger<PatientNotificationCommandService> logger)
     : IPatientNotificationCommandService
 {
@@ -21,7 +23,7 @@ public class PatientNotificationCommandService(
     {
         try
         {
-            var notification = new PatientNotification(command);
+            var notification = new PatientNotification(command, currentUserContext.AccountId!.Value);
             await notificationRepository.AddAsync(notification, cancellationToken);
             await unitOfWork.CompleteAsync(cancellationToken);
             return new Result<PatientNotification, CreateNotificationError>.Success(notification);
