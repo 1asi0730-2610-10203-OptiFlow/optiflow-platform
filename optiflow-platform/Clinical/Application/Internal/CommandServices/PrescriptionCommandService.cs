@@ -35,7 +35,7 @@ public class PrescriptionCommandService(
 
         try
         {
-            var prescription = new Prescription(command);
+            var prescription = new Prescription(command, record.AccountId);
             await prescriptionRepository.AddAsync(prescription, cancellationToken);
             await unitOfWork.CompleteAsync(cancellationToken);
             return new Result<Prescription, CreatePrescriptionError>.Success(prescription);

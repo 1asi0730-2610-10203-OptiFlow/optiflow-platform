@@ -5,6 +5,7 @@ using optiflow_platform.Clinical.Domain.Model.Commands;
 using optiflow_platform.Clinical.Domain.Model.Entities;
 using optiflow_platform.Clinical.Domain.Repositories;
 using optiflow_platform.Shared.Application.Patterns;
+using optiflow_platform.Shared.Application.Services;
 using optiflow_platform.Shared.Domain.Repositories;
 using Microsoft.EntityFrameworkCore;
 
@@ -21,6 +22,7 @@ public class PatientCommandService(
     IPatientRepository patientRepository,
     IClinicalRecordRepository clinicalRecordRepository,
     IUnitOfWork unitOfWork,
+    ICurrentUserContext currentUserContext,
     ILogger<PatientCommandService> logger)
     : IPatientCommandService
 {
@@ -39,12 +41,12 @@ public class PatientCommandService(
                 return new Result<Patient, CreatePatientError>.Failure(CreatePatientError.DniAlreadyExists);
             }
 
-            var patient = new Patient(command);
+            var patient = new Patient(command, currentUserContext.AccountId!.Value);
             await patientRepository.AddAsync(patient, cancellationToken);
             await unitOfWork.CompleteAsync(cancellationToken); // flush to get patient.Id
 
             // Auto-create the linked clinical record
-            var record = new ClinicalRecord(patient.Id);
+            var record = new ClinicalRecord(patient.Id, patient.AccountId);
             await clinicalRecordRepository.AddAsync(record, cancellationToken);
             await unitOfWork.CompleteAsync(cancellationToken);
 

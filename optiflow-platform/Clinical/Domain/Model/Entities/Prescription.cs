@@ -14,9 +14,10 @@ public class Prescription
         PrescriptionUuid = null!;
     }
 
-    public Prescription(CreatePrescriptionCommand command)
+    public Prescription(CreatePrescriptionCommand command, Guid accountId)
     {
         ArgumentNullException.ThrowIfNull(command);
+        AccountId        = accountId;
         ClinicalRecordId = command.ClinicalRecordId;
         OdSphere         = command.OdSphere;
         OdCylinder       = command.OdCylinder;
@@ -32,6 +33,7 @@ public class Prescription
     }
 
     public int      Id               { get; private set; }
+    public Guid     AccountId        { get; private set; }
 
     /// <summary>Alias of Id — kept for mockapi compatibility.</summary>
     public int      PrescriptionId   => Id;
