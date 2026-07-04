@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using optiflow_platform.Shared.Domain.Model.Entities;
+using optiflow_platform.Shared.Infrastructure.Persistence.EFC.Configuration;
 
 namespace optiflow_platform.Shared.Infrastructure.Persistence.EFC.Configuration.Extensions;
 
@@ -16,10 +17,13 @@ public static class ModelBuilderExtensions
     /// <summary>
     ///     Applies entity configuration for domain models owned directly by the Shared context.
     /// </summary>
-    public static void ApplySharedConfiguration(this ModelBuilder builder)
+    public static void ApplySharedConfiguration(this ModelBuilder builder, AppDbContext dbContext)
     {
         builder.Entity<SystemNotification>().HasKey(n => n.Id);
         builder.Entity<SystemNotification>().Property(n => n.Id).IsRequired().ValueGeneratedOnAdd();
+        builder.Entity<SystemNotification>().Property(n => n.AccountId).IsRequired();
+        builder.Entity<SystemNotification>().HasIndex(n => n.AccountId);
+        builder.Entity<SystemNotification>().HasQueryFilter(n => n.AccountId == dbContext.CurrentAccountId);
         builder.Entity<SystemNotification>().Property(n => n.RecipientUserId).IsRequired();
         builder.Entity<SystemNotification>().Property(n => n.Category).IsRequired().HasMaxLength(50);
         builder.Entity<SystemNotification>().Property(n => n.Message).IsRequired().HasMaxLength(500);

@@ -18,6 +18,7 @@ public class SystemNotification
     {
         ArgumentNullException.ThrowIfNull(command);
         RecipientUserId = command.RecipientUserId;
+        AccountId       = command.AccountId;
         Category        = command.Category;
         Message         = command.Message;
         IsRead          = false;
@@ -25,6 +26,7 @@ public class SystemNotification
     }
 
     public int      Id              { get; private set; }
+    public Guid     AccountId       { get; private set; }
     public int      RecipientUserId { get; private set; }
     public string   Category        { get; private set; }
     public string   Message         { get; private set; }
