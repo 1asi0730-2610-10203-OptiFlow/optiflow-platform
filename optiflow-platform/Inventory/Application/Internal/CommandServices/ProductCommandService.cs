@@ -178,7 +178,7 @@ public class ProductCommandService(
             logger.LogWarning(ex, "Invalid reduction quantity {Quantity} for product {ProductId}", command.Quantity, command.ProductId);
             return new Result<Product, ReduceStockError>.Failure(ReduceStockError.InvalidQuantity);
         }
-        catch (InvalidOperationException ex)
+        catch (InvalidOperationException ex) when (ex.Message.StartsWith("Insufficient stock"))
         {
             logger.LogWarning(ex, "Insufficient stock reducing product {ProductId} by {Quantity}", command.ProductId, command.Quantity);
             return new Result<Product, ReduceStockError>.Failure(ReduceStockError.InsufficientStock);
@@ -281,7 +281,7 @@ public class ProductCommandService(
             logger.LogWarning(ex, "Invalid consumption quantity {Quantity} for product {ProductId}", command.Quantity, command.ProductId);
             return new Result<Product, ConsumeStockError>.Failure(ConsumeStockError.InvalidQuantity);
         }
-        catch (InvalidOperationException ex)
+        catch (InvalidOperationException ex) when (ex.Message.StartsWith("Insufficient stock"))
         {
             logger.LogWarning(ex, "Insufficient stock to consume {Quantity} units of product {ProductId}", command.Quantity, command.ProductId);
             return new Result<Product, ConsumeStockError>.Failure(ConsumeStockError.InsufficientStock);
