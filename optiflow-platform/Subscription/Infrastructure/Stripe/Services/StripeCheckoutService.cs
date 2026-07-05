@@ -1,4 +1,4 @@
-﻿using optiflow_platform.Subscription.Application.Internal.OutboundServices.Stripe;
+using optiflow_platform.Subscription.Application.Internal.OutboundServices.Stripe;
 using Stripe;
 using Stripe.Checkout;
 
@@ -8,23 +8,25 @@ namespace optiflow_platform.Subscription.Infrastructure.Stripe.Services;
 public class StripeCheckoutService(IConfiguration configuration, ILogger<StripeCheckoutService> logger)
     : IStripeCheckoutService
 {
-    private readonly string _successUrl = configuration["Stripe:SuccessUrl"]
-        ?? (configuration["AppSettings:FrontendUrl"]?.TrimEnd('/') ?? "http://localhost:5173") + "/select-plan?status=success";
-    private readonly string _cancelUrl = configuration["Stripe:CancelUrl"]
-        ?? (configuration["AppSettings:FrontendUrl"]?.TrimEnd('/') ?? "http://localhost:5173") + "/select-plan?status=cancelled";
+    private readonly string _frontendUrl = configuration["AppSettings:FrontendUrl"]?.TrimEnd('/') ?? "http://localhost:5173";
+    private readonly string? _successUrl = configuration["Stripe:SuccessUrl"];
+    private readonly string? _cancelUrl  = configuration["Stripe:CancelUrl"];
 
     /// <inheritdoc />
-    public string CreateCheckoutSession(int adminId, int planId, string planName, decimal amount)
+    public string CreateCheckoutSession(int subscriptionId, Guid accountId, string planName, decimal amount)
     {
+        var successUrl = string.IsNullOrWhiteSpace(_successUrl) ? _frontendUrl + "/select-plan?status=success" : _successUrl;
+        var cancelUrl  = string.IsNullOrWhiteSpace(_cancelUrl)  ? _frontendUrl + "/select-plan?status=cancelled" : _cancelUrl;
+
         var options = new SessionCreateOptions
         {
             Mode       = "payment",
-            SuccessUrl = _successUrl + "?session_id={CHECKOUT_SESSION_ID}",
-            CancelUrl  = _cancelUrl,
+            SuccessUrl = successUrl + (successUrl.Contains('?') ? "&" : "?") + "session_id={CHECKOUT_SESSION_ID}",
+            CancelUrl  = cancelUrl,
             Metadata   = new Dictionary<string, string>
             {
-                { "adminId", adminId.ToString() },
-                { "planId",  planId.ToString()  }
+                { "subscriptionId", subscriptionId.ToString() },
+                { "accountId",      accountId.ToString()      }
             },
             LineItems =
             [
@@ -49,13 +51,13 @@ public class StripeCheckoutService(IConfiguration configuration, ILogger<StripeC
         {
             var service = new SessionService();
             var session = service.Create(options);
-            logger.LogInformation("Stripe Checkout Session created for admin {AdminId} plan {PlanId}: {SessionId}",
-                adminId, planId, session.Id);
+            logger.LogInformation("Stripe Checkout Session created for subscription {SubscriptionId}: {SessionId}",
+                subscriptionId, session.Id);
             return session.Url;
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Failed to create Stripe Checkout Session for admin {AdminId}", adminId);
+            logger.LogError(ex, "Failed to create Stripe Checkout Session for subscription {SubscriptionId}", subscriptionId);
             throw new InvalidOperationException("stripe.checkout.session.creation.failed");
         }
     }
