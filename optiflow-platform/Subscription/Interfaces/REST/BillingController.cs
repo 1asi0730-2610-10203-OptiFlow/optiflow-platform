@@ -19,6 +19,7 @@ namespace optiflow_platform.Subscription.Interfaces.REST;
 [Produces(MediaTypeNames.Application.Json)]
 [Tags("Billing")]
 [Authorize]
+[AllowWithoutSubscription]
 public class BillingController(
     IBillingCommandService billingCommandService,
     IBillingQueryService billingQueryService,

@@ -18,6 +18,7 @@ namespace optiflow_platform.Subscription.Interfaces.REST;
 [Produces(MediaTypeNames.Application.Json)]
 [Tags("Plans")]
 [Authorize]
+[AllowWithoutSubscription]
 public class PlansController(
     IPlanCommandService planCommandService,
     IPlanQueryService planQueryService,

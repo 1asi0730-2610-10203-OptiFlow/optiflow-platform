@@ -14,6 +14,7 @@ namespace optiflow_platform.PatientCenter.Interfaces.REST;
 [Produces(MediaTypeNames.Application.Json)]
 [Tags("Lens Materials")]
 [Authorize]
+[AllowWithoutSubscription]
 public class LensMaterialsController(ILensMaterialQueryService lensMaterialQueryService)
     : ControllerBase
 {

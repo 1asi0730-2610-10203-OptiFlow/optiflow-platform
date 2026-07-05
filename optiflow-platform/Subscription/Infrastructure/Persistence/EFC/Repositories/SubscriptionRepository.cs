@@ -18,8 +18,11 @@ public class SubscriptionRepository(AppDbContext context)
 
     /// <inheritdoc />
     public async Task<IEnumerable<Domain.Model.Aggregates.Subscription>> FindByStatusAsync(
-        string status, CancellationToken cancellationToken = default) =>
-        await Context.Set<Domain.Model.Aggregates.Subscription>()
-            .Where(s => s.Status.Value == status)
+        string status, CancellationToken cancellationToken = default)
+    {
+        var target = new Domain.Model.ValueObjects.SubscriptionStatus(status);
+        return await Context.Set<Domain.Model.Aggregates.Subscription>()
+            .Where(s => s.Status == target)
             .ToListAsync(cancellationToken);
+    }
 }

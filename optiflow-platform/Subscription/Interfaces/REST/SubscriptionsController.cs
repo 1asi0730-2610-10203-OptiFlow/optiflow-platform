@@ -19,6 +19,7 @@ namespace optiflow_platform.Subscription.Interfaces.REST;
 [Produces(MediaTypeNames.Application.Json)]
 [Tags("Subscriptions")]
 [Authorize]
+[AllowWithoutSubscription]
 public class SubscriptionsController(
     ISubscriptionCommandService subscriptionCommandService,
     ISubscriptionQueryService subscriptionQueryService,
@@ -57,6 +58,21 @@ public class SubscriptionsController(
             logger.LogError(ex, "Unexpected error creating subscription for admin {AdminId}", resource.AdminId);
             return Problem(title: "Unexpected server error", detail: "Could not create subscription.", statusCode: 500);
         }
+    }
+
+    /// <summary>Gets the current account's subscription status.</summary>
+    [HttpGet("me")]
+    [SwaggerOperation(Summary = "Gets my subscription status", OperationId = "GetMySubscription")]
+    [SwaggerResponse(200, "Current subscription status")]
+    public async Task<ActionResult> GetMySubscription(CancellationToken cancellationToken = default)
+    {
+        var active = await subscriptionQueryService.GetCurrentActiveSubscriptionAsync(cancellationToken);
+        return Ok(new
+        {
+            hasActiveSubscription = active != null,
+            status = active?.Status.Value,
+            subscription = active != null ? SubscriptionResourceFromEntityAssembler.ToResourceFromEntity(active) : null
+        });
     }
 
     /// <summary>Gets all subscriptions.</summary>
