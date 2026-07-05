@@ -21,12 +21,19 @@ namespace optiflow_platform.IAM.Application.Internal.CommandServices;
 
 public class UserCommandService(
     IUserRepository userRepository,
+    IAccountRepository accountRepository,
     IHashingService hashingService,
     ITokenService tokenService,
     IUnitOfWork unitOfWork,
     IPatientDirectoryService patientDirectory,
     IConfiguration configuration) : IUserCommandService
 {
+    private static string BuildDefaultOpticName(string email)
+    {
+        var localPart = email.Split('@')[0];
+        return string.IsNullOrWhiteSpace(localPart) ? "Mi Óptica" : $"Óptica {localPart}";
+    }
+
     public async Task<Result<AuthenticatedUser>> Handle(SignInCommand command, CancellationToken cancellationToken)
     {
         var user = await userRepository.FindByEmailAsync(command.Email, cancellationToken);
@@ -44,8 +51,23 @@ public class UserCommandService(
         // them to their optic on first sign-in where the match now exists.
         await TryLinkClientToOpticAsync(user, cancellationToken);
 
+        // Back-fill an optic for admins created before auto-provisioning existed, so onboarding is
+        // never left incomplete.
+        if (user.Role == UserRole.Admin && user.AccountId == null)
+            await ProvisionOpticAsync(user, cancellationToken);
+
         var token = tokenService.GenerateToken(user.Email.Value);
         return Result<AuthenticatedUser>.Success(new AuthenticatedUser(user, token));
+    }
+
+    private async Task ProvisionOpticAsync(User user, CancellationToken cancellationToken)
+    {
+        var account = new Account(new CreateAccountCommand(BuildDefaultOpticName(user.Email.Value), user.Id.Value));
+        await accountRepository.AddAsync(account, cancellationToken);
+        await unitOfWork.CompleteAsync();
+        user.AssignAccount(account.Id);
+        userRepository.Update(user);
+        await unitOfWork.CompleteAsync();
     }
 
     private async Task TryLinkClientToOpticAsync(User user, CancellationToken cancellationToken)
@@ -85,6 +107,11 @@ public class UserCommandService(
 
         await userRepository.AddAsync(user);
         await unitOfWork.CompleteAsync();
+
+        // An admin runs their own optic: provision it now so onboarding is complete and they land
+        // straight on plan selection. (Clients are attached to an existing optic above instead.)
+        if (command.Role == UserRole.Admin && user.AccountId == null)
+            await ProvisionOpticAsync(user, cancellationToken);
 
         var token = tokenService.GenerateToken(user.Email.Value);
         return Result<AuthenticatedUser>.Success(new AuthenticatedUser(user, token));
