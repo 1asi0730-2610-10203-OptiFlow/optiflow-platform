@@ -17,6 +17,7 @@ namespace optiflow_platform.PatientCenter.Interfaces.REST;
 [Produces(MediaTypeNames.Application.Json)]
 [Tags("Patient Notifications")]
 [Authorize]
+[AllowWithoutAccount]
 [AllowWithoutSubscription]
 public class PatientNotificationsController(
     IPatientNotificationQueryService notificationQueryService,
