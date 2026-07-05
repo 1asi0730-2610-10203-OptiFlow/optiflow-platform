@@ -21,7 +21,20 @@ public class ClientAccountService(
         if (string.IsNullOrWhiteSpace(email)) return;
 
         var emailAddress = new EmailAddress(email);
-        if (await userRepository.ExistsByEmailAsync(emailAddress, cancellationToken)) return;
+        var existing = await userRepository.FindByEmailAsync(emailAddress, cancellationToken);
+        if (existing != null)
+        {
+            // A client account already exists for this email — link it to this optic if it isn't
+            // attached to one yet, so the added patient and the existing client are connected now
+            // (instead of only on the client's next sign-in). Owners are never reassigned.
+            if (existing.Role == UserRole.Client && existing.AccountId == null)
+            {
+                existing.AssignAccount(opticAccountId);
+                userRepository.Update(existing);
+                await unitOfWork.CompleteAsync();
+            }
+            return;
+        }
 
         // Passwordless clients still need a stored hash; use an unguessable random one they never use.
         var placeholderPassword = hashingService.Encode(Guid.NewGuid().ToString("N"));
