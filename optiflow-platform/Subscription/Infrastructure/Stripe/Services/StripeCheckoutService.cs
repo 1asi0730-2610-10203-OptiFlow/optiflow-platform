@@ -8,8 +8,10 @@ namespace optiflow_platform.Subscription.Infrastructure.Stripe.Services;
 public class StripeCheckoutService(IConfiguration configuration, ILogger<StripeCheckoutService> logger)
     : IStripeCheckoutService
 {
-    private readonly string _successUrl = configuration["Stripe:SuccessUrl"]!;
-    private readonly string _cancelUrl  = configuration["Stripe:CancelUrl"]!;
+    private readonly string _successUrl = configuration["Stripe:SuccessUrl"]
+        ?? (configuration["AppSettings:FrontendUrl"]?.TrimEnd('/') ?? "http://localhost:5173") + "/select-plan?status=success";
+    private readonly string _cancelUrl = configuration["Stripe:CancelUrl"]
+        ?? (configuration["AppSettings:FrontendUrl"]?.TrimEnd('/') ?? "http://localhost:5173") + "/select-plan?status=cancelled";
 
     /// <inheritdoc />
     public string CreateCheckoutSession(int adminId, int planId, string planName, decimal amount)
