@@ -21,8 +21,14 @@ public class AccountCommandService(
         if (user == null)
             return Result<Account>.Failure(IamError.UserNotFound, "iam.error.user.notFound");
 
+        // Idempotent: if the user already has an optic (e.g. auto-provisioned at sign-up), return it
+        // instead of failing, so repeated onboarding calls are harmless.
         if (user.AccountId != null)
-            return Result<Account>.Failure(IamError.AccountAlreadyOnboarded, "iam.error.account.alreadyOnboarded");
+        {
+            var existing = await accountRepository.FindByIdAsync(user.AccountId.Value, cancellationToken);
+            if (existing != null)
+                return Result<Account>.Success(existing);
+        }
 
         var account = new Account(command);
         await accountRepository.AddAsync(account, cancellationToken);
