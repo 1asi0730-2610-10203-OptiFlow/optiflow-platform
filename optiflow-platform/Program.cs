@@ -250,6 +250,7 @@ builder.Services.AddScoped<IAccountQueryService, AccountQueryService>();
 builder.Services.AddScoped<IHashingService, BCryptHashingService>();
 builder.Services.AddScoped<ITokenService, optiflow_platform.IAM.Infrastructure.Tokens.Jwt.Services.TokenService>();builder.Services.AddScoped<IEmailService, SmtpEmailService>();
 builder.Services.AddScoped<optiflow_platform.IAM.Application.Internal.OutboundServices.Patients.IPatientDirectoryService, optiflow_platform.IAM.Infrastructure.Acl.PatientDirectoryService>();
+builder.Services.AddScoped<optiflow_platform.IAM.Application.ACL.IClientAccountService, optiflow_platform.IAM.Application.Internal.ACL.ClientAccountService>();
 // IAM Token Settings Configuration
 builder.Services.Configure<TokenSettings>(builder.Configuration.GetSection("AppSettings:JwtSettings"));
 
