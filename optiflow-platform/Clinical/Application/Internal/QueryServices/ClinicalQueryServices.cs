@@ -29,6 +29,12 @@ public class PatientQueryService(
         logger.LogInformation("Handling GetPatientByDniQuery for dni {Dni}", query.Dni);
         return await patientRepository.FindByDniAsync(query.Dni, cancellationToken);
     }
+
+    public async Task<Patient?> Handle(GetPatientByEmailQuery query, CancellationToken cancellationToken = default)
+    {
+        logger.LogInformation("Handling GetPatientByEmailQuery");
+        return await patientRepository.FindByEmailIgnoringScopeAsync(query.Email, cancellationToken);
+    }
 }
 
 /// <summary>Query service implementation for <see cref="ClinicalRecord"/> read operations.</summary>
