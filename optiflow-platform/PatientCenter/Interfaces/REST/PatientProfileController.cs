@@ -21,7 +21,7 @@ public class PatientProfileController(
     [HttpGet("patients/by-email")]
     [SwaggerOperation(
         Summary = "Gets a patient by email",
-        Description = "Returns the patient id for the authenticated patient user",
+        Description = "Returns the patient data for the authenticated patient user",
         OperationId = "GetPatientByEmail")]
     [SwaggerResponse(200, "Patient found")]
     [SwaggerResponse(404, "Patient not found")]
@@ -39,7 +39,15 @@ public class PatientProfileController(
 
             if (patient is null) return NotFound();
 
-            return Ok(new { id = patient.Id, email = patient.Email });
+            return Ok(new
+            {
+                id        = patient.Id,
+                firstName = patient.FirstName,
+                lastName  = patient.LastName,
+                email     = patient.Email,
+                phone     = patient.Phone,
+                birthDate = patient.BirthDate.ToString("yyyy-MM-dd")
+            });
         }
         catch (Exception ex)
         {
