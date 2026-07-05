@@ -61,6 +61,7 @@ public class PlansController(
 
     /// <summary>Gets all plans.</summary>
     [HttpGet]
+    [AllowWithoutAccount]
     [SwaggerOperation(Summary = "Gets all plans", OperationId = "GetAllPlans")]
     [SwaggerResponse(200, "List of plans", typeof(IEnumerable<PlanResource>))]
     public async Task<ActionResult> GetAllPlans(CancellationToken cancellationToken = default)
@@ -71,6 +72,7 @@ public class PlansController(
 
     /// <summary>Gets a plan by id.</summary>
     [HttpGet("{id:int}")]
+    [AllowWithoutAccount]
     [SwaggerOperation(Summary = "Gets a plan by id", OperationId = "GetPlanById")]
     [SwaggerResponse(200, "The plan was found", typeof(PlanResource))]
     [SwaggerResponse(404, "Plan not found")]
