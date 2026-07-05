@@ -237,6 +237,11 @@ builder.Services.AddScoped<IPatientNotificationQueryService, PatientNotification
 builder.Services.AddScoped<ILensMaterialQueryService, LensMaterialQueryService>();
 builder.Services.AddScoped<IPatientNotificationCommandService, PatientNotificationCommandService>();
 
+// Staff Bounded Context Injection
+builder.Services.AddScoped<optiflow_platform.Staff.Domain.Repositories.IStaffRepository, optiflow_platform.Staff.Infrastructure.Persistence.EFC.Repositories.StaffRepository>();
+builder.Services.AddScoped<optiflow_platform.Staff.Application.Services.IStaffCommandService, optiflow_platform.Staff.Application.Internal.CommandServices.StaffCommandService>();
+builder.Services.AddScoped<optiflow_platform.Staff.Application.Services.IStaffQueryService, optiflow_platform.Staff.Application.Internal.QueryServices.StaffQueryService>();
+
 // IAM Bounded Context Injection
 builder.Services.AddScoped<ProblemDetailsFactory>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
