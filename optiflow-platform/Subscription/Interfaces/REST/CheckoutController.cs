@@ -67,9 +67,11 @@ public class CheckoutController(
 
             if (UseRealStripeCheckout())
             {
-                // Hand off to Stripe; the webhook activates this subscription after payment.
+                // Stripe returns the browser to this backend endpoint, which activates the subscription
+                // and redirects into the app; the webhook is a backup for the same activation.
+                var returnUrl = $"{Request.Scheme}://{Request.Host}/api/v1/checkout/return";
                 var url = stripeCheckoutService.CreateCheckoutSession(
-                    subscription.Id, subscription.AccountId, resource.PlanName, resource.Amount);
+                    subscription.Id, subscription.AccountId, resource.PlanName, resource.Amount, returnUrl);
                 return Ok(new CheckoutSessionResource(url));
             }
 
