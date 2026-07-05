@@ -11,6 +11,7 @@ public interface IStripeCheckoutService
     /// <param name="accountId">The account the subscription belongs to.</param>
     /// <param name="planName">The display name of the plan.</param>
     /// <param name="amount">The payment amount in USD.</param>
+    /// <param name="returnUrl">Absolute URL Stripe redirects the browser to after a successful payment.</param>
     /// <returns>The Stripe Checkout Session URL.</returns>
-    string CreateCheckoutSession(int subscriptionId, Guid accountId, string planName, decimal amount);
+    string CreateCheckoutSession(int subscriptionId, Guid accountId, string planName, decimal amount, string returnUrl);
 }

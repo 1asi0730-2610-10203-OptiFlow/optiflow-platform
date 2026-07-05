@@ -47,27 +47,55 @@ public class StripeWebhookController(
             return BadRequest();
         }
 
-        if (stripeEvent.Type == "checkout.session.completed" &&
-            stripeEvent.Data.Object is Session session &&
-            session.Metadata is not null &&
-            session.Metadata.TryGetValue("subscriptionId", out var subscriptionIdRaw) &&
-            session.Metadata.TryGetValue("accountId", out var accountIdRaw) &&
-            int.TryParse(subscriptionIdRaw, out var subscriptionId) &&
-            Guid.TryParse(accountIdRaw, out var accountId))
-        {
-            // No JWT here, so scope the account explicitly for the tenant query filter.
-            dbContext.CurrentAccountId = accountId;
-            var subscription = await subscriptionRepository.FindByIdAsync(subscriptionId, cancellationToken);
-            if (subscription is not null)
-            {
-                var now = DateTimeOffset.UtcNow;
-                var command = new ActivateSubscriptionCommand(
-                    new SubscriptionId(subscriptionId), subscription.Tier, now, now.AddYears(1));
-                await subscriptionCommandService.Handle(command, cancellationToken);
-                logger.LogInformation("Activated subscription {SubscriptionId} from Stripe webhook", subscriptionId);
-            }
-        }
+        if (stripeEvent.Type == "checkout.session.completed" && stripeEvent.Data.Object is Session session)
+            await ActivateFromSessionAsync(session, cancellationToken);
 
         return Ok();
+    }
+
+    /// <summary>
+    ///     Where Stripe sends the browser after a successful payment. Verifies the session, activates the
+    ///     subscription server-side (no JWT needed — Stripe supplies the session id), then redirects into
+    ///     the app. Public because it's a top-level browser navigation without an Authorization header.
+    /// </summary>
+    [HttpGet("return")]
+    public async Task<IActionResult> Return([FromQuery(Name = "session_id")] string? sessionId, CancellationToken cancellationToken)
+    {
+        var frontend = configuration["AppSettings:FrontendUrl"]?.TrimEnd('/') ?? "http://localhost:5173";
+        if (!string.IsNullOrWhiteSpace(sessionId))
+        {
+            try
+            {
+                var session = await new SessionService().GetAsync(sessionId, cancellationToken: cancellationToken);
+                if (session.PaymentStatus == "paid" || session.Status == "complete")
+                    await ActivateFromSessionAsync(session, cancellationToken);
+            }
+            catch (StripeException ex)
+            {
+                logger.LogWarning(ex, "Failed to verify Stripe session {SessionId} on return", sessionId);
+            }
+        }
+        return Redirect($"{frontend}/payment-success?status=success");
+    }
+
+    private async Task ActivateFromSessionAsync(Session session, CancellationToken cancellationToken)
+    {
+        if (session.Metadata is null ||
+            !session.Metadata.TryGetValue("subscriptionId", out var subscriptionIdRaw) ||
+            !session.Metadata.TryGetValue("accountId", out var accountIdRaw) ||
+            !int.TryParse(subscriptionIdRaw, out var subscriptionId) ||
+            !Guid.TryParse(accountIdRaw, out var accountId))
+            return;
+
+        // No JWT here, so scope the account explicitly for the tenant query filter.
+        dbContext.CurrentAccountId = accountId;
+        var subscription = await subscriptionRepository.FindByIdAsync(subscriptionId, cancellationToken);
+        if (subscription is null) return;
+
+        var now = DateTimeOffset.UtcNow;
+        await subscriptionCommandService.Handle(
+            new ActivateSubscriptionCommand(new SubscriptionId(subscriptionId), subscription.Tier, now, now.AddYears(1)),
+            cancellationToken);
+        logger.LogInformation("Activated subscription {SubscriptionId} from Stripe", subscriptionId);
     }
 }

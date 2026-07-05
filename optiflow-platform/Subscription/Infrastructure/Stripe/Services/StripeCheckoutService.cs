@@ -13,9 +13,10 @@ public class StripeCheckoutService(IConfiguration configuration, ILogger<StripeC
     private readonly string? _cancelUrl  = configuration["Stripe:CancelUrl"];
 
     /// <inheritdoc />
-    public string CreateCheckoutSession(int subscriptionId, Guid accountId, string planName, decimal amount)
+    public string CreateCheckoutSession(int subscriptionId, Guid accountId, string planName, decimal amount, string returnUrl)
     {
-        var successUrl = string.IsNullOrWhiteSpace(_successUrl) ? _frontendUrl + "/payment-success" : _successUrl;
+        // Send the browser back through the backend so activation + redirect happen server-side.
+        var successUrl = string.IsNullOrWhiteSpace(_successUrl) ? returnUrl : _successUrl;
         var cancelUrl  = string.IsNullOrWhiteSpace(_cancelUrl)  ? _frontendUrl + "/select-plan?status=cancelled" : _cancelUrl;
 
         var options = new SessionCreateOptions
