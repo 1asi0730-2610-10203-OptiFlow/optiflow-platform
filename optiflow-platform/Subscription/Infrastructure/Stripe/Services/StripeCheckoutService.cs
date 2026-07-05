@@ -15,7 +15,7 @@ public class StripeCheckoutService(IConfiguration configuration, ILogger<StripeC
     /// <inheritdoc />
     public string CreateCheckoutSession(int subscriptionId, Guid accountId, string planName, decimal amount)
     {
-        var successUrl = string.IsNullOrWhiteSpace(_successUrl) ? _frontendUrl + "/select-plan?status=success" : _successUrl;
+        var successUrl = string.IsNullOrWhiteSpace(_successUrl) ? _frontendUrl + "/payment-success" : _successUrl;
         var cancelUrl  = string.IsNullOrWhiteSpace(_cancelUrl)  ? _frontendUrl + "/select-plan?status=cancelled" : _cancelUrl;
 
         var options = new SessionCreateOptions
