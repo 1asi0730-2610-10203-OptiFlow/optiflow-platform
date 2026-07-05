@@ -21,7 +21,7 @@ public static class UpdatePatientCommandFromResourceAssembler
     public static UpdatePatientCommand ToCommandFromResource(int patientId, UpdatePatientResource resource) =>
         new(patientId,
             resource.FirstName,
-            resource.LastName,
+            resource.LastName ?? "",
             resource.Dni,
             resource.Phone,
             resource.Email,

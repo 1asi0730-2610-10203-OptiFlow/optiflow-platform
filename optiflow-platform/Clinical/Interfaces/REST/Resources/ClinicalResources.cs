@@ -18,7 +18,7 @@ public record PatientResource(
 /// <summary>Resource used to create a new patient.</summary>
 public record CreatePatientResource(
     [Required] string  FirstName,
-    [Required] string  LastName,
+               string? LastName,
     [Required] string  Dni,
                string? Phone,
                string? Email,
@@ -28,7 +28,7 @@ public record CreatePatientResource(
 /// <summary>Resource used to update an existing patient.</summary>
 public record UpdatePatientResource(
     [Required] string  FirstName,
-    [Required] string  LastName,
+               string? LastName,
     [Required] string  Dni,
                string? Phone,
                string? Email,
