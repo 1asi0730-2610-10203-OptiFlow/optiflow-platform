@@ -11,8 +11,9 @@ namespace optiflow_platform.Shared.Infrastructure.Persistence.EFC.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "categories");
+            // Conditional: on a fresh database the categories table never exists (it was replaced by
+            // an enum in an earlier migration), so an unconditional DropTable would fail.
+            migrationBuilder.Sql("DROP TABLE IF EXISTS `categories`;");
         }
 
         /// <inheritdoc />
