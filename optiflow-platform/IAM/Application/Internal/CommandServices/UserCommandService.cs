@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using optiflow_platform.IAM.Application.CommandServices;
 using optiflow_platform.IAM.Application.Internal.OutboundServices.Hashing;
+using optiflow_platform.IAM.Application.Internal.OutboundServices.Patients;
 using optiflow_platform.IAM.Application.Internal.OutboundServices.Tokens;
 using optiflow_platform.IAM.Domain.Model;
 using optiflow_platform.IAM.Domain.Model.Aggregates;
@@ -23,6 +24,7 @@ public class UserCommandService(
     IHashingService hashingService,
     ITokenService tokenService,
     IUnitOfWork unitOfWork,
+    IPatientDirectoryService patientDirectory,
     IConfiguration configuration) : IUserCommandService
 {
     public async Task<Result<AuthenticatedUser>> Handle(SignInCommand command, CancellationToken cancellationToken)
@@ -38,8 +40,27 @@ public class UserCommandService(
             return Result<AuthenticatedUser>.Failure(IamError.InvalidCredentials, "iam.error.credentials.invalid");
         }
 
+        // A client may sign up before their optic has created the matching patient record; link
+        // them to their optic on first sign-in where the match now exists.
+        await TryLinkClientToOpticAsync(user, cancellationToken);
+
         var token = tokenService.GenerateToken(user.Email.Value);
         return Result<AuthenticatedUser>.Success(new AuthenticatedUser(user, token));
+    }
+
+    private async Task TryLinkClientToOpticAsync(User user, CancellationToken cancellationToken)
+    {
+        // Auto-match strategy: any account-less user whose email matches a patient an optic created
+        // is a client of that optic. Owners (AccountId already set) are never reclassified.
+        if (user.AccountId != null) return;
+
+        var opticAccountId = await patientDirectory.FindOpticAccountIdByEmailAsync(user.Email.Value, cancellationToken);
+        if (opticAccountId is not { } accountId) return;
+
+        user.AssignRole(UserRole.Client);
+        user.AssignAccount(accountId);
+        userRepository.Update(user);
+        await unitOfWork.CompleteAsync();
     }
 
     public async Task<Result<AuthenticatedUser>> Handle(SignUpCommand command, CancellationToken cancellationToken)
@@ -51,10 +72,20 @@ public class UserCommandService(
 
         var passwordHash = hashingService.Encode(command.Password.Value);
         var user = new User(command.Email, new Password(passwordHash));
-        
+        user.AssignRole(command.Role);
+
+        // Tie a client to the optic that already registered them as a patient (matched by email),
+        // so everything they do is owned by that optic.
+        if (command.Role == UserRole.Client)
+        {
+            var opticAccountId = await patientDirectory.FindOpticAccountIdByEmailAsync(command.Email.Value, cancellationToken);
+            if (opticAccountId is { } accountId)
+                user.AssignAccount(accountId);
+        }
+
         await userRepository.AddAsync(user);
         await unitOfWork.CompleteAsync();
-        
+
         var token = tokenService.GenerateToken(user.Email.Value);
         return Result<AuthenticatedUser>.Success(new AuthenticatedUser(user, token));
     }
