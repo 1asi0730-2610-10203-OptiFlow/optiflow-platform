@@ -23,6 +23,12 @@ public static class ModelBuilderExtensions
                     v => (UserStatus)System.Enum.Parse(typeof(UserStatus), v, true)
                 );
 
+            entity.Property(e => e.Role).IsRequired().HasMaxLength(20)
+                .HasConversion(
+                    v => v.ToString().ToUpper(),
+                    v => (UserRole)System.Enum.Parse(typeof(UserRole), v, true)
+                );
+
             entity.Property(e => e.AccountId);
 
             entity.Property(e => e.Version).IsConcurrencyToken();

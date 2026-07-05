@@ -7,9 +7,10 @@ namespace optiflow_platform.IAM.Domain.Model.Aggregates;
 
 public partial class User : IAuditableEntity
 {
-    public User() 
+    public User()
     {
         Status = UserStatus.Active;
+        Role = UserRole.Admin;
         Id = null!;
         Email = null!;
         Password = null!;
@@ -35,6 +36,7 @@ public partial class User : IAuditableEntity
 
     public GoogleId? GoogleId { get; private set; }
     public UserStatus Status { get; private set; }
+    public UserRole Role { get; private set; }
     public Guid? AccountId { get; private set; }
 
     public User ChangePassword(Password password)
@@ -64,6 +66,12 @@ public partial class User : IAuditableEntity
     public User AssignAccount(Guid accountId)
     {
         AccountId = accountId;
+        return this;
+    }
+
+    public User AssignRole(UserRole role)
+    {
+        Role = role;
         return this;
     }
 

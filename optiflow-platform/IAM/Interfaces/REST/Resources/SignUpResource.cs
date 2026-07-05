@@ -4,4 +4,5 @@ namespace optiflow_platform.IAM.Interfaces.REST.Resources;
 
 public record SignUpResource(
     [Required(ErrorMessage = "iam.error.email.required")] string Email,
-    [Required(ErrorMessage = "iam.error.password.required")] string Password);
+    [Required(ErrorMessage = "iam.error.password.required")] string Password,
+    string? UserType = null);
