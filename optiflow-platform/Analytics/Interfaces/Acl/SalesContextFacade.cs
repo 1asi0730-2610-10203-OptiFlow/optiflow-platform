@@ -17,7 +17,7 @@ public class SalesContextFacade(ISaleQueryService saleQueryService) : ISalesCont
     {
         var sales = await saleQueryService.Handle(new GetAllSalesQuery(), cancellationToken);
         return sales
-            .Select(s => new SaleSummary(s.Id.Value, s.CreatedAt, s.TotalAmount, s.Status))
+            .Select(s => new SaleSummary(s.Id.Value, s.CreatedAt, s.TotalAmount, s.PendingBalance, s.Status))
             .ToList();
     }
 }

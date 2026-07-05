@@ -56,24 +56,42 @@ public class AnalyticsReportQueryService(
         var sales = await salesContextFacade.FetchAllSalesAsync(cancellationToken);
         var workOrders = await labOrdersContextFacade.FetchAllWorkOrdersAsync(cancellationToken);
 
-        var salesByPeriod = sales
-            .Where(s => !string.IsNullOrWhiteSpace(s.CreatedAt) && s.CreatedAt.Length >= 7)
-            .GroupBy(s => PeriodOf(s.CreatedAt))
+        // Only sales with a usable date participate; PeriodOf is null/length-safe so a single malformed
+        // CreatedAt can no longer throw and 500 the whole endpoint.
+        var datedSales = sales.Where(s => PeriodOf(s.CreatedAt) is not null).ToList();
+
+        var salesByPeriod = datedSales
+            .GroupBy(s => PeriodOf(s.CreatedAt)!)
             .ToDictionary(g => g.Key, g => g.ToList());
 
-        var periodBySaleId = sales.ToDictionary(s => s.Id, s => PeriodOf(s.CreatedAt));
+        var periodBySaleId = datedSales.ToDictionary(s => s.Id, s => PeriodOf(s.CreatedAt)!);
 
-        var orderCountByPeriod = workOrders
+        var ordersByPeriod = workOrders
             .Where(w => periodBySaleId.ContainsKey(w.SaleId))
             .GroupBy(w => periodBySaleId[w.SaleId])
-            .ToDictionary(g => g.Key, g => g.Count());
+            .ToDictionary(g => g.Key, g => g.ToList());
 
-        var periods = salesByPeriod.Keys.Union(orderCountByPeriod.Keys).OrderBy(p => p).ToList();
+        var periods = salesByPeriod.Keys.Union(ordersByPeriod.Keys).OrderBy(p => p).ToList();
 
         var reports = new List<AnalyticsReport>();
         foreach (var period in periods)
         {
             var periodSales = salesByPeriod.GetValueOrDefault(period, []);
+            var periodOrders = ordersByPeriod.GetValueOrDefault(period, []);
+            var totalOrders = periodOrders.Count;
+            var reworked = periodOrders.Count(w => w.IsRework);
+
+            decimal b0to7 = 0, b8to15 = 0, b16to30 = 0, bOver30 = 0;
+            foreach (var s in periodSales)
+            {
+                if (s.PendingBalance <= 0) continue;
+                var age = AgeInDays(s.CreatedAt);
+                if (age <= 7) b0to7 += s.PendingBalance;
+                else if (age <= 15) b8to15 += s.PendingBalance;
+                else if (age <= 30) b16to30 += s.PendingBalance;
+                else bOver30 += s.PendingBalance;
+            }
+
             var report = new AnalyticsReport(
                 generatedBy: "system",
                 period: period,
@@ -82,17 +100,23 @@ public class AnalyticsReportQueryService(
                 conversionRate: 0,
                 averageDeliveryDays: 0,
                 onTimeDeliveryRate: 0,
-                reworkRate: 0,
-                totalOrders: orderCountByPeriod.GetValueOrDefault(period, 0),
-                pendingBalance0To7: 0,
-                pendingBalance8To15: 0,
-                pendingBalance16To30: 0,
-                pendingBalanceOver30: 0);
+                reworkRate: totalOrders > 0 ? Math.Round((decimal)reworked / totalOrders * 100, 2) : 0,
+                totalOrders: totalOrders,
+                pendingBalance0To7: b0to7,
+                pendingBalance8To15: b8to15,
+                pendingBalance16To30: b16to30,
+                pendingBalanceOver30: bOver30);
             reports.Add(report);
         }
 
         return reports;
 
-        static string PeriodOf(string createdAt) => createdAt[..7];
+        static string? PeriodOf(string? createdAt) =>
+            string.IsNullOrWhiteSpace(createdAt) || createdAt.Length < 7 ? null : createdAt[..7];
+
+        static int AgeInDays(string? createdAt) =>
+            DateTimeOffset.TryParse(createdAt, out var dt)
+                ? Math.Max(0, (int)(DateTimeOffset.UtcNow - dt).TotalDays)
+                : 0;
     }
 }
