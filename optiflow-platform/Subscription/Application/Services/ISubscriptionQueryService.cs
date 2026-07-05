@@ -17,4 +17,10 @@ public interface ISubscriptionQueryService
     /// <summary>Handles retrieving all subscriptions belonging to a given admin.</summary>
     Task<IEnumerable<SubscriptionAggregate>> Handle(GetSubscriptionsByAdminIdQuery query,
         CancellationToken cancellationToken = default);
+
+    /// <summary>
+    ///     Returns the current account's active subscription, or null if the account has none.
+    ///     Scoped to the caller's account by the global query filter.
+    /// </summary>
+    Task<SubscriptionAggregate?> GetCurrentActiveSubscriptionAsync(CancellationToken cancellationToken = default);
 }

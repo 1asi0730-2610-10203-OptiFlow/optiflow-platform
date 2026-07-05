@@ -1,5 +1,6 @@
 using optiflow_platform.Subscription.Application.Services;
 using optiflow_platform.Subscription.Domain.Model.Queries;
+using optiflow_platform.Subscription.Domain.Model.ValueObjects;
 using optiflow_platform.Subscription.Domain.Repositories;
 using SubscriptionAggregate = optiflow_platform.Subscription.Domain.Model.Aggregates.Subscription;
 
@@ -23,4 +24,8 @@ public class SubscriptionQueryService(ISubscriptionRepository subscriptionReposi
     public async Task<IEnumerable<SubscriptionAggregate>> Handle(GetSubscriptionsByAdminIdQuery query,
         CancellationToken cancellationToken = default) =>
         await subscriptionRepository.FindByAdminIdAsync(query.AdminId, cancellationToken);
+
+    /// <inheritdoc />
+    public async Task<SubscriptionAggregate?> GetCurrentActiveSubscriptionAsync(CancellationToken cancellationToken = default) =>
+        (await subscriptionRepository.FindByStatusAsync(SubscriptionStatus.Active, cancellationToken)).FirstOrDefault();
 }
