@@ -36,6 +36,22 @@ public class AuthenticationController(
         return Ok(authenticatedUserResource);
     }
 
+    /// <summary>Inicia sesión como cliente usando solo su nombre de usuario (email), sin contraseña.</summary>
+    [HttpPost("sign-in/client")]
+    [SwaggerOperation(Summary = "Client sign in (passwordless)", OperationId = "ClientSignIn")]
+    public async Task<IActionResult> ClientSignIn([FromBody] ClientSignInResource resource, CancellationToken cancellationToken)
+    {
+        var command = new optiflow_platform.IAM.Domain.Model.Commands.SignInClientCommand(
+            new optiflow_platform.IAM.Domain.Model.ValueObjects.EmailAddress(resource.Username));
+        var result = await userCommandService.Handle(command, cancellationToken);
+
+        if (!result.IsSuccess)
+            return IamErrorToActionAssembler.ToActionResult(result.Error, result.Message, this, problemDetailsFactory, localizer);
+
+        var authenticatedUserResource = AuthenticatedUserResourceFromEntityAssembler.ToResourceFromEntity(result.Value!.User, result.Value.Token);
+        return Ok(authenticatedUserResource);
+    }
+
     /// <summary>Inicia sesión utilizando una cuenta de Google.</summary>
     [HttpPost("sign-in/google")]
     [SwaggerOperation(Summary = "Google sign in", OperationId = "GoogleSignIn")]

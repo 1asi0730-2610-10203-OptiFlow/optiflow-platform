@@ -70,6 +70,20 @@ public class UserCommandService(
         await unitOfWork.CompleteAsync();
     }
 
+    public async Task<Result<AuthenticatedUser>> Handle(SignInClientCommand command, CancellationToken cancellationToken)
+    {
+        var user = await userRepository.FindByEmailAsync(command.Email, cancellationToken);
+        // Passwordless: only client users can sign in this way, and only if their account is active.
+        if (user == null || user.Role != UserRole.Client || user.Status == UserStatus.Inactive)
+            return Result<AuthenticatedUser>.Failure(IamError.InvalidCredentials, "iam.error.credentials.invalid");
+
+        // Link to their optic if a matching patient record now exists.
+        await TryLinkClientToOpticAsync(user, cancellationToken);
+
+        var token = tokenService.GenerateToken(user.Email.Value);
+        return Result<AuthenticatedUser>.Success(new AuthenticatedUser(user, token));
+    }
+
     private async Task TryLinkClientToOpticAsync(User user, CancellationToken cancellationToken)
     {
         // Auto-match strategy: any account-less user whose email matches a patient an optic created

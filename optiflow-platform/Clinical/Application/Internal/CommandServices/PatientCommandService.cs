@@ -23,6 +23,7 @@ public class PatientCommandService(
     IClinicalRecordRepository clinicalRecordRepository,
     IUnitOfWork unitOfWork,
     ICurrentUserContext currentUserContext,
+    optiflow_platform.IAM.Application.ACL.IClientAccountService clientAccountService,
     ILogger<PatientCommandService> logger)
     : IPatientCommandService
 {
@@ -49,6 +50,20 @@ public class PatientCommandService(
             var record = new ClinicalRecord(patient.Id, patient.AccountId);
             await clinicalRecordRepository.AddAsync(record, cancellationToken);
             await unitOfWork.CompleteAsync(cancellationToken);
+
+            // Turn the patient into a valid client user of this optic so they can log in (passwordless)
+            // and see their orders. Best-effort — never fail patient creation over it.
+            if (!string.IsNullOrWhiteSpace(command.Email))
+            {
+                try
+                {
+                    await clientAccountService.EnsureClientUserAsync(command.Email!, patient.AccountId, cancellationToken);
+                }
+                catch (Exception ex)
+                {
+                    logger.LogWarning(ex, "Could not provision client user for patient {Dni}", command.Dni);
+                }
+            }
 
             return new Result<Patient, CreatePatientError>.Success(patient);
         }
