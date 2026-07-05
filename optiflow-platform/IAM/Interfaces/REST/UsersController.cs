@@ -20,6 +20,7 @@ namespace optiflow_platform.IAM.Interfaces.REST;
 [Produces(MediaTypeNames.Application.Json)]
 [Tags("Users")]
 [Authorize]
+[AllowWithoutSubscription]
 public class UsersController(
     IUserCommandService userCommandService,
     IUserQueryService userQueryService,

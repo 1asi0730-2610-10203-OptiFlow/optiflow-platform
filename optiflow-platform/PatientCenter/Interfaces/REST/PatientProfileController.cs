@@ -13,6 +13,7 @@ namespace optiflow_platform.PatientCenter.Interfaces.REST;
 [Tags("Patient Center")]
 [Authorize]
 [AllowWithoutAccount]
+[AllowWithoutSubscription]
 public class PatientProfileController(
     IPatientQueryService patientQueryService,
     ILogger<PatientProfileController> logger)

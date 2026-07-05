@@ -15,6 +15,7 @@ namespace optiflow_platform.PatientCenter.Interfaces.REST;
 [Produces(MediaTypeNames.Application.Json)]
 [Tags("Patient Orders")]
 [Authorize]
+[AllowWithoutSubscription]
 public class PatientOrdersController(
     IWorkOrderQueryService workOrderQueryService,
     ISaleQueryService saleQueryService,

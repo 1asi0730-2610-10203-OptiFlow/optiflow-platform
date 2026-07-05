@@ -18,6 +18,7 @@ namespace optiflow_platform.Subscription.Interfaces.REST;
 [Produces(MediaTypeNames.Application.Json)]
 [Tags("Subscription Payments")]
 [Authorize]
+[AllowWithoutSubscription]
 public class SubscriptionPaymentsController(
     IPaymentCommandService paymentCommandService,
     IPaymentQueryService paymentQueryService,

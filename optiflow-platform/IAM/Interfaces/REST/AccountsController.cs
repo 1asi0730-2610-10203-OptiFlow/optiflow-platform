@@ -18,6 +18,7 @@ namespace optiflow_platform.IAM.Interfaces.REST;
 [Produces(MediaTypeNames.Application.Json)]
 [Tags("Accounts")]
 [Authorize]
+[AllowWithoutSubscription]
 public class AccountsController(
     IAccountCommandService accountCommandService,
     IAccountQueryService accountQueryService,
