@@ -480,3 +480,7 @@ $RECYCLE.BIN/
 
 # Vim temporary swap files
 *.swp
+
+# Local secrets (Stripe keys, etc.) — never commit
+appsettings.Local.json
+**/appsettings.Local.json

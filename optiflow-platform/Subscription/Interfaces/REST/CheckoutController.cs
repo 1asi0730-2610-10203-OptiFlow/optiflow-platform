@@ -46,14 +46,42 @@ public class CheckoutController(
     {
         try
         {
+            // Already subscribed → nothing to charge, just send them to the success page.
+            var existing = await subscriptionQueryService.GetCurrentActiveSubscriptionAsync(cancellationToken);
+            if (existing != null)
+                return Ok(new CheckoutSessionResource(SuccessUrl()));
+
+            var plan = await planQueryService.Handle(new GetPlanByIdQuery(new PlanId(resource.PlanId)), cancellationToken);
+            if (plan is null)
+                return Problem(title: "Checkout error", detail: "Selected plan does not exist.", statusCode: 400);
+
+            // Create the subscription in PENDING_PAYMENT for the current account.
+            var selectCommand = new SelectSubscriptionPlanCommand(
+                resource.AdminId, plan.PlanId, plan.Tier, resource.Amount, "CARD");
+            var created = await subscriptionCommandService.Handle(selectCommand, cancellationToken);
+            if (created is not Result<SubscriptionAggregate, Application.Errors.SelectSubscriptionPlanError>.Success createdOk)
+                return Problem(title: "Checkout error", detail: "Could not create subscription.", statusCode: 500);
+            var subscription = createdOk.Value;
+
             if (UseRealStripeCheckout())
             {
+                // Hand off to Stripe; the webhook activates this subscription after payment.
                 var url = stripeCheckoutService.CreateCheckoutSession(
-                    resource.AdminId, resource.PlanId, resource.PlanName, resource.Amount);
+                    subscription.Id, subscription.AccountId, resource.PlanName, resource.Amount);
                 return Ok(new CheckoutSessionResource(url));
             }
 
-            return await DevActivateAsync(resource, cancellationToken);
+            // Local dev without a real key: activate immediately.
+            var now = DateTimeOffset.UtcNow;
+            var activateCommand = new ActivateSubscriptionCommand(
+                new SubscriptionId(subscription.Id), plan.Tier, now, now.AddYears(1));
+            var activated = await subscriptionCommandService.Handle(activateCommand, cancellationToken);
+            if (activated is not Result<SubscriptionAggregate, Application.Errors.ActivateSubscriptionError>.Success)
+                return Problem(title: "Checkout error", detail: "Could not activate subscription.", statusCode: 500);
+
+            logger.LogInformation("Dev-activated subscription {SubscriptionId} for account {AccountId}",
+                subscription.Id, currentUserContext.AccountId);
+            return Ok(new CheckoutSessionResource(SuccessUrl()));
         }
         catch (Exception ex)
         {
@@ -66,36 +94,6 @@ public class CheckoutController(
     {
         var key = configuration["Stripe:SecretKey"];
         return !string.IsNullOrWhiteSpace(key) && key.StartsWith("sk_");
-    }
-
-    private async Task<ActionResult<CheckoutSessionResource>> DevActivateAsync(
-        CreateCheckoutSessionResource resource, CancellationToken cancellationToken)
-    {
-        // Already subscribed → nothing to charge, just send them to the success page.
-        var existing = await subscriptionQueryService.GetCurrentActiveSubscriptionAsync(cancellationToken);
-        if (existing != null)
-            return Ok(new CheckoutSessionResource(SuccessUrl()));
-
-        var plan = await planQueryService.Handle(new GetPlanByIdQuery(new PlanId(resource.PlanId)), cancellationToken);
-        if (plan is null)
-            return Problem(title: "Checkout error", detail: "Selected plan does not exist.", statusCode: 400);
-
-        var selectCommand = new SelectSubscriptionPlanCommand(
-            resource.AdminId, plan.PlanId, plan.Tier, resource.Amount, "CARD");
-        var created = await subscriptionCommandService.Handle(selectCommand, cancellationToken);
-        if (created is not Result<SubscriptionAggregate, Application.Errors.SelectSubscriptionPlanError>.Success createdOk)
-            return Problem(title: "Checkout error", detail: "Could not create subscription.", statusCode: 500);
-
-        var now = DateTimeOffset.UtcNow;
-        var activateCommand = new ActivateSubscriptionCommand(
-            new SubscriptionId(createdOk.Value.Id), plan.Tier, now, now.AddYears(1));
-        var activated = await subscriptionCommandService.Handle(activateCommand, cancellationToken);
-        if (activated is not Result<SubscriptionAggregate, Application.Errors.ActivateSubscriptionError>.Success)
-            return Problem(title: "Checkout error", detail: "Could not activate subscription.", statusCode: 500);
-
-        logger.LogInformation("Dev-activated subscription for account {AccountId} plan {PlanId}",
-            currentUserContext.AccountId, resource.PlanId);
-        return Ok(new CheckoutSessionResource(SuccessUrl()));
     }
 
     private string SuccessUrl()
