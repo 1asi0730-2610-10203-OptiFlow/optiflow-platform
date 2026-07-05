@@ -8,6 +8,7 @@ using optiflow_platform.Subscription.Application.Services;
 using optiflow_platform.Subscription.Domain.Model.Commands;
 using optiflow_platform.Subscription.Domain.Model.Queries;
 using optiflow_platform.Subscription.Domain.Model.ValueObjects;
+using optiflow_platform.Subscription.Domain.Repositories;
 using optiflow_platform.Subscription.Interfaces.REST.Resources;
 using Swashbuckle.AspNetCore.Annotations;
 using SubscriptionAggregate = optiflow_platform.Subscription.Domain.Model.Aggregates.Subscription;
@@ -24,6 +25,7 @@ public class CheckoutController(
     IStripeCheckoutService stripeCheckoutService,
     ISubscriptionCommandService subscriptionCommandService,
     ISubscriptionQueryService subscriptionQueryService,
+    ISubscriptionRepository subscriptionRepository,
     IPlanQueryService planQueryService,
     ICurrentUserContext currentUserContext,
     IConfiguration configuration,
@@ -87,6 +89,54 @@ public class CheckoutController(
         {
             logger.LogError(ex, "Unexpected error creating checkout session for plan {PlanId}", resource.PlanId);
             return Problem(title: "Checkout error", detail: "Failed to create checkout session.", statusCode: 500);
+        }
+    }
+
+    /// <summary>
+    ///     Confirms a completed Stripe checkout by verifying the session was paid, then activates the
+    ///     subscription. Lets payment grant access even when the webhook isn't reachable (local dev).
+    /// </summary>
+    [HttpPost("confirm")]
+    [SwaggerOperation(Summary = "Confirm checkout payment", OperationId = "ConfirmCheckout")]
+    [SwaggerResponse(200, "Confirmation result")]
+    public async Task<ActionResult> ConfirmCheckout([FromQuery] string? sessionId, CancellationToken cancellationToken)
+    {
+        // Already active (dev-activate or the webhook already fired) → done.
+        var active = await subscriptionQueryService.GetCurrentActiveSubscriptionAsync(cancellationToken);
+        if (active != null) return Ok(new { active = true });
+
+        if (string.IsNullOrWhiteSpace(sessionId))
+            return Ok(new { active = false });
+
+        try
+        {
+            var session = new global::Stripe.Checkout.SessionService().Get(sessionId);
+            var paid = session.PaymentStatus == "paid" || session.Status == "complete";
+            if (paid
+                && session.Metadata is not null
+                && session.Metadata.TryGetValue("subscriptionId", out var subIdRaw)
+                && int.TryParse(subIdRaw, out var subscriptionId)
+                && session.Metadata.TryGetValue("accountId", out var accIdRaw)
+                && Guid.TryParse(accIdRaw, out var accountId)
+                && accountId == currentUserContext.AccountId)
+            {
+                var subscription = await subscriptionRepository.FindByIdAsync(subscriptionId, cancellationToken);
+                if (subscription is not null)
+                {
+                    var now = DateTimeOffset.UtcNow;
+                    await subscriptionCommandService.Handle(
+                        new ActivateSubscriptionCommand(new SubscriptionId(subscriptionId), subscription.Tier, now, now.AddYears(1)),
+                        cancellationToken);
+                    logger.LogInformation("Confirmed and activated subscription {SubscriptionId} from Stripe session", subscriptionId);
+                    return Ok(new { active = true });
+                }
+            }
+            return Ok(new { active = false });
+        }
+        catch (global::Stripe.StripeException ex)
+        {
+            logger.LogWarning(ex, "Failed to confirm Stripe session {SessionId}", sessionId);
+            return Ok(new { active = false });
         }
     }
 
