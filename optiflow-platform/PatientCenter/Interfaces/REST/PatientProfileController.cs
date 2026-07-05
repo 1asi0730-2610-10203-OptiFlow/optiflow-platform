@@ -31,11 +31,8 @@ public class PatientProfileController(
     {
         try
         {
-            var patients = await patientQueryService.Handle(
-                new GetAllPatientsQuery(), cancellationToken);
-            var patient = patients.FirstOrDefault(p =>
-                p.Email != null &&
-                p.Email.Equals(email, StringComparison.OrdinalIgnoreCase));
+            var patient = await patientQueryService.Handle(
+                new GetPatientByEmailQuery(email), cancellationToken);
 
             if (patient is null) return NotFound();
 

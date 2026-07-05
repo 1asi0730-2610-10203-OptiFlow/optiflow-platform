@@ -14,4 +14,13 @@ public class PatientRepository(AppDbContext context)
     public async Task<Patient?> FindByDniAsync(string dni, CancellationToken cancellationToken = default) =>
         await Context.Set<Patient>()
             .FirstOrDefaultAsync(p => p.Dni == dni, cancellationToken);
+
+    /// <inheritdoc />
+    public async Task<Patient?> FindByEmailIgnoringScopeAsync(string email, CancellationToken cancellationToken = default)
+    {
+        var normalized = email.ToLower();
+        return await Context.Set<Patient>()
+            .IgnoreQueryFilters()
+            .FirstOrDefaultAsync(p => p.Email != null && p.Email.ToLower() == normalized, cancellationToken);
+    }
 }

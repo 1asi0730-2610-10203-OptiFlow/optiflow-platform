@@ -9,6 +9,13 @@ public record GetPatientByIdQuery(int Id);
 /// <summary>Query to retrieve a patient by their DNI number.</summary>
 public record GetPatientByDniQuery(string Dni);
 
+/// <summary>
+///     Query to retrieve a patient by their email across every account. Used by the patient
+///     portal, where the authenticated patient user has no account of their own and therefore
+///     cannot be resolved through the tenant-scoped patient queries.
+/// </summary>
+public record GetPatientByEmailQuery(string Email);
+
 /// <summary>Query to retrieve all clinical records.</summary>
 public record GetAllClinicalRecordsQuery;
 
