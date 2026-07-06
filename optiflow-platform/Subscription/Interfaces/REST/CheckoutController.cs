@@ -48,9 +48,10 @@ public class CheckoutController(
     {
         try
         {
-            // Already subscribed → nothing to charge, just send them to the success page.
+            // Already active on this exact plan → nothing to charge; idempotent success. A different
+            // plan means an upgrade/downgrade, which must be paid for like any other checkout.
             var existing = await subscriptionQueryService.GetCurrentActiveSubscriptionAsync(cancellationToken);
-            if (existing != null)
+            if (existing != null && existing.PlanId.Value == resource.PlanId)
                 return Ok(new CheckoutSessionResource(SuccessUrl()));
 
             var plan = await planQueryService.Handle(new GetPlanByIdQuery(new PlanId(resource.PlanId)), cancellationToken);
@@ -83,6 +84,9 @@ public class CheckoutController(
             if (activated is not Result<SubscriptionAggregate, Application.Errors.ActivateSubscriptionError>.Success)
                 return Problem(title: "Checkout error", detail: "Could not activate subscription.", statusCode: 500);
 
+            // Upgrades: the just-activated plan replaces whatever was active before.
+            await SupersedeOtherActiveSubscriptionsAsync(subscription.Id, cancellationToken);
+
             logger.LogInformation("Dev-activated subscription {SubscriptionId} for account {AccountId}",
                 subscription.Id, currentUserContext.AccountId);
             return Ok(new CheckoutSessionResource(SuccessUrl()));
@@ -103,13 +107,16 @@ public class CheckoutController(
     [SwaggerResponse(200, "Confirmation result")]
     public async Task<ActionResult> ConfirmCheckout([FromQuery] string? sessionId, CancellationToken cancellationToken)
     {
-        // Already active (dev-activate or the webhook already fired) → done.
-        var active = await subscriptionQueryService.GetCurrentActiveSubscriptionAsync(cancellationToken);
-        if (active != null) return Ok(new { active = true });
-
+        // No session to verify → just report whether something is already active (dev-activate or the
+        // webhook/return already fired).
         if (string.IsNullOrWhiteSpace(sessionId))
-            return Ok(new { active = false });
+        {
+            var current = await subscriptionQueryService.GetCurrentActiveSubscriptionAsync(cancellationToken);
+            return Ok(new { active = current != null });
+        }
 
+        // A session id was supplied: always verify and activate that specific subscription, so an upgrade
+        // (paid while another plan is still active) actually switches instead of reporting the old one.
         try
         {
             var session = new global::Stripe.Checkout.SessionService().Get(sessionId);
@@ -129,17 +136,33 @@ public class CheckoutController(
                     await subscriptionCommandService.Handle(
                         new ActivateSubscriptionCommand(new SubscriptionId(subscriptionId), subscription.Tier, now, now.AddYears(1)),
                         cancellationToken);
+                    await SupersedeOtherActiveSubscriptionsAsync(subscriptionId, cancellationToken);
                     logger.LogInformation("Confirmed and activated subscription {SubscriptionId} from Stripe session", subscriptionId);
                     return Ok(new { active = true });
                 }
             }
-            return Ok(new { active = false });
+
+            // Session not paid/attributable → fall back to whatever is currently active.
+            var active = await subscriptionQueryService.GetCurrentActiveSubscriptionAsync(cancellationToken);
+            return Ok(new { active = active != null });
         }
         catch (global::Stripe.StripeException ex)
         {
             logger.LogWarning(ex, "Failed to confirm Stripe session {SessionId}", sessionId);
             return Ok(new { active = false });
         }
+    }
+
+    /// <summary>
+    ///     Cancels every other active subscription for the current account so the just-activated one is
+    ///     the single source of truth after an upgrade or plan change. No-op on a first-time purchase.
+    /// </summary>
+    private async Task SupersedeOtherActiveSubscriptionsAsync(int keepSubscriptionId, CancellationToken cancellationToken)
+    {
+        var actives = await subscriptionRepository.FindByStatusAsync(SubscriptionStatus.Active, cancellationToken);
+        foreach (var other in actives.Where(s => s.Id != keepSubscriptionId))
+            await subscriptionCommandService.Handle(
+                new CancelSubscriptionCommand(new SubscriptionId(other.Id)), cancellationToken);
     }
 
     private bool UseRealStripeCheckout()
