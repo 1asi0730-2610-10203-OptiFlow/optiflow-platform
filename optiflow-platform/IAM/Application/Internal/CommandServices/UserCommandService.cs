@@ -214,6 +214,13 @@ public class UserCommandService(
                 return Result<AuthenticatedUser>.Failure(IamError.InvalidCredentials, "iam.error.credentials.invalid");
             }
 
+            // Same onboarding as email sign-up/sign-in: link the user to their optic when a matching
+            // patient exists, otherwise provision an optic so a Google-created admin has a complete
+            // account and lands on plan selection instead of a broken, optic-less state.
+            await TryLinkClientToOpticAsync(user, cancellationToken);
+            if (user.Role == UserRole.Admin && user.AccountId == null)
+                await ProvisionOpticAsync(user, cancellationToken);
+
             var token = tokenService.GenerateToken(user.Email.Value);
             return Result<AuthenticatedUser>.Success(new AuthenticatedUser(user, token));
         }
