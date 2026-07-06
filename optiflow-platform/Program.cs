@@ -277,6 +277,12 @@ builder.Services.PostConfigure<TokenSettings>(settings =>
 // Cargar config local (en .gitignore)
 builder.Configuration.AddJsonFile("appsettings.Local.json", optional: true, reloadOnChange: true);
 
+// Resolve %VAR% placeholders in the frontend URL from the environment, like the DB connection string,
+// so post-payment Stripe redirects reach the real site instead of a literal "%FRONTEND_URL%".
+var frontendUrl = builder.Configuration["AppSettings:FrontendUrl"];
+if (!string.IsNullOrWhiteSpace(frontendUrl))
+    builder.Configuration["AppSettings:FrontendUrl"] = Environment.ExpandEnvironmentVariables(frontendUrl);
+
 // Configurar Stripe API key
 StripeConfiguration.ApiKey = builder.Configuration["Stripe:SecretKey"];
 
