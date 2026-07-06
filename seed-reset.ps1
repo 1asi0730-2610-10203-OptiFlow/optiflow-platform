@@ -66,6 +66,15 @@ function Seed-Optic($admin, $opticLabel, $planTier, $clients) {
         if ($act) { Write-Host "  subscription ACTIVE ($($plan.tier))" -ForegroundColor Green }
     }
 
+    # Default staff roles for the Settings > Roles section
+    $roles = @(
+        @{ name="ADMINISTRADOR"; displayName="Administrador"; description="Acceso total al sistema"; color="#ef4444"; permissions=@("settings","reports","users","full_access") },
+        @{ name="OPTOMETRISTA";  displayName="Optometrista";  description="Historias clinicas, recetas"; color="#8b5cf6"; permissions=@("dashboard","clinical","prescriptions","appointments") },
+        @{ name="ASESOR";        displayName="Asesor de Ventas"; description="Ventas, inventario, pacientes"; color="#3b82f6"; permissions=@("sales","inventory","lab_orders") },
+        @{ name="RECEPCIONISTA"; displayName="Recepcionista"; description="Citas y registros (solo lectura)"; color="#10b981"; permissions=@("appointments") }
+    )
+    foreach ($r in $roles) { Post "/roles" $r $t | Out-Null }
+
     # Supplier + product + lab (needed for orders)
     $sup = Post "/suppliers" @{ name = "Distribuidora $opticLabel"; contactPerson = "Contacto"; phone = "+51 900 000 000"; email = "prov.$($admin.email)" } $t
     $lab = Post "/laboratories" @{ name = "Lab $opticLabel"; phone = "+51 921 000 000"; email = "lab.$($admin.email)" } $t
