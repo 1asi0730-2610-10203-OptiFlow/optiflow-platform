@@ -96,6 +96,14 @@ public class StripeWebhookController(
         await subscriptionCommandService.Handle(
             new ActivateSubscriptionCommand(new SubscriptionId(subscriptionId), subscription.Tier, now, now.AddYears(1)),
             cancellationToken);
+
+        // Upgrade path: the newly paid subscription supersedes any previously active one for the account,
+        // leaving exactly one active subscription.
+        var actives = await subscriptionRepository.FindByStatusAsync(SubscriptionStatus.Active, cancellationToken);
+        foreach (var other in actives.Where(s => s.Id != subscriptionId))
+            await subscriptionCommandService.Handle(
+                new CancelSubscriptionCommand(new SubscriptionId(other.Id)), cancellationToken);
+
         logger.LogInformation("Activated subscription {SubscriptionId} from Stripe", subscriptionId);
     }
 }
