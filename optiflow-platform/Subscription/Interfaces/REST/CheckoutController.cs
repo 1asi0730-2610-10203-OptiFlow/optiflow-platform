@@ -29,6 +29,7 @@ public class CheckoutController(
     IPlanQueryService planQueryService,
     ICurrentUserContext currentUserContext,
     IConfiguration configuration,
+    IWebHostEnvironment environment,
     ILogger<CheckoutController> logger) : ControllerBase
 {
     /// <summary>
@@ -57,6 +58,12 @@ public class CheckoutController(
             var plan = await planQueryService.Handle(new GetPlanByIdQuery(new PlanId(resource.PlanId)), cancellationToken);
             if (plan is null)
                 return Problem(title: "Checkout error", detail: "Selected plan does not exist.", statusCode: 400);
+
+            // Outside local development, a real Stripe key is mandatory: never hand out access without a
+            // real payment. Dev-activate (instant unlock, no charge) is a Development-only convenience.
+            if (!UseRealStripeCheckout() && !environment.IsDevelopment())
+                return Problem(title: "Checkout unavailable",
+                    detail: "Online payment is not configured. Please contact support.", statusCode: 503);
 
             // Create the subscription in PENDING_PAYMENT for the current account.
             var selectCommand = new SelectSubscriptionPlanCommand(
