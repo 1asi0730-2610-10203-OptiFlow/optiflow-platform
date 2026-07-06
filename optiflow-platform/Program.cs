@@ -241,6 +241,9 @@ builder.Services.AddScoped<IPatientNotificationCommandService, PatientNotificati
 builder.Services.AddScoped<optiflow_platform.Staff.Domain.Repositories.IStaffRepository, optiflow_platform.Staff.Infrastructure.Persistence.EFC.Repositories.StaffRepository>();
 builder.Services.AddScoped<optiflow_platform.Staff.Application.Services.IStaffCommandService, optiflow_platform.Staff.Application.Internal.CommandServices.StaffCommandService>();
 builder.Services.AddScoped<optiflow_platform.Staff.Application.Services.IStaffQueryService, optiflow_platform.Staff.Application.Internal.QueryServices.StaffQueryService>();
+builder.Services.AddScoped<optiflow_platform.Staff.Domain.Repositories.IRoleRepository, optiflow_platform.Staff.Infrastructure.Persistence.EFC.Repositories.RoleRepository>();
+builder.Services.AddScoped<optiflow_platform.Staff.Application.Services.IRoleCommandService, optiflow_platform.Staff.Application.Internal.CommandServices.RoleCommandService>();
+builder.Services.AddScoped<optiflow_platform.Staff.Application.Services.IRoleQueryService, optiflow_platform.Staff.Application.Internal.QueryServices.RoleQueryService>();
 
 // IAM Bounded Context Injection
 builder.Services.AddScoped<ProblemDetailsFactory>();
