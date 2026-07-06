@@ -26,5 +26,20 @@ public static class ModelBuilderExtensions
             entity.HasIndex(e => new { e.AccountId, e.EmployeeCode }).IsUnique();
             entity.HasQueryFilter(e => e.AccountId == dbContext.CurrentAccountId);
         });
+
+        builder.Entity<Role>(entity =>
+        {
+            entity.ToTable("staff_roles");
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Id).IsRequired().ValueGeneratedOnAdd();
+            entity.Property(e => e.AccountId).IsRequired();
+            entity.Property(e => e.Name).IsRequired().HasMaxLength(100);
+            entity.Property(e => e.DisplayName).IsRequired().HasMaxLength(150);
+            entity.Property(e => e.Description).HasMaxLength(500);
+            entity.Property(e => e.Color).IsRequired().HasMaxLength(20);
+            entity.Property(e => e.Permissions).IsRequired().HasMaxLength(1000);
+            entity.HasIndex(e => new { e.AccountId, e.Name }).IsUnique();
+            entity.HasQueryFilter(e => e.AccountId == dbContext.CurrentAccountId);
+        });
     }
 }
