@@ -41,9 +41,12 @@ Write-Host "=== OptiFlow reset seed  $(Get-Date -Format 'yyyy-MM-dd HH:mm') ==="
 # --- Plans (shared catalog) -----------------------------------------------
 $adminBootstrap = New-Admin "admin1@optiflow.com" "Admin123!"
 $plansData = @(
-    @{ name = "Plan Basico Mensual";       tier = "BASiC";        price = 49.90;  description = "Hasta 2 usuarios" },
-    @{ name = "Plan Professional Mensual"; tier = "PROFESSIONAL"; price = 99.90;  description = "Hasta 5 usuarios" },
-    @{ name = "Plan Enterprise Mensual";   tier = "ENTERPRISE";   price = 179.90; description = "Usuarios ilimitados" }
+    @{ name = "Plan Basico Mensual";       tier = "BASiC";        price = 99.00;   description = "Hasta 2 usuarios" },
+    @{ name = "Plan Professional Mensual"; tier = "PROFESSIONAL"; price = 248.00;  description = "Hasta 5 usuarios" },
+    @{ name = "Plan Enterprise Mensual";   tier = "ENTERPRISE";   price = 499.00;  description = "Usuarios ilimitados" },
+    @{ name = "Plan Basico Anual";         tier = "BASiC";        price = 984.00;  description = "Hasta 2 usuarios - facturacion anual" },
+    @{ name = "Plan Professional Anual";   tier = "PROFESSIONAL"; price = 2472.00; description = "Hasta 5 usuarios - facturacion anual" },
+    @{ name = "Plan Enterprise Anual";     tier = "ENTERPRISE";   price = 4968.00; description = "Usuarios ilimitados - facturacion anual" }
 )
 $existing = @()
 try { $existing = Invoke-RestMethod -Method GET -Uri "$BASE/api/v1/plans" -Headers @{ Authorization = "Bearer $($adminBootstrap.token)" } } catch {}
