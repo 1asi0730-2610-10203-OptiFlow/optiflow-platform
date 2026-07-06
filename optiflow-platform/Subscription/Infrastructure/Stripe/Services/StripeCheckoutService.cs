@@ -36,7 +36,7 @@ public class StripeCheckoutService(IConfiguration configuration, ILogger<StripeC
                     Quantity  = 1,
                     PriceData = new SessionLineItemPriceDataOptions
                     {
-                        Currency   = "usd",
+                        Currency   = "pen",
                         UnitAmount = (long)(amount * 100),
                         ProductData = new SessionLineItemPriceDataProductDataOptions
                         {
