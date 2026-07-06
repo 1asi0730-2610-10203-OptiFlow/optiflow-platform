@@ -261,6 +261,17 @@ builder.Services.AddScoped<optiflow_platform.IAM.Application.Internal.OutboundSe
 builder.Services.AddScoped<optiflow_platform.IAM.Application.ACL.IClientAccountService, optiflow_platform.IAM.Application.Internal.ACL.ClientAccountService>();
 // IAM Token Settings Configuration
 builder.Services.Configure<TokenSettings>(builder.Configuration.GetSection("AppSettings:JwtSettings"));
+builder.Services.PostConfigure<TokenSettings>(settings =>
+{
+    // Resolve %VAR% placeholders from the environment like the DB connection string above, then fail fast
+    // on an unresolved placeholder or a key too short for HMAC-SHA256 (needs 128 bits / 16 bytes) instead
+    // of surfacing the cryptic IDX10653 at token-signing time.
+    settings.Secret = Environment.ExpandEnvironmentVariables(settings.Secret ?? string.Empty);
+    if (string.IsNullOrWhiteSpace(settings.Secret) || settings.Secret.Contains('%') || settings.Secret.Length < 16)
+        throw new InvalidOperationException(
+            "JWT secret is missing, unresolved, or shorter than 16 characters (128 bits required for HMAC-SHA256). " +
+            "Set JWT_SECRET (or AppSettings:JwtSettings:Secret) to a long random value.");
+});
 
 
 // Cargar config local (en .gitignore)
