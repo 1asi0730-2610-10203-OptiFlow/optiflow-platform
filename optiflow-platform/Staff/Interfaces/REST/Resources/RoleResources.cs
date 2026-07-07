@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace optiflow_platform.Staff.Interfaces.REST.Resources;
 
@@ -13,8 +14,8 @@ public record RoleResource(
 
 /// <summary>Resource used to create or update a role.</summary>
 public record SaveRoleResource(
-    string?       Name,
-    string?       DisplayName,
-    string?       Description,
-    string?       Color,
+    [StringLength(50, ErrorMessage = "Name must be at most 50 characters")] string? Name,
+    [StringLength(50, ErrorMessage = "DisplayName must be at most 50 characters")] string? DisplayName,
+    [StringLength(200, ErrorMessage = "Description must be at most 200 characters")] string? Description,
+    [StringLength(20, ErrorMessage = "Color must be at most 20 characters")] string? Color,
     List<string>? Permissions);

@@ -14,5 +14,5 @@ public record PatientNotificationResource(
 
 [SwaggerSchema(Description = "Payload to create a notification")]
 public record CreatePatientNotificationResource(
-    [Required][SwaggerParameter("Work order ID")]       int    WorkOrderId,
-    [Required][SwaggerParameter("Notification message")] string Message);
+    [Required][Range(1, int.MaxValue, ErrorMessage = "WorkOrderId must be a positive identifier")][SwaggerParameter("Work order ID")] int WorkOrderId,
+    [Required][StringLength(500, ErrorMessage = "Message must be at most 500 characters")][SwaggerParameter("Notification message")] string Message);
