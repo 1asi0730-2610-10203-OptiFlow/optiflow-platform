@@ -15,5 +15,7 @@ public record UpdateProductResource(
     [SwaggerParameter(Description = "Stock keeping unit code")] string Sku,
     [Required]
     [SwaggerParameter(Description = "The product category")] EProductCategory Category,
+    [Range(0.01, 1000000, ErrorMessage = "Price must be between 0.01 and 1000000")]
     [SwaggerParameter(Description = "Unit price of the product")] decimal Price,
+    [Range(0, 1000000, ErrorMessage = "MinimumStockThreshold must be between 0 and 1000000")]
     [SwaggerParameter(Description = "Minimum stock threshold before a low stock alert is raised")] int MinimumStockThreshold);

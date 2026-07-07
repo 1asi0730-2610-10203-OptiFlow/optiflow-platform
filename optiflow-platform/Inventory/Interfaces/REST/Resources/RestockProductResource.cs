@@ -8,6 +8,7 @@ namespace optiflow_platform.Inventory.Interfaces.REST.Resources;
 /// </summary>
 [SwaggerSchema(Description = "Request payload to restock a product")]
 public record RestockProductResource(
+    [Range(1, 1000000, ErrorMessage = "Quantity must be between 1 and 1000000")]
     [SwaggerParameter(Description = "Quantity of units received, must be greater than zero")] int Quantity,
     [Required]
     [SwaggerParameter(Description = "Name of the technical performing the restock")] string Author);
