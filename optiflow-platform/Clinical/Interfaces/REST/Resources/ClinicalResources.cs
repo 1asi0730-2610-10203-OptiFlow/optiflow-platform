@@ -20,8 +20,8 @@ public record CreatePatientResource(
     [Required] [StringLength(100, ErrorMessage = "FirstName must be at most 100 characters")] string  FirstName,
                [StringLength(100, ErrorMessage = "LastName must be at most 100 characters")]  string? LastName,
     [Required] [StringLength(12, MinimumLength = 8, ErrorMessage = "Dni must be between 8 and 12 characters")] string  Dni,
-               [Phone] [StringLength(20, ErrorMessage = "Phone must be at most 20 characters")] string? Phone,
-               [EmailAddress] [StringLength(100, ErrorMessage = "Email must be at most 100 characters")] string? Email,
+               [RegularExpression(@"^\+?[0-9\s()\-.]{7,20}$", ErrorMessage = "Phone must be 7-20 characters and may include +, spaces, dashes or parentheses")] string? Phone,
+               [EmailAddress(ErrorMessage = "Email must be a valid email address")] [StringLength(100, ErrorMessage = "Email must be at most 100 characters")] string? Email,
     [Required] string  BirthDate
 );
 
@@ -30,8 +30,8 @@ public record UpdatePatientResource(
     [Required] [StringLength(100, ErrorMessage = "FirstName must be at most 100 characters")] string  FirstName,
                [StringLength(100, ErrorMessage = "LastName must be at most 100 characters")]  string? LastName,
     [Required] [StringLength(12, MinimumLength = 8, ErrorMessage = "Dni must be between 8 and 12 characters")] string  Dni,
-               [Phone] [StringLength(20, ErrorMessage = "Phone must be at most 20 characters")] string? Phone,
-               [EmailAddress] [StringLength(100, ErrorMessage = "Email must be at most 100 characters")] string? Email,
+               [RegularExpression(@"^\+?[0-9\s()\-.]{7,20}$", ErrorMessage = "Phone must be 7-20 characters and may include +, spaces, dashes or parentheses")] string? Phone,
+               [EmailAddress(ErrorMessage = "Email must be a valid email address")] [StringLength(100, ErrorMessage = "Email must be at most 100 characters")] string? Email,
     [Required] string  BirthDate
 );
 
