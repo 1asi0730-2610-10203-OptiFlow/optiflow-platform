@@ -22,5 +22,7 @@ public record CreateWorkOrderResource(
     [SwaggerParameter(Description = "Order priority: normal, high, urgent")] string Priority,
     [Required]
     [SwaggerParameter(Description = "Expected delivery date (YYYY-MM-DD)")] string DeliveryDate,
+    [Range(0, 1000000, ErrorMessage = "Deposit must be between 0 and 1000000")]
     [SwaggerParameter(Description = "Initial deposit amount")] decimal Deposit,
+    [Range(0, 1000000, ErrorMessage = "Total must be between 0 and 1000000")]
     [SwaggerParameter(Description = "Total order amount")] decimal Total);
