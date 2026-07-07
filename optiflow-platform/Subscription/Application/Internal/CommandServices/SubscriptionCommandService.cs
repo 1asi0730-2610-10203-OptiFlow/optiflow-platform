@@ -68,6 +68,11 @@ public class SubscriptionCommandService(
                 cancellationToken);
             return new Result<SubscriptionAggregate, ActivateSubscriptionError>.Success(subscription);
         }
+        catch (ArgumentException ex)
+        {
+            logger.LogWarning(ex, "Invalid date range activating subscription {Id}", command.SubscriptionId.Value);
+            return new Result<SubscriptionAggregate, ActivateSubscriptionError>.Failure(ActivateSubscriptionError.InvalidDateRange);
+        }
         catch (Exception ex)
         {
             logger.LogError(ex, "Unexpected error activating subscription {Id}", command.SubscriptionId.Value);

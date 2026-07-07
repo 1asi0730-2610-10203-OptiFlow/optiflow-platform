@@ -54,6 +54,8 @@ public class Subscription
     public void Activate(ActivateSubscriptionCommand command)
     {
         ArgumentNullException.ThrowIfNull(command);
+        if (command.EndDate <= command.StartDate)
+            throw new ArgumentException("Subscription end date must be after the start date.");
         Tier      = command.Tier;
         Status    = new SubscriptionStatus(SubscriptionStatus.Active);
         StartDate = command.StartDate;

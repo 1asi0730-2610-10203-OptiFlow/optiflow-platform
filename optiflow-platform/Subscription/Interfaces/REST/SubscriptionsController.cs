@@ -127,6 +127,8 @@ public class SubscriptionsController(
                     Ok(SubscriptionResourceFromEntityAssembler.ToResourceFromEntity(success.Value)),
                 Result<SubscriptionAggregate, ActivateSubscriptionError>.Failure { Error: ActivateSubscriptionError.SubscriptionNotFound } =>
                     NotFound(),
+                Result<SubscriptionAggregate, ActivateSubscriptionError>.Failure { Error: ActivateSubscriptionError.InvalidDateRange } =>
+                    BadRequest("Subscription end date must be after the start date."),
                 _ => Problem(title: "Unexpected error", detail: "Could not activate subscription.", statusCode: 500)
             };
         }
