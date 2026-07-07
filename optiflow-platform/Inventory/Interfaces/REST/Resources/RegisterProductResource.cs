@@ -13,6 +13,7 @@ public record RegisterProductResource(
     [SwaggerParameter(Description = "The product category")] EProductCategory Category,
     [Range(0, int.MaxValue, ErrorMessage = "SupplierId must be zero or a positive identifier")]
     [SwaggerParameter(Description = "Reference to the supplier")] int SupplierId,
+    [Required]
     [StringLength(100, ErrorMessage = "SupplierName must be at most 100 characters")]
     [SwaggerParameter(Description = "Name of the supplier")] string SupplierName,
     [Required]
