@@ -299,6 +299,10 @@ using (var scope = app.Services.CreateScope())
     {
         var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
         context.Database.Migrate();
+
+        // Ensure the default subscription plan catalog exists, otherwise "select plan" has nothing to show.
+        var planCommandService = scope.ServiceProvider.GetRequiredService<IPlanCommandService>();
+        await optiflow_platform.Subscription.Infrastructure.Seeding.PlanSeeder.SeedAsync(planCommandService, logger);
     }
     catch (Exception ex)
     {
