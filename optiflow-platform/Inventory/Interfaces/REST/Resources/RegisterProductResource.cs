@@ -11,7 +11,7 @@ namespace optiflow_platform.Inventory.Interfaces.REST.Resources;
 public record RegisterProductResource(
     [Required]
     [SwaggerParameter(Description = "The product category")] EProductCategory Category,
-    [Range(1, int.MaxValue, ErrorMessage = "SupplierId must be a positive identifier")]
+    [Range(0, int.MaxValue, ErrorMessage = "SupplierId must be zero or a positive identifier")]
     [SwaggerParameter(Description = "Reference to the supplier")] int SupplierId,
     [Required]
     [StringLength(100, ErrorMessage = "SupplierName must be at most 100 characters")]
