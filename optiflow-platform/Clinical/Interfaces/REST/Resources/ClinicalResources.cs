@@ -17,21 +17,21 @@ public record PatientResource(
 
 /// <summary>Resource used to create a new patient.</summary>
 public record CreatePatientResource(
-    [Required] string  FirstName,
-               string? LastName,
-    [Required] string  Dni,
-               string? Phone,
-               string? Email,
+    [Required] [StringLength(100, ErrorMessage = "FirstName must be at most 100 characters")] string  FirstName,
+               [StringLength(100, ErrorMessage = "LastName must be at most 100 characters")]  string? LastName,
+    [Required] [StringLength(12, MinimumLength = 8, ErrorMessage = "Dni must be between 8 and 12 characters")] string  Dni,
+               [Phone] [StringLength(20, ErrorMessage = "Phone must be at most 20 characters")] string? Phone,
+               [EmailAddress] [StringLength(100, ErrorMessage = "Email must be at most 100 characters")] string? Email,
     [Required] string  BirthDate
 );
 
 /// <summary>Resource used to update an existing patient.</summary>
 public record UpdatePatientResource(
-    [Required] string  FirstName,
-               string? LastName,
-    [Required] string  Dni,
-               string? Phone,
-               string? Email,
+    [Required] [StringLength(100, ErrorMessage = "FirstName must be at most 100 characters")] string  FirstName,
+               [StringLength(100, ErrorMessage = "LastName must be at most 100 characters")]  string? LastName,
+    [Required] [StringLength(12, MinimumLength = 8, ErrorMessage = "Dni must be between 8 and 12 characters")] string  Dni,
+               [Phone] [StringLength(20, ErrorMessage = "Phone must be at most 20 characters")] string? Phone,
+               [EmailAddress] [StringLength(100, ErrorMessage = "Email must be at most 100 characters")] string? Email,
     [Required] string  BirthDate
 );
 
@@ -96,8 +96,10 @@ public record CreatePrescriptionResource(
     [Range(0.00, 4.00, ErrorMessage = "Addition must be between 0.00 and +4.00")]
     decimal? Addition,
 
+    [StringLength(500, ErrorMessage = "Notes must be at most 500 characters")]
     string Notes,
 
     [Required]
+    [StringLength(100, ErrorMessage = "DoctorName must be at most 100 characters")]
     string DoctorName
 );
