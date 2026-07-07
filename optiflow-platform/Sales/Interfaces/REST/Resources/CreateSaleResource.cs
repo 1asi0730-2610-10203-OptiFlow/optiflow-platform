@@ -23,5 +23,5 @@ public record CreateSaleResource(
 
 [SwaggerSchema(Description = "A product and quantity sold as part of a sale")]
 public record CreateSaleItemResource(
-    [Required] [SwaggerParameter(Description = "Inventory product ID")] int ProductId,
-    [Required] [Range(1, int.MaxValue)] [SwaggerParameter(Description = "Quantity sold")] int Quantity);
+    [Required] [Range(1, int.MaxValue, ErrorMessage = "ProductId must be a positive identifier")] [SwaggerParameter(Description = "Inventory product ID")] int ProductId,
+    [Required] [Range(1, 1000000, ErrorMessage = "Quantity must be between 1 and 1000000")] [SwaggerParameter(Description = "Quantity sold")] int Quantity);
