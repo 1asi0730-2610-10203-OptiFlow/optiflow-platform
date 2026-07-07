@@ -10,8 +10,10 @@ namespace optiflow_platform.Inventory.Interfaces.REST.Resources;
 [SwaggerSchema(Description = "Request payload to update a product's catalog details")]
 public record UpdateProductResource(
     [Required]
+    [StringLength(100, ErrorMessage = "Name must be at most 100 characters")]
     [SwaggerParameter(Description = "Name of the product")] string Name,
     [Required]
+    [StringLength(50, ErrorMessage = "Sku must be at most 50 characters")]
     [SwaggerParameter(Description = "Stock keeping unit code")] string Sku,
     [Required]
     [SwaggerParameter(Description = "The product category")] EProductCategory Category,
