@@ -15,7 +15,8 @@ public record RegisterSupplierResource(
     [StringLength(100, ErrorMessage = "ContactPerson must be at most 100 characters")]
     [SwaggerParameter(Description = "Name of the contact person at the supplier")] string ContactPerson,
     [Required]
-    [RegularExpression(@"^\+?[0-9\s()\-.]{7,20}$", ErrorMessage = "Phone must be 7-20 characters and may include +, spaces, dashes or parentheses")]
+    [StringLength(50, ErrorMessage = "Phone must be at most 50 characters")]
+    [RegularExpression(@"^\+?([\s().-]*\d){7,15}[\s().-]*$", ErrorMessage = "Phone must contain 7 to 15 digits and may include +, spaces, dashes or parentheses")]
     [SwaggerParameter(Description = "Contact phone number of the supplier")] string Phone,
     [Required]
     [EmailAddress(ErrorMessage = "Email must be a valid email address")]
