@@ -1,3 +1,4 @@
+using System.Globalization;
 using optiflow_platform.LabAndOrders.Domain.Model.Commands;
 using optiflow_platform.LabAndOrders.Domain.Model.ValueObjects;
 
@@ -50,6 +51,11 @@ public class WorkOrder
         if (command.Deposit > command.Total)
             throw new ArgumentException(
                 $"Deposit ({command.Deposit:F2}) cannot exceed the order total ({command.Total:F2}).");
+        if (!DateOnly.TryParse(command.DeliveryDate, CultureInfo.InvariantCulture, out var deliveryDate))
+            throw new ArgumentException(
+                $"Delivery date '{command.DeliveryDate}' is not a valid date (expected yyyy-MM-dd).");
+        if (deliveryDate < DateOnly.FromDateTime(DateTime.UtcNow))
+            throw new ArgumentException("Delivery date cannot be in the past.");
         AccountId = accountId;
         SaleId = command.SaleId;
         RecipeId = command.RecipeId;

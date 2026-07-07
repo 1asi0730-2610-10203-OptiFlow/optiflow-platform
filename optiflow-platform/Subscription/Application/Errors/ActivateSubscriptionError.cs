@@ -4,5 +4,6 @@ public enum ActivateSubscriptionError
 {
     SubscriptionNotFound,
     AlreadyActive,
+    InvalidDateRange,
     UnexpectedError
 }

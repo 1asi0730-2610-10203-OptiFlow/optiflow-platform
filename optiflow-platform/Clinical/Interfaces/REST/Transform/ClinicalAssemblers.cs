@@ -1,3 +1,4 @@
+using System.Globalization;
 using optiflow_platform.Clinical.Domain.Model.Aggregates;
 using optiflow_platform.Clinical.Domain.Model.Commands;
 using optiflow_platform.Clinical.Domain.Model.Entities;
@@ -13,7 +14,7 @@ public static class CreatePatientCommandFromResourceAssembler
             resource.Dni,
             resource.Phone,
             resource.Email,
-            DateOnly.Parse(resource.BirthDate));
+            BirthDateParser.Parse(resource.BirthDate));
 }
 
 public static class UpdatePatientCommandFromResourceAssembler
@@ -25,7 +26,23 @@ public static class UpdatePatientCommandFromResourceAssembler
             resource.Dni,
             resource.Phone,
             resource.Email,
-            DateOnly.Parse(resource.BirthDate));
+            BirthDateParser.Parse(resource.BirthDate));
+}
+
+/// <summary>Parses and validates a patient birth date, rejecting malformed, future or absurdly old dates.</summary>
+public static class BirthDateParser
+{
+    public static DateOnly Parse(string value)
+    {
+        if (!DateOnly.TryParse(value, CultureInfo.InvariantCulture, out var birthDate))
+            throw new ArgumentException($"Birth date '{value}' is not a valid date (expected yyyy-MM-dd).");
+        var today = DateOnly.FromDateTime(DateTime.UtcNow);
+        if (birthDate > today)
+            throw new ArgumentException("Birth date cannot be in the future.");
+        if (birthDate < today.AddYears(-120))
+            throw new ArgumentException("Birth date cannot be more than 120 years in the past.");
+        return birthDate;
+    }
 }
 
 public static class PatientResourceFromEntityAssembler
