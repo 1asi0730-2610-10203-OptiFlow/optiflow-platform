@@ -47,6 +47,9 @@ public class WorkOrder
     public WorkOrder(CreateWorkOrderCommand command, Guid accountId)
     {
         ArgumentNullException.ThrowIfNull(command);
+        if (command.Deposit > command.Total)
+            throw new ArgumentException(
+                $"Deposit ({command.Deposit:F2}) cannot exceed the order total ({command.Total:F2}).");
         AccountId = accountId;
         SaleId = command.SaleId;
         RecipeId = command.RecipeId;
