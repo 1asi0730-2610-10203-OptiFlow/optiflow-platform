@@ -93,6 +93,9 @@ public class Sale
     public void ApplyDiscount(ApplyPromotionalDiscountCommand command)
     {
         ArgumentNullException.ThrowIfNull(command);
+        if (command.DiscountAmount > TotalAmount)
+            throw new ArgumentException(
+                $"Discount amount ({command.DiscountAmount:F2}) cannot exceed the sale total ({TotalAmount:F2}).");
         DiscountCode = command.DiscountCode;
         DiscountAmount = command.DiscountAmount;
         TotalAmount -= command.DiscountAmount;

@@ -250,6 +250,9 @@ public class SalesController(
                 Result<Sale, ApplyPromotionalDiscountError>.Failure
                     { Error: ApplyPromotionalDiscountError.SaleNotFound } =>
                     NotFound(),
+                Result<Sale, ApplyPromotionalDiscountError>.Failure
+                    { Error: ApplyPromotionalDiscountError.DiscountExceedsTotal } =>
+                    BadRequest("Discount amount cannot exceed the sale total."),
                 _ => Problem(title: "Unexpected server error", detail: "Could not apply discount.", statusCode: 500)
             };
         }

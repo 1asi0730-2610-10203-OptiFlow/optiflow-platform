@@ -164,6 +164,11 @@ public class SaleCommandService(
             await domainEventPublisher.PublishAsync(new DiscountAppliedEvent(sale.Id, sale.DiscountCode, sale.DiscountAmount, sale.TotalAmount), cancellationToken);
             return new Result<Sale, ApplyPromotionalDiscountError>.Success(sale);
         }
+        catch (ArgumentException ex)
+        {
+            logger.LogWarning(ex, "Discount exceeds total for sale {SaleId}", command.SaleId);
+            return new Result<Sale, ApplyPromotionalDiscountError>.Failure(ApplyPromotionalDiscountError.DiscountExceedsTotal);
+        }
         catch (Exception ex)
         {
             logger.LogError(ex, "Unexpected error applying discount to sale {SaleId}", command.SaleId);
