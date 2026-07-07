@@ -28,7 +28,7 @@ public static class ModelBuilderExtensions
         builder.Entity<Patient>().Property(p => p.LastName).IsRequired().HasMaxLength(100);
         builder.Entity<Patient>().Property(p => p.Dni).IsRequired().HasMaxLength(20);
         builder.Entity<Patient>().HasIndex(p => new { p.AccountId, p.Dni }).IsUnique();
-        builder.Entity<Patient>().Property(p => p.Phone).HasMaxLength(20);
+        builder.Entity<Patient>().Property(p => p.Phone).HasMaxLength(50);
         builder.Entity<Patient>().Property(p => p.Email).HasMaxLength(255);
         builder.Entity<Patient>().Property(p => p.BirthDate).IsRequired()
             .HasConversion(
