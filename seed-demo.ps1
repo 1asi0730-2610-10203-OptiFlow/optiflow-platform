@@ -64,18 +64,14 @@ if ($admin.accountId) {
     Write-Host "  onboarded account '$($acc.name)' -> id $adminAccountId" -ForegroundColor Green
 }
 
-# --- 2. Subscription plans (shared global catalog) ------------------------
+# --- 2. Subscription plans (owned by the backend PlanSeeder catalog) -------
 Write-Host ""
 Write-Host "[plans]" -ForegroundColor Cyan
+# Plans are seeded and de-duplicated by the backend PlanSeeder on startup; do not create them
+# here or the "select plan" screen ends up showing duplicated plans.
 $plans = Get-Api "/api/v1/plans" $adminToken
 if (-not $plans -or $plans.Count -eq 0) {
-    $plansData = @(
-        @{ name = "Plan Basico Mensual";       tier = "BASIC";        price = 49.90;  description = "Hasta 2 usuarios" },
-        @{ name = "Plan Professional Mensual"; tier = "PROFESSIONAL"; price = 99.90;  description = "Hasta 5 usuarios" },
-        @{ name = "Plan Enterprise Mensual";   tier = "ENTERPRISE";   price = 179.90; description = "Usuarios ilimitados" }
-    )
-    foreach ($p in $plansData) { Post "/api/v1/plans" $p $adminToken | Out-Null }
-    $plans = Get-Api "/api/v1/plans" $adminToken
+    Write-Host "  WARNING: no plans found. Start the API so PlanSeeder can create the default catalog." -ForegroundColor Yellow
 }
 Write-Host "  $($plans.Count) plans available"
 

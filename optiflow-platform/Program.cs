@@ -300,9 +300,12 @@ using (var scope = app.Services.CreateScope())
         var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
         context.Database.Migrate();
 
-        // Ensure the default subscription plan catalog exists, otherwise "select plan" has nothing to show.
+        // Ensure the default subscription plan catalog exists (and stays free of duplicates),
+        // otherwise "select plan" has nothing to show or shows duplicated plans.
         var planCommandService = scope.ServiceProvider.GetRequiredService<IPlanCommandService>();
-        await optiflow_platform.Subscription.Infrastructure.Seeding.PlanSeeder.SeedAsync(planCommandService, logger);
+        var planRepository = scope.ServiceProvider.GetRequiredService<optiflow_platform.Subscription.Domain.Repositories.IPlanRepository>();
+        var unitOfWork = scope.ServiceProvider.GetRequiredService<optiflow_platform.Shared.Domain.Repositories.IUnitOfWork>();
+        await optiflow_platform.Subscription.Infrastructure.Seeding.PlanSeeder.SeedAsync(planCommandService, planRepository, unitOfWork, logger);
     }
     catch (Exception ex)
     {
