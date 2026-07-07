@@ -14,12 +14,17 @@ public record RegisterProductResource(
     [Range(1, int.MaxValue, ErrorMessage = "SupplierId must be a positive identifier")]
     [SwaggerParameter(Description = "Reference to the supplier")] int SupplierId,
     [Required]
+    [StringLength(100, ErrorMessage = "SupplierName must be at most 100 characters")]
     [SwaggerParameter(Description = "Name of the supplier")] string SupplierName,
     [Required]
+    [StringLength(50, ErrorMessage = "Sku must be at most 50 characters")]
     [SwaggerParameter(Description = "Stock keeping unit code, must be unique")] string Sku,
     [Required]
+    [StringLength(100, ErrorMessage = "Name must be at most 100 characters")]
     [SwaggerParameter(Description = "Name of the product")] string Name,
+    [StringLength(50, ErrorMessage = "Brand must be at most 50 characters")]
     [SwaggerParameter(Description = "Brand of the product")] string Brand,
+    [StringLength(50, ErrorMessage = "Model must be at most 50 characters")]
     [SwaggerParameter(Description = "Model of the product")] string Model,
     [Range(0.01, 1000000, ErrorMessage = "Price must be between 0.01 and 1000000")]
     [SwaggerParameter(Description = "Unit price of the product")] decimal Price,

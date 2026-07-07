@@ -11,4 +11,5 @@ public record ConsumeStockResource(
     [Range(1, 1000000, ErrorMessage = "Quantity must be between 1 and 1000000")]
     [SwaggerParameter(Description = "Quantity consumed")] int Quantity,
     [Required]
+    [StringLength(100, ErrorMessage = "Author must be at most 100 characters")]
     [SwaggerParameter(Description = "Origin of the consumption, e.g. the work order that triggered it")] string Author);
