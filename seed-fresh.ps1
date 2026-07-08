@@ -119,19 +119,22 @@ function Onboard-Optic($email, $password, $businessName) {
 $FirstNames = @("Alejandro","Valentina","Diego","Lucia","Sebastian","Camila","Mateo","Isabela","Emilio","Sofia")
 $LastNames  = @("Garcia Lopez","Morales Cruz","Rodriguez Perez","Hernandez Vega","Vargas Quispe","Torres Mendoza","Flores Salas","Diaz Ramirez","Castro Huanca","Reyes Chavez")
 $LensTypes  = @("Monofocal","Bifocal","Progresiva","Anti-reflejo")
-$Frames     = @("Metal slim negro","Acetato carey marron","Titanio sin aro","Metal dorado")
 
 function Seed-Optic($ctx, $opticIndex) {
     $token = $ctx.Token
     $tag   = "o$opticIndex"
 
-    # A lab + one product so orders/sales have something to reference.
+    # A lab + real inventory: a frame AND a lens product, so work orders reference actual stock
+    # (lensProductId/frameProductId) and the inventory-depletion integration has something to reduce.
     $lab = Post "/laboratories" @{ name = "LabVision $($ctx.Name)"; phone = "+51 921 100 00$opticIndex"; email = "lab.$tag@labvision.pe" } $token
     $labId = if ($lab) { $lab.id } else { 1 }
     $sup = Post "/suppliers" @{ name = "VisionPro $($ctx.Name)"; contactPerson = "Carlos Medina"; phone = "+51 912 001 00$opticIndex"; email = "sup.$tag@visionpro.pe" } $token
     $supId = if ($sup) { $sup.id } else { 0 }
-    $prod = Post "/products" @{ category = "Frames"; supplierId = $supId; supplierName = "VisionPro"; sku = "MON-$tag-001"; name = "Montura Ray-Ban RB5154"; brand = "Ray-Ban"; model = "RB5154"; price = 349.90; stock = 25; minimumStockThreshold = 5 } $token
-    $prodId = if ($prod) { $prod.id } else { $null }
+    $frameProd = Post "/products" @{ category = "Frames"; supplierId = $supId; supplierName = "VisionPro"; sku = "MON-$tag-001"; name = "Montura Ray-Ban RB5154"; brand = "Ray-Ban"; model = "RB5154"; price = 349.90; stock = 120; minimumStockThreshold = 10 } $token
+    $frameProdId = if ($frameProd) { $frameProd.id } else { $null }
+    $frameName   = if ($frameProd) { $frameProd.name } else { "Montura Ray-Ban RB5154" }
+    $lensProd  = Post "/products" @{ category = "Lenses"; supplierId = $supId; supplierName = "VisionPro"; sku = "LEN-$tag-001"; name = "Lente Essilor Varilux"; brand = "Essilor"; model = "Varilux X"; price = 520.00; stock = 120; minimumStockThreshold = 10 } $token
+    $lensProdId = if ($lensProd) { $lensProd.id } else { $null }
 
     $seeded = @()
     for ($i = 0; $i -lt $PatientsEach; $i++) {
@@ -147,7 +150,7 @@ function Seed-Optic($ctx, $opticIndex) {
         for ($o = 0; $o -lt 2; $o++) {
             $total   = [math]::Round(300 + (Get-Random -Minimum 50 -Maximum 400), 2)
             $advance = [math]::Round($total * 0.4, 2)
-            $items   = if ($prodId) { @(@{ productId = $prodId; quantity = 1 }) } else { @() }
+            $items   = if ($frameProdId) { @(@{ productId = $frameProdId; quantity = 1 }) } else { @() }
             $sale = Post "/sales" @{
                 invoiceNumber = ("FAC-$tag-{0:D2}{1}" -f $i, $o); labOrderNumber = $null
                 patientId = $pat.id; patientName = "$fn $ln"; userId = 1; userName = "Seed"
@@ -159,8 +162,8 @@ function Seed-Optic($ctx, $opticIndex) {
             $wo = Post "/work-orders" @{
                 saleId = $sale.id; recipeId = 0; labId = $labId
                 patientName = "$fn $ln"; laboratoryName = "LabVision $($ctx.Name)"
-                lensType = ($LensTypes | Get-Random); lensProductId = $null
-                frame = ($Frames | Get-Random); frameProductId = $null
+                lensType = ($LensTypes | Get-Random); lensProductId = $lensProdId
+                frame = $frameName; frameProductId = $frameProdId
                 prescription = "Segun receta del paciente"; priority = "normal"
                 deliveryDate = (DayShort (-(Get-Random -Minimum 5 -Maximum 21))); deposit = $advance; total = $total
             } $token
