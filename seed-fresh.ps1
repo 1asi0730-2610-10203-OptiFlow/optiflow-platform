@@ -27,6 +27,9 @@ param(
     [string]$DbPassword = "password",
     [string]$DbName     = "optiflow_db",
     [string]$MysqlExe   = "C:\Program Files\MySQL\MySQL Server 8.0\bin\mysql.exe",
+    # Azure Database for MySQL enforces TLS; PREFERRED works locally and on Azure. Pass REQUIRED if Azure rejects it.
+    [ValidateSet("PREFERRED","REQUIRED","DISABLED")]
+    [string]$SslMode    = "PREFERRED",
     [int]$Optics        = 2,
     [int]$PatientsEach  = 6,
     [switch]$SkipReset
@@ -65,7 +68,7 @@ function Day($offset)              { return (Get-Date).AddDays(-$offset).ToStrin
 function Invoke-Sql($sql) {
     $env:MYSQL_PWD = $DbPassword
     try {
-        $out = & $MysqlExe -h $DbServer -u $DbUser --protocol=TCP $DbName -N -B -e $sql 2>&1
+        $out = & $MysqlExe -h $DbServer -u $DbUser --protocol=TCP "--ssl-mode=$SslMode" $DbName -N -B -e $sql 2>&1
         if ($LASTEXITCODE -ne 0) { throw "mysql failed: $out" }
         return $out
     } finally { Remove-Item Env:\MYSQL_PWD -ErrorAction SilentlyContinue }
