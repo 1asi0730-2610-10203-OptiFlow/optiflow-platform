@@ -20,7 +20,10 @@ public class ClientAccountService(
     {
         if (string.IsNullOrWhiteSpace(email)) return;
 
-        var emailAddress = new EmailAddress(email);
+        // Normalize so a client is one login identity regardless of casing/whitespace. Without this,
+        // "Sarah@x.com" and "sarah@x.com" look like different users, so the existing account is missed
+        // and a duplicate is created — which detaches the patient from their orders. Reuse, never recreate.
+        var emailAddress = new EmailAddress(email.Trim().ToLowerInvariant());
         var existing = await userRepository.FindByEmailAsync(emailAddress, cancellationToken);
         if (existing != null)
         {
