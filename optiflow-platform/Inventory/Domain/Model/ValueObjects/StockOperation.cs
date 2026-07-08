@@ -6,8 +6,9 @@ public sealed record StockOperation
     public const string ManualAdjustment = "Manual Adjustment";
     public const string Sale = "Sale";
     public const string Consumption = "Consumption";
+    public const string Registration = "Registration";
 
-    private static readonly HashSet<string> ValidValues = [Restock, ManualAdjustment, Sale, Consumption];
+    private static readonly HashSet<string> ValidValues = [Restock, ManualAdjustment, Sale, Consumption, Registration];
 
     public string Value { get; }
 

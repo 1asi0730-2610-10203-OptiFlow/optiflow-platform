@@ -27,4 +27,10 @@ public interface IWorkOrderCommandService
     /// </summary>
     Task<Result<WorkOrder, LinkSaleError>> Handle(LinkSaleCommand command,
         CancellationToken cancellationToken = default);
+
+    /// <summary>
+    ///     Deletes a work order. Only allowed once the order has reached the Delivered status.
+    /// </summary>
+    Task<Result<bool, DeleteWorkOrderError>> Delete(int workOrderId,
+        CancellationToken cancellationToken = default);
 }
