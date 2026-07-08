@@ -107,42 +107,9 @@ public class SubscriptionsController(
         return Ok(result.Select(SubscriptionResourceFromEntityAssembler.ToResourceFromEntity));
     }
 
-    /// <summary>Activates a subscription after payment is confirmed.</summary>
-    [HttpPost("{id:int}/activate")]
-    [SwaggerOperation(Summary = "Activates a subscription", OperationId = "ActivateSubscription")]
-    [SwaggerResponse(200, "Subscription activated", typeof(SubscriptionResource))]
-    [SwaggerResponse(400, "Invalid request payload", typeof(string))]
-    [SwaggerResponse(404, "Subscription not found")]
-    [SwaggerResponse(500, "Unexpected server error", typeof(ProblemDetails))]
-    public async Task<ActionResult> ActivateSubscription(int id,
-        [FromBody] ActivateSubscriptionResource resource, CancellationToken cancellationToken)
-    {
-        try
-        {
-            var command = ActivateSubscriptionCommandFromResourceAssembler.ToCommandFromResource(id, resource);
-            var result = await subscriptionCommandService.Handle(command, cancellationToken);
-            return result switch
-            {
-                Result<SubscriptionAggregate, ActivateSubscriptionError>.Success success =>
-                    Ok(SubscriptionResourceFromEntityAssembler.ToResourceFromEntity(success.Value)),
-                Result<SubscriptionAggregate, ActivateSubscriptionError>.Failure { Error: ActivateSubscriptionError.SubscriptionNotFound } =>
-                    NotFound(),
-                Result<SubscriptionAggregate, ActivateSubscriptionError>.Failure { Error: ActivateSubscriptionError.InvalidDateRange } =>
-                    BadRequest("Subscription end date must be after the start date."),
-                _ => Problem(title: "Unexpected error", detail: "Could not activate subscription.", statusCode: 500)
-            };
-        }
-        catch (ArgumentException ex)
-        {
-            logger.LogWarning(ex, "Validation failed activating subscription {Id}", id);
-            return BadRequest(ex.Message);
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, "Unexpected error activating subscription {Id}", id);
-            return Problem(title: "Unexpected server error", detail: "Could not activate subscription.", statusCode: 500);
-        }
-    }
+    // Note: there is deliberately no public "activate" endpoint. A subscription may only be activated
+    // by a confirmed payment (Stripe webhook / return / confirm) or the dev-activate path — never by a
+    // direct client call, which would let anyone unlock the app without paying.
 
     /// <summary>Cancels a subscription.</summary>
     [HttpPost("{id:int}/cancel")]
