@@ -7,6 +7,7 @@ using optiflow_platform.Subscription.Domain.Model.ValueObjects;
 using optiflow_platform.Subscription.Domain.Repositories;
 using Stripe;
 using Stripe.Checkout;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace optiflow_platform.Subscription.Interfaces.REST;
 
@@ -16,6 +17,7 @@ namespace optiflow_platform.Subscription.Interfaces.REST;
 /// </summary>
 [ApiController]
 [Route("api/v1/checkout")]
+[Tags("Stripe Webhook")]
 public class StripeWebhookController(
     AppDbContext dbContext,
     ISubscriptionCommandService subscriptionCommandService,
@@ -24,6 +26,12 @@ public class StripeWebhookController(
     ILogger<StripeWebhookController> logger) : ControllerBase
 {
     [HttpPost("webhook")]
+    [SwaggerOperation(
+        Summary = "Receives Stripe webhook events",
+        Description = "Endpoint Stripe calls (no JWT) for events such as checkout.session.completed. Authenticity is verified from the Stripe-Signature header against the configured webhook secret; a paid checkout activates the account's subscription.",
+        OperationId = "HandleStripeWebhook")]
+    [SwaggerResponse(200, "The event was accepted (and processed if relevant)")]
+    [SwaggerResponse(400, "The webhook secret is not configured or the signature is invalid")]
     public async Task<IActionResult> Handle(CancellationToken cancellationToken)
     {
         var payload = await new StreamReader(Request.Body).ReadToEndAsync(cancellationToken);
@@ -59,6 +67,11 @@ public class StripeWebhookController(
     ///     the app. Public because it's a top-level browser navigation without an Authorization header.
     /// </summary>
     [HttpGet("return")]
+    [SwaggerOperation(
+        Summary = "Stripe post-payment return redirect",
+        Description = "Where Stripe sends the browser after checkout. Verifies the session server-side, activates the subscription if paid, then redirects to the frontend payment-success page.",
+        OperationId = "StripeCheckoutReturn")]
+    [SwaggerResponse(302, "Redirects to the frontend payment-success page")]
     public async Task<IActionResult> Return([FromQuery(Name = "session_id")] string? sessionId, CancellationToken cancellationToken)
     {
         var frontend = configuration["AppSettings:FrontendUrl"]?.TrimEnd('/') ?? "http://localhost:5173";

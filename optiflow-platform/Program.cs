@@ -116,7 +116,21 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
     options.EnableAnnotations();
-    
+
+    // Prefill the "Try it out" panel with realistic example bodies for the most-used requests.
+    options.SchemaFilter<optiflow_platform.Shared.Infrastructure.Documentation.RequestExampleSchemaFilter>();
+
+    // Describe the API on the Swagger landing page so consumers know what it covers and how to authenticate.
+    options.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "OptiFlow Platform API",
+        Version = "v1",
+        Description =
+            "REST API for OptiFlow, an ERP/CRM for optical shops. Covers IAM, subscriptions and billing, " +
+            "clinical records, lab work orders, inventory, sales, staff and analytics. Most endpoints require a " +
+            "Bearer JWT — click Authorize and paste 'Bearer {token}' — and an active subscription for the account."
+    });
+
     // Add Bearer Security Definition
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {

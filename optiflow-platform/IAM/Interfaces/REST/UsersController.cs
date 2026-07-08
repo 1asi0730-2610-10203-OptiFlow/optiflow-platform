@@ -42,6 +42,12 @@ public class UsersController(
     }
 
     [HttpGet("{id}")]
+    [SwaggerOperation(
+        Summary = "Get a user by id",
+        Description = "Gets a single registered user by its unique identifier",
+        OperationId = "GetUserById")]
+    [SwaggerResponse(200, "The user was found", typeof(UserResource))]
+    [SwaggerResponse(404, "The user was not found")]
     public async Task<IActionResult> GetUserById(Guid id, CancellationToken cancellationToken)
     {
         var query = new GetUserByIdQuery(new UserId(id));
@@ -54,6 +60,14 @@ public class UsersController(
     }
 
     [HttpPut("{id}/email")]
+    [SwaggerOperation(
+        Summary = "Update a user's email",
+        Description = "Changes the authenticated user's email and returns a refreshed authentication token",
+        OperationId = "UpdateUserEmail")]
+    [SwaggerResponse(200, "The email was updated", typeof(AuthenticatedUserResource))]
+    [SwaggerResponse(400, "The request payload is invalid", typeof(ProblemDetails))]
+    [SwaggerResponse(404, "The user was not found", typeof(ProblemDetails))]
+    [SwaggerResponse(409, "The email is already in use", typeof(ProblemDetails))]
     public async Task<IActionResult> UpdateUserEmail(Guid id, [FromBody] UpdateUserEmailResource resource, CancellationToken cancellationToken)
     {
         var command = UpdateUserEmailCommandFromResourceAssembler.ToCommandFromResource(id, resource);
@@ -67,6 +81,13 @@ public class UsersController(
     }
 
     [HttpPut("{id}/password")]
+    [SwaggerOperation(
+        Summary = "Update a user's password",
+        Description = "Changes the authenticated user's password after validating the current one",
+        OperationId = "UpdateUserPassword")]
+    [SwaggerResponse(200, "The password was updated")]
+    [SwaggerResponse(400, "The current password is incorrect or the payload is invalid", typeof(ProblemDetails))]
+    [SwaggerResponse(404, "The user was not found", typeof(ProblemDetails))]
     public async Task<IActionResult> UpdateUserPassword(Guid id, [FromBody] UpdateUserPasswordResource resource, CancellationToken cancellationToken)
     {
         var command = UpdateUserPasswordCommandFromResourceAssembler.ToCommandFromResource(id, resource);
