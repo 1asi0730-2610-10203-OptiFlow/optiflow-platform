@@ -117,6 +117,9 @@ builder.Services.AddSwaggerGen(options =>
 {
     options.EnableAnnotations();
 
+    // Prefill the "Try it out" panel with realistic example bodies for the most-used requests.
+    options.SchemaFilter<optiflow_platform.Shared.Infrastructure.Documentation.RequestExampleSchemaFilter>();
+
     // Describe the API on the Swagger landing page so consumers know what it covers and how to authenticate.
     options.SwaggerDoc("v1", new OpenApiInfo
     {
