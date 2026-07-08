@@ -13,4 +13,5 @@ namespace optiflow_platform.LabAndOrders.Domain.Model.Events;
 ///     Reference to the Inventory product consumed as frame material, or null if none was selected.
 /// </param>
 /// <param name="PatientName">Full name of the patient the order belongs to.</param>
-public record WorkOrderCreatedEvent(int WorkOrderId, int? LensProductId, int? FrameProductId, string PatientName) : IEvent;
+/// <param name="AccountId">The account the work order belongs to, needed by cross-context handlers to scope their own queries.</param>
+public record WorkOrderCreatedEvent(int WorkOrderId, int? LensProductId, int? FrameProductId, string PatientName, Guid AccountId) : IEvent;

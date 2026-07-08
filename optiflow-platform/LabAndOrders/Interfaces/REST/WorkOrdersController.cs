@@ -175,4 +175,30 @@ public class WorkOrdersController(
             _ => Problem(title: "Unexpected server error", detail: "Could not link work order to sale.", statusCode: 500)
         };
     }
+
+    /// <summary>
+    ///     Deletes a work order. Only allowed once the order has reached the Delivered status.
+    /// </summary>
+    [HttpDelete("{id:int}")]
+    [SwaggerOperation(
+        Summary = "Deletes a work order",
+        Description = "Permanently deletes a work order. Only allowed when its status is Delivered.",
+        OperationId = "DeleteWorkOrder")]
+    [SwaggerResponse(204, "The work order was deleted")]
+    [SwaggerResponse(400, "The work order is not in the Delivered status", typeof(string))]
+    [SwaggerResponse(404, "The work order was not found")]
+    [SwaggerResponse(500, "Unexpected server error", typeof(ProblemDetails))]
+    public async Task<ActionResult> DeleteWorkOrder(int id, CancellationToken cancellationToken)
+    {
+        var result = await workOrderCommandService.Delete(id, cancellationToken);
+        return result switch
+        {
+            Result<bool, DeleteWorkOrderError>.Success => NoContent(),
+            Result<bool, DeleteWorkOrderError>.Failure { Error: DeleteWorkOrderError.WorkOrderNotFound } =>
+                NotFound(),
+            Result<bool, DeleteWorkOrderError>.Failure { Error: DeleteWorkOrderError.NotDelivered } =>
+                BadRequest("Only work orders with status Delivered can be deleted."),
+            _ => Problem(title: "Unexpected server error", detail: "Could not delete work order.", statusCode: 500)
+        };
+    }
 }

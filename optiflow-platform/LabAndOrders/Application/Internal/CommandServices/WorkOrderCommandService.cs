@@ -4,6 +4,7 @@ using optiflow_platform.LabAndOrders.Application.Services;
 using optiflow_platform.LabAndOrders.Domain.Model.Aggregates;
 using optiflow_platform.LabAndOrders.Domain.Model.Commands;
 using optiflow_platform.LabAndOrders.Domain.Model.Events;
+using optiflow_platform.LabAndOrders.Domain.Model.ValueObjects;
 using optiflow_platform.LabAndOrders.Domain.Repositories;
 using optiflow_platform.Shared.Application.Patterns;
 using optiflow_platform.Shared.Application.Services;
@@ -41,7 +42,7 @@ public class WorkOrderCommandService(
             await workOrderRepository.AddAsync(workOrder, cancellationToken);
             await unitOfWork.CompleteAsync(cancellationToken);
             await domainEventPublisher.PublishAsync(
-                new WorkOrderCreatedEvent(workOrder.Id, workOrder.LensProductId, workOrder.FrameProductId, workOrder.PatientName),
+                new WorkOrderCreatedEvent(workOrder.Id, workOrder.LensProductId, workOrder.FrameProductId, workOrder.PatientName, workOrder.AccountId),
                 cancellationToken);
             return new Result<WorkOrder, CreateWorkOrderError>.Success(workOrder);
         }
@@ -115,6 +116,37 @@ public class WorkOrderCommandService(
             logger.LogError(ex, "Unexpected error linking work order {WorkOrderId} to sale {SaleId}",
                 command.WorkOrderId, command.SaleId);
             return new Result<WorkOrder, LinkSaleError>.Failure(LinkSaleError.UnexpectedError);
+        }
+    }
+
+    /// <inheritdoc />
+    public async Task<Result<bool, DeleteWorkOrderError>> Delete(int workOrderId,
+        CancellationToken cancellationToken = default)
+    {
+        var workOrder = await workOrderRepository.FindByIdAsync(workOrderId, cancellationToken);
+        if (workOrder is null)
+        {
+            logger.LogWarning("Work order {WorkOrderId} not found for deletion", workOrderId);
+            return new Result<bool, DeleteWorkOrderError>.Failure(DeleteWorkOrderError.WorkOrderNotFound);
+        }
+
+        if (workOrder.Status != OrderStatus.Delivered)
+        {
+            logger.LogWarning("Cannot delete work order {WorkOrderId}: status is {Status}, not Delivered",
+                workOrderId, workOrder.Status);
+            return new Result<bool, DeleteWorkOrderError>.Failure(DeleteWorkOrderError.NotDelivered);
+        }
+
+        try
+        {
+            workOrderRepository.Remove(workOrder);
+            await unitOfWork.CompleteAsync(cancellationToken);
+            return new Result<bool, DeleteWorkOrderError>.Success(true);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Unexpected error deleting work order {WorkOrderId}", workOrderId);
+            return new Result<bool, DeleteWorkOrderError>.Failure(DeleteWorkOrderError.UnexpectedError);
         }
     }
 }

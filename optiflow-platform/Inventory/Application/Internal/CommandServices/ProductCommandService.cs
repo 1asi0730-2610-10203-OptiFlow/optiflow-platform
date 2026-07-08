@@ -45,7 +45,16 @@ public class ProductCommandService(
         {
             var product = new Product(command, currentUserContext.AccountId!.Value);
             await productRepository.AddAsync(product, cancellationToken);
-            await unitOfWork.CompleteAsync(cancellationToken);
+            await unitOfWork.CompleteAsync(cancellationToken); // flush to get product.Id
+
+            if (command.Stock > 0)
+            {
+                var auditLog = new StockAuditLog(product.Id, product.Name, product.Sku, StockOperation.Registration,
+                    0, command.Stock, product.Stock, "Sistema", product.AccountId);
+                await stockAuditLogRepository.AddAsync(auditLog, cancellationToken);
+                await unitOfWork.CompleteAsync(cancellationToken);
+            }
+
             return new Result<Product, RegisterProductError>.Success(product);
         }
         catch (DbUpdateException ex)
