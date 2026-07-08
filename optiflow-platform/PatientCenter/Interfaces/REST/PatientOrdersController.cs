@@ -1,10 +1,13 @@
 using System.Net.Mime;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using optiflow_platform.Clinical.Domain.Model.Aggregates;
 using optiflow_platform.LabAndOrders.Application.Services;
 using optiflow_platform.LabAndOrders.Domain.Model.Queries;
 using optiflow_platform.PatientCenter.Interfaces.REST.Resources;
 using optiflow_platform.Sales.Application.Services;
 using optiflow_platform.Sales.Domain.Model.Queries;
+using optiflow_platform.Shared.Infrastructure.Persistence.EFC.Configuration;
 using Swashbuckle.AspNetCore.Annotations;
 using optiflow_platform.IAM.Infrastructure.Pipeline.Middleware.Attributes;
 
@@ -20,6 +23,7 @@ namespace optiflow_platform.PatientCenter.Interfaces.REST;
 public class PatientOrdersController(
     IWorkOrderQueryService workOrderQueryService,
     ISaleQueryService saleQueryService,
+    AppDbContext dbContext,
     ILogger<PatientOrdersController> logger)
     : ControllerBase
 {
@@ -35,6 +39,17 @@ public class PatientOrdersController(
     {
         try
         {
+            // The patient portal is cross-account by design (clients aren't the optic's tenant). Scope the
+            // order lookups to the OPTIC that owns this patient — resolved ignoring the tenant filter — instead
+            // of the client's own session account, otherwise the account query filter hides every order.
+            var opticAccountId = await dbContext.Set<Patient>()
+                .IgnoreQueryFilters()
+                .Where(p => p.Id == patientId)
+                .Select(p => (Guid?)p.AccountId)
+                .FirstOrDefaultAsync(cancellationToken);
+            if (opticAccountId is { } accountId)
+                dbContext.CurrentAccountId = accountId;
+
             var workOrders = await workOrderQueryService.Handle(
                 new GetAllWorkOrdersQuery(), cancellationToken);
 
